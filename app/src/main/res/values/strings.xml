@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">Lume</string>
+    <string name="title_activity_multi">MultiActivity</string>
+    <string name="title_base_feature">Instant Module</string>
+</resources>

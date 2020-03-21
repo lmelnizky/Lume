@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "404286522994",
+    "firebase_url": "https://lume-46cf3.firebaseio.com",
+    "project_id": "lume-46cf3",
+    "storage_bucket": "lume-46cf3.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:404286522994:android:859dac56d5288acaa2a4eb",
+        "android_client_info": {
+          "package_name": "org.andengine"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "404286522994-m0v366enfu1qsapvg4v21kn3kr8fbar6.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCcxueO44yEqdv05QTNgTy3sXJERIX8clY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "404286522994-m0v366enfu1qsapvg4v21kn3kr8fbar6.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

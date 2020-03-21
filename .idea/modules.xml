@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/Lume.iml" filepath="$PROJECT_DIR$/Lume.iml" />
+      <module fileurl="file://$PROJECT_DIR$/andenginephysicsbox2dextension/andenginephysicsbox2dextension.iml" filepath="$PROJECT_DIR$/andenginephysicsbox2dextension/andenginephysicsbox2dextension.iml" />
+      <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/tappx-sdk-3.1.5/tappx-sdk-3.1.5.iml" filepath="$PROJECT_DIR$/tappx-sdk-3.1.5/tappx-sdk-3.1.5.iml" />
+    </modules>
+  </component>
+</project>
