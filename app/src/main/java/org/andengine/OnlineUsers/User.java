@@ -1,4 +1,5 @@
 /*
+
 Diese Klasse stellt deine User dar. Möchtest du neue User hinzufügen, dann musst du die static Methode createUser aufrufen.
 Hast du einen User in deiner Firebase schon erstellt kannst du diesen Über den public Konstruktor aufrufen!
 
@@ -6,14 +7,19 @@ Bitte schreib in dieser Klasse noch Methoden für das speichern deines Users in 
 
 Du musst bitte unbeding die ID des Users in den Sharedprefs. speichern! Ansonsten kannst du nicht mehr auf den User zugreifen!
 
-
 */
 package org.andengine.OnlineUsers;
 
 import android.content.SharedPreferences;
 import android.util.Log;
 
+import androidx.annotation.MainThread;
 import androidx.annotation.NonNull;
+
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.ValueEventListener;
 
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -22,21 +28,23 @@ import com.google.firebase.database.ValueEventListener;
 
 import org.andengine.OnlineUsers.DataBaseManager;
 import org.andengine.OnlineUsers.GameState;
+import org.andengine.manager.ResourcesManager;
 
 import java.util.Random;
 
 public class User {
-    //variables
+  //variables
     private GameState gameState;
     private int iD;
     private DatabaseReference iDRef;
     //constructor
 
     public User(int iD) {
+        Log.i("User", "constructor");
         this.iD = iD;
         setUpUserFromDatabase();
     }
-    private User(){}
+    private User(){Log.i("User", "constructor");}
 
     //static variables need for setUpUserFromDataBase
     private static int coin;
@@ -44,12 +52,12 @@ public class User {
     private static World world;
     //methods
     private void setUpUserFromDatabase(){
-
+        Log.i("User", "setUpUserFromDataBase");
         iDRef = DataBaseManager.getInstance().getUserPath().child("" + iD);
         iDRef.child("coin").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                coin = (int) dataSnapshot.getValue();
+                coin = ((Long) dataSnapshot.getValue()).intValue();
             }
 
             @Override
@@ -72,7 +80,7 @@ public class User {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 int worldint;
-                worldint = (int) dataSnapshot.getValue();
+                worldint = ((Long) dataSnapshot.getValue()).intValue();
                 switch (worldint){
                     case 1:
                         world = World.WORLD1;
@@ -110,14 +118,16 @@ public class User {
         });
     }
     public static User createUser(GameState gameState){
+        Log.i("User", "createUser");
         int iD = newUserInDatabase(gameState);
         return new User(iD);
     }
     private static int newUserInDatabase(GameState gS){
+        Log.i("User", "newUserInDataBase");
         int iD = createNewId();
-        DatabaseReference dF = DataBaseManager.getInstance().getUserPath().child("" + iD).push();
-        dF.child("coin").push().setValue(gS.getCoins());
-        dF.child("name").push().setValue(gS.getName());
+        DataBaseManager.getInstance().getUserPath().child("" + iD).
+        child("coin").setValue(gS.getCoins()); DatabaseReference dF = DataBaseManager.getInstance().getUserPath().child(""+iD);
+        dF.child("name").setValue(gS.getName());
         int value;
         switch (gS.getWorld()){
             case WORLD1:
@@ -148,17 +158,18 @@ public class User {
                 value = 1;
 
         }
-        dF.child("world").push().setValue(value);
+        dF.child("world").setValue(value);
         return iD;
     }
 
     private static int createNewId() {
+        Log.i("User", "CreateNewID");
         Random random = new Random();
         final int[] returnValue = {random.nextInt(10000)};
         DataBaseManager.getInstance().getUserPath().addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                if(!dataSnapshot.hasChild("createNewId")) returnValue[0] = createNewId();
+                if(dataSnapshot.hasChild("createNewId")) returnValue[0] = createNewId();
             }
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {}

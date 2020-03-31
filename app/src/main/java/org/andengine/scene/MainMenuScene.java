@@ -2,7 +2,12 @@ package org.andengine.scene;
 
 import android.content.Intent;
 import android.net.Uri;
+import android.util.Log;
 
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+
+import org.andengine.OnlineUsers.DataBaseManager;
 import org.andengine.base.BaseScene;
 import org.andengine.entity.scene.background.SpriteBackground;
 import org.andengine.entity.scene.menu.MenuScene;
@@ -17,6 +22,7 @@ import org.andengine.entity.text.TextOptions;
 import org.andengine.manager.ResourcesManager;
 import org.andengine.manager.SceneManager;
 import org.andengine.manager.SceneType;
+import org.andengine.scene.OnlineScenes.UploadUserScene;
 import org.andengine.util.adt.align.HorizontalAlign;
 
 import java.util.Random;
@@ -63,11 +69,14 @@ public class MainMenuScene extends BaseScene implements IOnMenuItemClickListener
 
     @Override
     public void createScene() {
-        createBackground();
+        Log.i("MainMennuScene", "CreateScene()");
+        /*createBackground();
         createWorldText();
         createMenuChildScene();
         showRandomAd();
-        activity.showSlowMoHintMenu();
+        activity.showSlowMoHintMenu();*/
+        DataBaseManager.getInstance().getBasePath().child("newChildLEL").child("LOLOL").setValue("Han");
+        this.setChildScene(new UploadUserScene());
     }
 
     @Override

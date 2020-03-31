@@ -4,7 +4,6 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -14,7 +13,6 @@ import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
-import android.widget.VideoView;
 
 import com.google.android.gms.ads.AdListener;
 import com.google.android.gms.ads.AdRequest;
@@ -46,7 +44,6 @@ import org.andengine.manager.SceneManager;
 import org.andengine.opengl.view.RenderSurfaceView;
 import org.andengine.ui.activity.BaseGameActivity;
 
-import java.io.File;
 import java.io.IOException;
 
 import me.drakeet.support.toast.ToastCompat;
@@ -70,8 +67,8 @@ public class GameActivity extends BaseGameActivity implements RewardedVideoAdLis
     private boolean firstSlowMoWorld = true;
     private boolean firstSlowMoMenu = true;
 
-    private int cameraWidth; //1280
-    private int cameraHeight; //720
+    public final static float CAMERA_WIDTH = 1280;
+    public final static float CAMERA_HEIGHT = 720;
     private int playedGames = 4;
     private int showedLevelHints;
     private int worldToStart, levelToStart;
@@ -673,13 +670,12 @@ public class GameActivity extends BaseGameActivity implements RewardedVideoAdLis
             editor = pref.edit();
 
             //change width and height because we have landscape
-            cameraWidth = 1280;
-            cameraHeight = 720; //using absolute values!!
+            // using absolute values!!
 
 
 
-            camera = new BoundCamera(0, 0, cameraWidth, cameraHeight);
-            engineOptions = new EngineOptions(true, ScreenOrientation.LANDSCAPE_FIXED, new RatioResolutionPolicy(cameraWidth, cameraHeight), this.camera);
+            camera = new BoundCamera(0, 0, CAMERA_WIDTH, CAMERA_HEIGHT);
+            engineOptions = new EngineOptions(true, ScreenOrientation.LANDSCAPE_FIXED, new RatioResolutionPolicy(CAMERA_WIDTH, CAMERA_HEIGHT), this.camera);
             engineOptions.getAudioOptions().setNeedsMusic(true).setNeedsSound(true);
             engineOptions.setWakeLockOptions(WakeLockOptions.SCREEN_ON);
 
