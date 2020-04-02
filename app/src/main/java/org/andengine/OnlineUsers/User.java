@@ -10,10 +10,8 @@ Du musst bitte unbeding die ID des Users in den Sharedprefs. speichern! Ansonste
 */
 package org.andengine.OnlineUsers;
 
-import android.content.SharedPreferences;
 import android.util.Log;
 
-import androidx.annotation.MainThread;
 import androidx.annotation.NonNull;
 
 import com.google.firebase.database.DataSnapshot;
@@ -21,16 +19,9 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.ValueEventListener;
 
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.ValueEventListener;
-
-import org.andengine.OnlineUsers.DataBaseManager;
-import org.andengine.OnlineUsers.GameState;
-import org.andengine.manager.ResourcesManager;
-
+import java.util.LinkedList;
 import java.util.Random;
+import java.util.concurrent.Semaphore;
 
 public class User {
   //variables
@@ -79,9 +70,9 @@ public class User {
         iDRef.child("world").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                int worldint;
-                worldint = ((Long) dataSnapshot.getValue()).intValue();
-                switch (worldint){
+                int worldInt;
+                worldInt = ((Long) dataSnapshot.getValue()).intValue();
+                switch (worldInt){
                     case 1:
                         world = World.WORLD1;
                         break;
@@ -176,6 +167,37 @@ public class User {
         });
         return returnValue[0];
     }
+    //static variables for getUsersFromDatabase
+    private static LinkedList<String> returnValue;
+    public static LinkedList<String> getUsersFromDatabase(){
+        Log.i("User", "getUsersFromDatabase");
+        DatabaseReference dF = DataBaseManager.getInstance().getUserPath();
+        final Semaphore semaphore = new Semaphore(0);
+        dF.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                returnValue = new LinkedList<>();
+                Log.i("User", "onDataChange");
+                for(DataSnapshot dS : dataSnapshot.getChildren()){
+                    Log.i("User", "Here's a User!!" + dS.child("name").getValue());
+                    returnValue.add(String.valueOf(dS.child("name").getValue()));
+                }
+                    semaphore.release();
+            }
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                Log.w("User", databaseError.toException());
+            }
+        });
+        try {
+            semaphore.acquire();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        Log.i("User", "return Userlist");
+        return returnValue;
+    }
+
     //getters and setters
 
     public GameState getGameState() {
