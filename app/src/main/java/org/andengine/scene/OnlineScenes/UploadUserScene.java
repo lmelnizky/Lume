@@ -1,7 +1,6 @@
 package org.andengine.scene.OnlineScenes;
 
 import android.util.Log;
-import android.widget.EditText;
 
 import com.org.andengine.helperclasses.InputText;
 
@@ -16,6 +15,8 @@ import org.andengine.manager.ResourcesManager;
 import org.andengine.manager.SceneType;
 import org.andengine.opengl.texture.region.TiledTextureRegion;
 import org.andengine.util.adt.color.Color;
+
+import java.util.List;
 
 import static org.andengine.GameActivity.CAMERA_HEIGHT;
 import static org.andengine.GameActivity.CAMERA_WIDTH;
@@ -38,6 +39,13 @@ public class UploadUserScene extends BaseScene implements ButtonSprite.OnClickLi
             public void setText(String text) {
                 super.setText(text);
                 if(!text.equals("")) confirmButton.setEnabled(true); else confirmButton.setEnabled(false);
+                boolean enabled = confirmButton.isEnabled();
+                List checkNull = User.getUsersFromDatabase();
+                if(checkNull == null) Log.i("User", "NULL NULL!!!");
+                for(String name: User.getUsersFromDatabase()) {
+                    Log.i("UploadUserScene", "Also User!");
+                    if(name.equals(userNameInputText.getText())) enabled = false; }
+                confirmButton.setEnabled(enabled);
             }
         };
         userNameInputText.setSize(CAMERA_WIDTH/4, ResourcesManager.getInstance().smallFont.getLineHeight());
