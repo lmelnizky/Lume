@@ -17,6 +17,8 @@ import org.andengine.manager.SceneType;
 import org.andengine.opengl.texture.region.TiledTextureRegion;
 import org.andengine.util.adt.color.Color;
 
+import java.util.LinkedList;
+
 import static org.andengine.GameActivity.CAMERA_HEIGHT;
 import static org.andengine.GameActivity.CAMERA_WIDTH;
 
@@ -27,6 +29,7 @@ public class UploadUserScene extends BaseScene implements ButtonSprite.OnClickLi
     private Text confirmButtonHelpText;
     private Text usernameText;
     private String username;
+    private UsernameLoaderManager uLM;
     //private Methods
     private void setUpEntities(){
         userNameInputText = new InputText(
@@ -38,22 +41,8 @@ public class UploadUserScene extends BaseScene implements ButtonSprite.OnClickLi
             public void setText(String text) {
                 super.setText(text);
                 if(!text.equals("")) confirmButton.setEnabled(true); else confirmButton.setEnabled(false);
-                boolean enabled = confirmButton.isEnabled();
-                for(String name: User.getUsersFromDatabase(new UsernameLoaderManager() {
-                    @Override
-                    public void startLoadingNames() {
-                        //start Loading, create a sprite to show the user that the app is checking for his username.
-                    }
 
-                    @Override
-                    public void finishLoadingNames() {
-                        //end of loading. set the visible of the sprite false
-                    }
-                })) {
-                    Log.i("UploadUserScene", "Also User!");
-                    if(name.equals(userNameInputText.getText())) enabled = false; }
-                //you can check the enabled value to make a green sprite(for available username) or a red one for the other case.
-                confirmButton.setEnabled(enabled);
+                User.getUsersFromDatabase(uLM);
             }
         };
         userNameInputText.setSize(CAMERA_WIDTH/4, ResourcesManager.getInstance().smallFont.getLineHeight());
@@ -67,10 +56,27 @@ public class UploadUserScene extends BaseScene implements ButtonSprite.OnClickLi
         this.attachChild(userNameInputText);    this.attachChild(confirmButton);    this.attachChild(usernameText);
         this.registerTouchArea(confirmButton);  this.registerTouchArea(userNameInputText);
     }
+    private void setUpULM(){
+        uLM = new UsernameLoaderManager() {
+            @Override
+            public void startLoadingNames() {
+                confirmButton.setEnabled(false);
+            }
+
+            @Override
+            public void finishLoadingNames(LinkedList<String> userNames) {
+                boolean enabled = confirmButton.isEnabled();
+                if(userNameInputText.getText().equals("")) enabled = false; else enabled = true;
+                for(String username: userNames) if (username.equals(userNameInputText.getText())) enabled=false;
+                confirmButton.setEnabled(enabled);
+            }
+        };
+    }
     //override Methods from superclass
     @Override
     public void createScene() {
         this.setBackground(new Background(Color.WHITE));
+        setUpULM();
         setUpEntities();
     }
 
