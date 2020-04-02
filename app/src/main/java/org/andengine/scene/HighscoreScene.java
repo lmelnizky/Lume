@@ -1,5 +1,7 @@
 package org.andengine.scene;
 
+import android.hardware.SensorManager;
+
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
@@ -69,16 +71,18 @@ public class HighscoreScene extends BaseScene {
     int yellowArrow = 0;
     private int level = 1;
     private int score = 0;
-    private int time = 99*60; //100 seconds
+    private int time = 100*60; //100 seconds
     private int sideLength;
     private int xPosLume, yPosLume;
     private int xPosCoin, yPosCoin;
 
-    private int[] playVariants = new int[5];
-    private int[] usedPlayVariants = new int[5];
+    private int[] playVariants;
+    private int[] usedPlayVariants;
 
     private long[] stoneTimes;
     private long stoneTime;
+
+    private float ratio = resourcesManager.screenRatio;
 
     private float shootX1, shootX2, shootY1, shootY2;
     private float swipeX1, swipeX2, swipeY1, swipeY2;
@@ -99,6 +103,8 @@ public class HighscoreScene extends BaseScene {
 
     private HUD gameHUD;
     private Text scoreText, levelText, timeText;
+    private Sprite shootNormalSign, moveNormalSign, shootDiagonalSign, moveDiagonalSign,
+        mirrorSign, lamporghinaSign, helmetSign;
     private PhysicsWorld physicsWorld;
 
 
@@ -109,7 +115,6 @@ public class HighscoreScene extends BaseScene {
     public HighscoreScene() { //default constructor
         this.level = 1;
         cameFromLevelsScene = false;
-        createHUD();
     }
 
     @Override
@@ -119,6 +124,8 @@ public class HighscoreScene extends BaseScene {
         randomGenerator = new Random();
         crackyStones = new ArrayList<Sprite>();
         crackyStonesToRemove = new ArrayList<Sprite>();
+        mirrorStones = new ArrayList<Sprite>();
+        mirrorStonesToRemove = new ArrayList<Sprite>();
         cannonBallsToRemove = new ArrayList<Sprite>();
         elements = new ArrayList<Sprite>();
         elementsToRemove = new ArrayList<Sprite>();
@@ -126,6 +133,7 @@ public class HighscoreScene extends BaseScene {
         for (int i = 0; i < 4; i++) {
             stoneTimes[i] = 0;
         }
+        level = 1;
 
         makePlayVariants();
         createLayers();
@@ -134,7 +142,6 @@ public class HighscoreScene extends BaseScene {
         createBoard();
         createLume();
         createCannons();
-//        createCoin();
         createHalves();
         createHUD();
 
@@ -144,9 +151,10 @@ public class HighscoreScene extends BaseScene {
             @Override
             public void onUpdate(float pSecondsElapsed) {
                 if (!waitingForStonesToDisappear) {
-                    createStones(level);
+                    createStones(playVariants[((level-1)%5)]);
                     time--;
-                    int newLevel = 10 - (int)(time/(10*60));
+                    int subtrahend = (int)(time/(10*60));
+                    int newLevel = 10 - subtrahend;
                     if (level != newLevel) {
                         if (newLevel == 0) newLevel = 1;
                         level = newLevel;
@@ -176,13 +184,27 @@ public class HighscoreScene extends BaseScene {
     }
 
     public void resetData() {
+        activity.toastOnUiThread(String.valueOf(playVariants[0]) + ", "
+            + String.valueOf(playVariants[1]) + ", " + String.valueOf(playVariants[2]));
         stoneTime = new Date().getTime();
         for (int i = 0; i < 4; i++) {
             stoneTimes[i] = new Date().getTime();
         }
-        setPlayVariant(playVariants[level-1]);
+        makeSignsInvisible();
+        setPlayVariant(playVariants[((level-1)%5)]);
+        levelText.setText("L"+String.valueOf(level));
         firstStonesInLevel = true;
         variantUsed = false;
+    }
+
+    public void makeSignsInvisible() {
+        shootNormalSign.setVisible(false);
+        shootDiagonalSign.setVisible(false);
+        mirrorSign.setVisible(false);
+        lamporghinaSign.setVisible(false);
+        moveNormalSign.setVisible(false);
+        moveDiagonalSign.setVisible(false);
+        helmetSign.setVisible(false);
     }
 
     public void disposeHUD() {
@@ -283,10 +305,31 @@ public class HighscoreScene extends BaseScene {
         levelText.setText("L" + String.valueOf(level));
         gameHUD.attachChild(levelText);
 
-        timeText = new Text(camera.getWidth() - 50, camera.getHeight() - 60, resourcesManager.smallFont, "0123456789", new TextOptions(HorizontalAlign.RIGHT), vbom);
+        timeText = new Text(camera.getWidth() - 65, camera.getHeight() - 60, resourcesManager.smallFont, "0123456789", new TextOptions(HorizontalAlign.RIGHT), vbom);
         timeText.setAnchorCenter(0, 0);
         timeText.setText("30");
         gameHUD.attachChild(timeText);
+
+        //left signs
+        shootNormalSign = new Sprite(camera.getCenterX() - 3*sideLength, camera.getHeight()-35, sideLength*7/8, sideLength*7/8, resourcesManager.shoot_normal_region, vbom);
+        shootDiagonalSign = new Sprite(camera.getCenterX() - 3*sideLength, camera.getHeight()-35, sideLength*7/8, sideLength*7/8, resourcesManager.shoot_diagonal_region, vbom);
+        mirrorSign = new Sprite(camera.getCenterX() - 3*sideLength, camera.getHeight()-35, sideLength*7/8, sideLength*7/8, resourcesManager.cracky_mirror_sign_region, vbom);
+        lamporghinaSign = new Sprite(camera.getCenterX() - 3*sideLength, camera.getHeight()-35, sideLength*7/8, sideLength*7/8, resourcesManager.lamporghina_sign_region, vbom);
+        //right signs
+        moveNormalSign = new Sprite(camera.getCenterX() + 3*sideLength, camera.getHeight()-35, sideLength*7/8, sideLength*7/8, resourcesManager.move_normal_region, vbom);
+        moveDiagonalSign = new Sprite(camera.getCenterX() + 3*sideLength, camera.getHeight()-35, sideLength*7/8, sideLength*7/8, resourcesManager.move_diagonal_region, vbom);
+        helmetSign = new Sprite(camera.getCenterX() + 3*sideLength, camera.getHeight()-35, sideLength*7/8, sideLength*7/8, resourcesManager.helmet_region, vbom);
+
+        gameHUD.attachChild(shootNormalSign);
+        gameHUD.attachChild(shootDiagonalSign);
+        gameHUD.attachChild(mirrorSign);
+        gameHUD.attachChild(lamporghinaSign);
+        gameHUD.attachChild(moveNormalSign);
+        gameHUD.attachChild(moveDiagonalSign);
+        gameHUD.attachChild(helmetSign);
+
+        makeSignsInvisible();
+
 
         camera.setHUD(gameHUD);
     }
@@ -640,112 +683,127 @@ public class HighscoreScene extends BaseScene {
         physicsWorld.registerPhysicsConnector(new PhysicsConnector(cannonball, body, true, false));
     }
 
-    private void createStones(int level) {
-        char thorny = 'C';
+    private void createStones(int mode) {
+        char stoneType = 'C';
         float randomNumber = randomGenerator.nextFloat();
-        double probabilityStone; //= 0.6
+        double levelFactor = 1 + (level/10);
         long interval;
 
-        switch (level) {
+        switch (mode) {
             case 1:
                 long age = (new Date()).getTime() - stoneTime;
-                int direction = (randomGenerator.nextInt(8) + 1);
-                interval = (long) (2500/(Math.pow(score, 0.1)));
-                if (firstStonesInLevel) interval = 500;
-                if (age >= interval) {
-                    if (firstStonesInLevel) createCoin();
-                    firstStonesInLevel = false;
-                    if (randomNumber < 0.4f) thorny = 'T';
-                    this.showStonesToScreen(direction, thorny);
-                    stoneTime = new Date().getTime();
+                int direction = (randomGenerator.nextInt(4) + 1);
+                if (level <= 5) {
+                    interval = (long) (2500/levelFactor);
+                    if (firstStonesInLevel) interval = 500;
+                    if (age >= interval) {
+                        if (firstStonesInLevel) createCoin();
+                        firstStonesInLevel = false;
+                        if (randomNumber < 0.4f) stoneType = 'T';
+                        this.showStonesToScreen(direction, stoneType);
+                        stoneTime = new Date().getTime();
+                    }
+                } else {
+                    interval = (long) (2500/levelFactor);
+                    if (firstStonesInLevel) interval = 500;
+                    if (age >= interval) {
+                        if (firstStonesInLevel) createCoin();
+                        firstStonesInLevel = false;
+                        if (randomNumber < 0.4f) stoneType = 'T';
+                        this.showStonesToScreen(direction, stoneType);
+                        stoneTime = new Date().getTime();
+                    }
                 }
                 break;
             case 2:
                 age = (new Date()).getTime() - stoneTime;
-                direction = (randomGenerator.nextInt(8) + 1);
-                interval = (long) (2500/(Math.pow(score, 0.1)));
+                direction = (randomGenerator.nextInt(4) + 1);
+                if (level <= 5) {
+
+                } else {
+
+                }
+
+                interval = (long) (2500/levelFactor);
                 if (firstStonesInLevel) interval = 500;
                 if (age >= interval) {
-                    if (firstStonesInLevel) createCoin();
                     firstStonesInLevel = false;
-                    if (randomNumber < 0.4f) thorny = 'T';
-                    this.showStonesToScreen(direction, thorny);
+                    if (randomNumber < 0.4f) stoneType = 'T';
+                    this.showStonesToScreen(direction, stoneType);
                     stoneTime = new Date().getTime();
                 }
                 break;
             case 3:
                 age = (new Date()).getTime() - stoneTime;
-                direction = (randomGenerator.nextInt(8) + 1);
-                interval = (long) (2500/(Math.pow(score, 0.1)));
+                direction = (randomGenerator.nextInt(4) + 1);
+                if (level <= 5) {
+
+                } else {
+
+                }
+
+                interval = (long) (2400/levelFactor);
                 if (firstStonesInLevel) interval = 500;
                 if (age >= interval) {
-                    if (firstStonesInLevel) createCoin();
                     firstStonesInLevel = false;
-                    if (randomNumber < 0.4f) thorny = 'T';
-                    this.showStonesToScreen(direction, thorny);
+                    if (randomNumber < 0.4f) stoneType = 'T';
+                    this.showStonesToScreen(direction, stoneType);
                     stoneTime = new Date().getTime();
                 }
                 break;
             case 4:
                 age = (new Date()).getTime() - stoneTime;
-                direction = (randomGenerator.nextInt(8) + 1);
-                interval = (long) (2500/(Math.pow(score, 0.1)));
+                direction = (randomGenerator.nextInt(4) + 1);
+                if (level <= 5) {
+
+                } else {
+
+                }
+
+                interval = (long) (2600/levelFactor);
                 if (firstStonesInLevel) interval = 500;
                 if (age >= interval) {
-                    if (firstStonesInLevel) createCoin();
                     firstStonesInLevel = false;
-                    if (randomNumber < 0.4f) thorny = 'T';
-                    this.showStonesToScreen(direction, thorny);
+                    if (randomNumber < 0.4f) stoneType = 'T';
+                    this.showStonesToScreen(direction, stoneType);
                     stoneTime = new Date().getTime();
                 }
                 break;
             case 5:
                 age = (new Date()).getTime() - stoneTime;
-                direction = (randomGenerator.nextInt(8) + 1);
-                interval = (long) (2500/(Math.pow(score, 0.1)));
+                direction = (randomGenerator.nextInt(4) + 1);
+                if (level <= 5) {
+
+                } else {
+
+                }
+
+                interval = (long) (3000/levelFactor);
                 if (firstStonesInLevel) interval = 500;
                 if (age >= interval) {
-                    if (firstStonesInLevel) createCoin();
                     firstStonesInLevel = false;
-                    if (randomNumber < 0.4f) thorny = 'T';
-                    this.showStonesToScreen(direction, thorny);
+                    if (randomNumber < 0.4f) stoneType = 'T';
+                    this.showStonesToScreen(direction, stoneType);
                     stoneTime = new Date().getTime();
                 }
-                break;
-            case 6:
-
-                break;
-            case 7:
-
-                break;
-            case 8:
-
-                break;
-            case 9:
-
-                break;
-            case 10:
-
                 break;
         }
     }
 
     private void showStonesToScreen(int directionVariant, char showArrow) {
-        float speed = 1f + (float) (Math.pow(score, 0.1))/2;
-        int level = (int) score/10 + 1;
+        float speed = 1f;
+        boolean firstHalf = level <= 5;
         int randomPos = randomGenerator.nextInt(3);
-        switch (level) {
-            case 1: //showing one stone
-                addBall(showArrow, directionVariant, randomPos, speed);
+        switch (playVariants[((level-1)%5)]) {
+            case 1: //showing two stones next to each other
+                showMode1(firstHalf, directionVariant, showArrow);
                 break;
             case 2: //showing two stones next to each other
-                int secondPos = randomPos+1;
-                if (secondPos > 4) secondPos = 1;
-                addBall(showArrow, directionVariant, randomPos, speed);
-                //2nd stone is random so that not all stones are of same type
-                addBall((randomGenerator.nextBoolean()) ? 'C' : 'T' , directionVariant, secondPos, speed);
+                showMode2(firstHalf, directionVariant, showArrow);
                 break;
             case 3:
+                showMode3(firstHalf, directionVariant, showArrow);
+
                 float randomNum = randomGenerator.nextFloat();
                 if (randomNum < 0.3f) {
                     speed = 2.5f;
@@ -756,12 +814,66 @@ public class HighscoreScene extends BaseScene {
                 addArrow(directionVariant, speed);
                 break;
             case 4:
-
+                showMode4(firstHalf, directionVariant, showArrow);
                 break;
-            default:
-                addArrow(directionVariant, speed);
+            case 5:
+                showMode5(firstHalf, directionVariant, showArrow);
+                break;
         }
 
+    }
+
+    private void showMode1(boolean firstHalf, int direction, char showArrow) {
+        float levF = 1 + (level/10);
+        float dirF = (direction%2 == 0) ? ratio : 1f;
+        float speed = 1f;
+        int randomPos = randomGenerator.nextInt(3);
+        if (firstHalf) {
+            int secondPos = randomPos+1;
+            if (secondPos > 3) secondPos = 0;
+            addBall('T', direction, randomPos, speed*levF*dirF); //thorny stone
+            addBall('C', direction, secondPos, speed*levF*dirF); //cracky stone
+        } else {
+            addBall((randomPos == 0) ? 'C' : 'T', direction, 0, speed*levF*dirF);
+            addBall((randomPos == 1) ? 'C' : 'T', direction, 1, speed*levF*dirF);
+            addBall((randomPos == 2) ? 'C' : 'T', direction, 2, speed*levF*dirF);
+        }
+    }
+
+    private void showMode2(boolean firstHalf, int directionVariant, char showArrow) {
+        float levF = 1 + (level/10);
+        float dirF = (directionVariant%2 == 0) ? ratio : 1f;
+        float speed = 1f;
+        int randomPos = randomGenerator.nextInt(3);
+        if (firstHalf) {
+
+        } else {
+
+        }
+    }
+
+    private void showMode3(boolean firstHalf, int directionVariant, char showArrow) {
+        if (firstHalf) {
+
+        } else {
+
+        }
+    }
+
+    private void showMode4(boolean firstHalf, int directionVariant, char showArrow) {
+        if (firstHalf) {
+
+        } else {
+
+        }
+    }
+
+    private void showMode5(boolean firstHalf, int directionVariant, char showArrow) {
+        if (firstHalf) {
+
+        } else {
+
+        }
     }
 
     private boolean allStonesGone() {
@@ -819,6 +931,7 @@ public class HighscoreScene extends BaseScene {
     }
 
     private void setPlayVariant(int variant) {
+        activity.toastOnUiThread(String.valueOf(variant), 0);
         switch (variant) {
             case 1:
                 shootNormal = true;
@@ -826,6 +939,8 @@ public class HighscoreScene extends BaseScene {
                 rebound = false;
                 isGravity = false;
                 isLamporghina = false;
+                shootNormalSign.setVisible(true);
+                moveNormalSign.setVisible(true);
                 break;
             case 2:
                 shootNormal = false;
@@ -833,6 +948,8 @@ public class HighscoreScene extends BaseScene {
                 rebound = false;
                 isGravity = true;
                 isLamporghina = false;
+                shootDiagonalSign.setVisible(true);
+                moveNormalSign.setVisible(true);
                 break;
             case 3:
                 shootNormal = true;
@@ -840,6 +957,8 @@ public class HighscoreScene extends BaseScene {
                 rebound = false;
                 isGravity = false;
                 isLamporghina = false;
+                shootNormalSign.setVisible(true);
+                moveDiagonalSign.setVisible(true);
                 break;
             case 4:
                 shootNormal = true;
@@ -847,6 +966,8 @@ public class HighscoreScene extends BaseScene {
                 rebound = true;
                 isGravity = false;
                 isLamporghina = false;
+                mirrorSign.setVisible(true);
+                moveNormalSign.setVisible(true);
                 break;
             case 5:
                 shootNormal = true;
@@ -854,7 +975,17 @@ public class HighscoreScene extends BaseScene {
                 rebound = false;
                 isGravity = false;
                 isLamporghina = true;
+                lamporghinaSign.setVisible(true);
+                helmetSign.setVisible(true);
                 break;
+            default:
+                shootNormal = true;
+                moveNormal = true;
+                rebound = false;
+                isGravity = false;
+                isLamporghina = false;
+                shootNormalSign.setVisible(true);
+                moveNormalSign.setVisible(true);
         }
     }
 
@@ -1218,6 +1349,32 @@ public class HighscoreScene extends BaseScene {
         lumeSprite.setPosition(camera.getCenterX() - sideLength + (xPosLume-1)*sideLength,
                 camera.getCenterY() - sideLength + (yPosLume-1)*sideLength);
         coinCheck();
+    }
+
+    private int getGravityDirection(int direction) {
+        int gravityDirection;
+        gravityDirection = ((direction%2+1) + randomGenerator.nextInt(2)*2);
+        return gravityDirection;
+    }
+
+    private Vector2 getGravity(int gravityDirection) {
+        Vector2 gravity = null;
+
+        switch(gravityDirection) {
+            case 1:
+                gravity = new Vector2(0, SensorManager.GRAVITY_EARTH); //everything goes down
+                break;
+            case 2:
+                gravity = new Vector2(SensorManager.GRAVITY_EARTH, 0); //everything goes right
+                break;
+            case 3:
+                gravity = new Vector2(0, -SensorManager.GRAVITY_EARTH); //everything goes up
+                break;
+            case 4:
+                gravity = new Vector2(-SensorManager.GRAVITY_EARTH, 0); //everything goes left
+                break;
+        }
+        return gravity;
     }
 
     private void createPhysics() {
