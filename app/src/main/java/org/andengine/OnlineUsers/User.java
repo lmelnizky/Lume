@@ -169,7 +169,7 @@ public class User {
     }
     //static variables for getUsersFromDatabase
     private static LinkedList<String> returnValue;
-    public static LinkedList<String> getUsersFromDatabase(){
+    public static LinkedList<String> getUsersFromDatabase(UsernameLoaderManager uLM){
         Log.i("User", "getUsersFromDatabase");
         DatabaseReference dF = DataBaseManager.getInstance().getUserPath();
         final Semaphore semaphore = new Semaphore(0);
@@ -190,7 +190,9 @@ public class User {
             }
         });
         try {
+            uLM.startLoadingNames();
             semaphore.acquire();
+            uLM.finishLoadingNames();
         } catch (InterruptedException e) {
             e.printStackTrace();
         }

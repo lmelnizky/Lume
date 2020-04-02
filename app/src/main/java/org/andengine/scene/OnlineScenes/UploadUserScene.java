@@ -6,6 +6,7 @@ import com.org.andengine.helperclasses.InputText;
 
 import org.andengine.OnlineUsers.GameState;
 import org.andengine.OnlineUsers.User;
+import org.andengine.OnlineUsers.UsernameLoaderManager;
 import org.andengine.OnlineUsers.World;
 import org.andengine.base.BaseScene;
 import org.andengine.entity.scene.background.Background;
@@ -15,8 +16,6 @@ import org.andengine.manager.ResourcesManager;
 import org.andengine.manager.SceneType;
 import org.andengine.opengl.texture.region.TiledTextureRegion;
 import org.andengine.util.adt.color.Color;
-
-import java.util.List;
 
 import static org.andengine.GameActivity.CAMERA_HEIGHT;
 import static org.andengine.GameActivity.CAMERA_WIDTH;
@@ -40,11 +39,20 @@ public class UploadUserScene extends BaseScene implements ButtonSprite.OnClickLi
                 super.setText(text);
                 if(!text.equals("")) confirmButton.setEnabled(true); else confirmButton.setEnabled(false);
                 boolean enabled = confirmButton.isEnabled();
-                List checkNull = User.getUsersFromDatabase();
-                if(checkNull == null) Log.i("User", "NULL NULL!!!");
-                for(String name: User.getUsersFromDatabase()) {
+                for(String name: User.getUsersFromDatabase(new UsernameLoaderManager() {
+                    @Override
+                    public void startLoadingNames() {
+                        //start Loading, create a sprite to show the user that the app is checking for his username.
+                    }
+
+                    @Override
+                    public void finishLoadingNames() {
+                        //end of loading. set the visible of the sprite false
+                    }
+                })) {
                     Log.i("UploadUserScene", "Also User!");
                     if(name.equals(userNameInputText.getText())) enabled = false; }
+                //you can check the enabled value to make a green sprite(for available username) or a red one for the other case.
                 confirmButton.setEnabled(enabled);
             }
         };
