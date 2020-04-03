@@ -81,7 +81,6 @@ public class UploadUserScene extends BaseScene implements ButtonSprite.OnClickLi
         SpriteBackground spriteBackground = new SpriteBackground(new Sprite(camera.getCenterX(), camera.getCenterY(),
                 camera.getWidth(), camera.getHeight(), resourcesManager.upload_background_region, vbom));
         this.setBackground(spriteBackground);
-        this.setBackground(new Background(Color.WHITE));
         setUpULM();
         setUpEntities();
     }
