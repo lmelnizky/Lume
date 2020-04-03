@@ -518,30 +518,31 @@ public class HighscoreScene extends BaseScene {
         ITextureRegion textureRegion = resourcesManager.cannonball_region;
         final FixtureDef FIXTURE_DEF = PhysicsFactory.createFixtureDef(0, 0.01f, 0.5f);
         final Sprite cannonball;
-//        Ball ball;
+        Ball ball;
         float x = 0;
         float y = 0;
         float xVel = 0;
         float yVel = 0;
-        float speed = sideLength / 5;
+//        float speed = 1.4f*sideLength/5;
+        float speed = resourcesManager.screenWidth*6/400;
         switch (direction) {
             case 1: //up to down
                 x = lumeSprite.getX();
-                y = lumeSprite.getY() - lumeSprite.getHeight();
+                y = lumeSprite.getY() - lumeSprite.getHeight()-1;
                 yVel = -speed;
                 break;
             case 2: //right to left
-                x = lumeSprite.getX() - lumeSprite.getWidth();
+                x = lumeSprite.getX() - lumeSprite.getWidth()-1;
                 y = lumeSprite.getY();
                 xVel = -speed;
                 break;
             case 3: //down to up
                 x = lumeSprite.getX();
-                y = lumeSprite.getY() + lumeSprite.getHeight();
+                y = lumeSprite.getY() + lumeSprite.getHeight()+1;
                 yVel = speed;
                 break;
             case 4: //left to right
-                x = lumeSprite.getX() + lumeSprite.getWidth();
+                x = lumeSprite.getX() + lumeSprite.getWidth()+1;
                 y = lumeSprite.getY();
                 xVel = speed;
                 break;
@@ -549,11 +550,25 @@ public class HighscoreScene extends BaseScene {
         cannonball = new Sprite(x, y, sideLength * 3 / 4, sideLength * 3 / 4, textureRegion, vbom) {
             @Override
             protected void onManagedUpdate(float pSecondsElapsed) {
-                for (Sprite crackyStone : crackyStones) {
-                    final Circle cannonCircle, stoneCircle;
-                    cannonCircle = new Circle(this.getX(), this.getY(), this.getWidth() / 2);
-                    stoneCircle = new Circle(crackyStone.getX(), crackyStone.getY(), crackyStone.getWidth() / 2);
 
+                final Circle cannonCircle, lumeCircle;
+                cannonCircle = new Circle(this.getX(), this.getY(), this.getWidth()/2);
+                lumeCircle = new Circle(lumeSprite.getX(), lumeSprite.getY(), lumeSprite.getWidth()/2);
+
+                //if mirror stones are present, cannonball is deadly
+                if (cannonCircle.collision(lumeCircle) && !gameOverDisplayed && rebound) {
+                    luserSprite = new Sprite(lumeSprite.getX()-lumeSprite.getWidth()*4/10,
+                            lumeSprite.getY() + lumeSprite.getHeight()*5/10,
+                            lumeSprite.getWidth(), lumeSprite.getWidth(),
+                            ResourcesManager.getInstance().finger_luser, vbom);
+                    secondLayer.attachChild(luserSprite);
+                    displayGameOverText();
+                    score = 0;
+                }
+
+                for (Sprite crackyStone : crackyStones) { //loop for cracky stones
+                    final Circle stoneCircle;
+                    stoneCircle = new Circle(crackyStone.getX(), crackyStone.getY(), crackyStone.getWidth() / 2);
                     if (cannonCircle.collision(stoneCircle)) {
                         crackyStonesToRemove.add(crackyStone);
                         elementsToRemove.add(crackyStone);
@@ -571,10 +586,8 @@ public class HighscoreScene extends BaseScene {
 
                                     cannonBallsToRemove.clear();
                                     for (Sprite sprite : crackyStonesToRemove) {
-                                        if (!sprite.isDisposed()) { //sprite can be disposed in addArrow or addBall
-                                            sprite.detachSelf();
-                                            sprite.dispose();
-                                        }
+                                        sprite.detachSelf();
+                                        sprite.dispose();
                                     }
                                     elementsToRemove.clear();
                                     crackyStonesToRemove.clear();
@@ -583,8 +596,35 @@ public class HighscoreScene extends BaseScene {
                         });
                     }
                 }
+                for (Sprite mirrorStone : mirrorStones) {
+                    final Circle stoneCircle; //making this circle smaller so that ball rebounds later
+                    stoneCircle = new Circle(mirrorStone.getX(), mirrorStone.getY(), mirrorStone.getWidth() / 8);
+
+                    if (cannonCircle.collision(stoneCircle)) {
+                        mirrorStonesToRemove.add(mirrorStone);
+                        elementsToRemove.add(mirrorStone);
+
+                        this.setPosition(mirrorStone.getX(), mirrorStone.getY());
+                        rebound(this); //makes the cannonball rebound in the opposite direction
+
+                        engine.runOnUpdateThread(new Runnable() { //destroys the stone
+                            @Override
+                            public void run() {
+                                if (mirrorStonesToRemove.size() > 0) {
+                                    for (Sprite sprite : mirrorStonesToRemove) {
+                                        sprite.detachSelf();
+                                        sprite.dispose();
+                                    }
+                                    elementsToRemove.clear();
+                                    mirrorStonesToRemove.clear();
+                                }
+                            }
+                        });
+                    }
+                }
                 elements.removeAll(elementsToRemove);
                 crackyStones.removeAll(crackyStonesToRemove);
+                mirrorStones.removeAll(mirrorStonesToRemove);
 
                 if (this.getX() < -sideLength || this.getY() < - sideLength ||
                         this.getX() > camera.getWidth()+sideLength || this.getY() > camera.getWidth()+sideLength) {
@@ -595,10 +635,12 @@ public class HighscoreScene extends BaseScene {
         };
         secondLayer.attachChild(cannonball);
         final Body body = PhysicsFactory.createCircleBody(physicsWorld, cannonball, BodyType.KinematicBody, FIXTURE_DEF);
-//        ball = new Ball(cannonball, "cannonball");
-//        body.setUserData(ball);
         body.setLinearVelocity(xVel, yVel);
         physicsWorld.registerPhysicsConnector(new PhysicsConnector(cannonball, body, true, false));
+        ball = new Ball();
+        ball.setDirection(direction);
+        ball.setBody(body);
+        cannonball.setUserData(ball);
     }
 
     private void createCannonball(float deltaX, float deltaY) {
@@ -1040,7 +1082,6 @@ public class HighscoreScene extends BaseScene {
                 break;
         }
 
-//        stoneCircle = new Circle(x, y, sideLength*3/8);
         stone = new Sprite(x, y, sideLength * 3 / 4, sideLength * 3 / 4, textureRegion, vbom) {
             @Override
             protected void onManagedUpdate(float pSecondsElapsed) {
@@ -1048,7 +1089,7 @@ public class HighscoreScene extends BaseScene {
                 lumeCircle = new Circle(lumeSprite.getX(), lumeSprite.getY(), lumeSprite.getWidth() / 2);
                 stoneCircle = new Circle(this.getX(), this.getY(), this.getWidth() / 2);
 
-                if (stoneCircle.collision(lumeCircle) && !gameOverDisplayed) {
+                if (stoneCircle.collision(lumeCircle) && !gameOverDisplayed) { //TODO make variant 5
                     luserSprite = new Sprite(lumeSprite.getX()-lumeSprite.getWidth()*4/10,
                             lumeSprite.getY() + lumeSprite.getHeight()*5/10,
                             lumeSprite.getWidth(), lumeSprite.getWidth(),
@@ -1057,12 +1098,6 @@ public class HighscoreScene extends BaseScene {
                     displayGameOverText();
                     score = 0;
                 }
-//                if (this.getX() < -sideLength || this.getY() < -sideLength ||
-//                        this.getX() > camera.getWidth() + sideLength || this.getY() > camera.getWidth() + sideLength) {
-//                    if (!thorny) crackyStones.remove(this);
-//                    this.detachSelf();
-//                    this.dispose();
-//                }
 
 
                 if (this.getX() < -sideLength || this.getY() < -sideLength ||
