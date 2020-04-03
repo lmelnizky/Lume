@@ -21,7 +21,6 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.util.LinkedList;
 import java.util.Random;
-import java.util.concurrent.Semaphore;
 
 public class User {
   //variables
@@ -168,34 +167,28 @@ public class User {
         return returnValue[0];
     }
     //static variables for getUsersFromDatabase
-    private static LinkedList<String> returnValue;
-    public static LinkedList<String> getUsersFromDatabase(){
+    private static LinkedList<String> userNames;
+    public static void getUsersFromDatabase(UsernameLoaderManager uLM){
         Log.i("User", "getUsersFromDatabase");
+        uLM.startLoadingNames();
         DatabaseReference dF = DataBaseManager.getInstance().getUserPath();
-        final Semaphore semaphore = new Semaphore(0);
         dF.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                returnValue = new LinkedList<>();
+                userNames = new LinkedList<>();
                 Log.i("User", "onDataChange");
                 for(DataSnapshot dS : dataSnapshot.getChildren()){
                     Log.i("User", "Here's a User!!" + dS.child("name").getValue());
-                    returnValue.add(String.valueOf(dS.child("name").getValue()));
+                    userNames.add(String.valueOf(dS.child("name").getValue()));
                 }
-                    semaphore.release();
+                uLM.finishLoadingNames(userNames);
             }
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
                 Log.w("User", databaseError.toException());
             }
         });
-        try {
-            semaphore.acquire();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
         Log.i("User", "return Userlist");
-        return returnValue;
     }
 
     //getters and setters
