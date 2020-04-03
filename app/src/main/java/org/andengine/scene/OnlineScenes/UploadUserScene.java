@@ -102,7 +102,7 @@ public class UploadUserScene extends BaseScene implements ButtonSprite.OnClickLi
 
     @Override
     public void onBackKeyPressed() {
-
+        this.back(); //TODO cannot go back to parent scene
     }
 
     @Override
@@ -120,7 +120,9 @@ public class UploadUserScene extends BaseScene implements ButtonSprite.OnClickLi
         if(pButtonSprite == confirmButton){
             Log.i("CONFIRMED", "CONFIRMED");
             username = userNameInputText.getText();
-            User.createUser(new GameState(0, World.WORLD1, username));
+            User.createUser(new GameState((activity.getCurrentWorld()-1)*40,
+                    World.getWorld(activity.getCurrentWorld()), username));
+            activity.setNameOnline(true);
         }
     }
 }

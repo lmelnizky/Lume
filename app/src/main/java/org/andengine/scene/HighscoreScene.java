@@ -996,6 +996,7 @@ public class HighscoreScene extends BaseScene {
         float xVel = 0;
         float yVel = 0;
         float speed = sideLength/15 * speedFactor;
+        int gravityDirection = getGravityDirection(direction);
 
         final Sprite stone;
         ITextureRegion textureRegion = null;
@@ -1016,22 +1017,26 @@ public class HighscoreScene extends BaseScene {
             case 1:
                 x = camera.getCenterX() - sideLength + sideLength*position;
                 y = camera.getHeight() - sideLength / 2;
+                xVel = (isGravity) ? (gravityDirection-3)*speed : 0;
                 yVel = -speed;
                 break;
             case 2:
                 x = camera.getWidth() - sideLength / 2;
                 y = camera.getCenterY()-sideLength + sideLength*position;
                 xVel = -speed;
+                yVel = (isGravity) ? (gravityDirection-2)*speed : 0;
                 break;
             case 3:
                 x = camera.getCenterX()-sideLength + sideLength*position;
                 y = sideLength / 2;
+                xVel = (isGravity) ? (gravityDirection-3)*speed : 0;
                 yVel = speed;
                 break;
             case 4:
                 x = sideLength / 2;
                 y = camera.getCenterY()-sideLength + sideLength*position;
                 xVel = speed;
+                yVel = (isGravity) ? (gravityDirection-2)*speed : 0;
                 break;
         }
 
