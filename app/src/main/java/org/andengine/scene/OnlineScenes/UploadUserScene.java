@@ -42,14 +42,25 @@ public class UploadUserScene extends BaseScene implements ButtonSprite.OnClickLi
             @Override
             public void setText(String text) {
                 super.setText(text);
-                if(!text.equals("")) confirmButton.setEnabled(true); else confirmButton.setEnabled(false);
+                if (!text.equals("")) {
+                    confirmButton.setEnabled(true);
+                } else {
+                    confirmButton.setEnabled(false);
+                }
                 boolean enabled = confirmButton.isEnabled();
                 List checkNull = User.getUsersFromDatabase();
-                if(checkNull == null) Log.i("User", "NULL NULL!!!");
+                if (checkNull == null) Log.i("User", "NULL NULL!!!");
                 for(String name: User.getUsersFromDatabase()) {
                     Log.i("UploadUserScene", "Also User!");
-                    if(name.equals(userNameInputText.getText())) enabled = false; }
+                    if (name.equals(userNameInputText.getText())) {
+                        enabled = false;
+                        usernameText.setText("Username:" + " (already used)");
+                    } else {
+                        usernameText.setText("Username:");
+                    }
+                }
                 confirmButton.setEnabled(enabled);
+                confirmButton.setVisible(enabled);
             }
         };
         userNameInputText.setSize(CAMERA_WIDTH/4, ResourcesManager.getInstance().standardFont.getLineHeight());
