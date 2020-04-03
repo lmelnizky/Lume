@@ -28,6 +28,7 @@ public class UploadUserScene extends BaseScene implements ButtonSprite.OnClickLi
     private Text confirmButtonHelpText;
     private Text usernameText;
     private String username;
+
     //private Methods
     private void setUpEntities(){
         userNameInputText = new InputText(
