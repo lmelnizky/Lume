@@ -6,6 +6,7 @@ import com.org.andengine.helperclasses.InputText;
 
 import org.andengine.OnlineUsers.GameState;
 import org.andengine.OnlineUsers.User;
+import org.andengine.OnlineUsers.UsernameLoaderManager;
 import org.andengine.OnlineUsers.World;
 import org.andengine.base.BaseScene;
 import org.andengine.entity.scene.background.Background;
@@ -18,7 +19,7 @@ import org.andengine.manager.SceneType;
 import org.andengine.opengl.texture.region.TiledTextureRegion;
 import org.andengine.util.adt.color.Color;
 
-import java.util.List;
+import java.util.LinkedList;
 
 import static org.andengine.GameActivity.CAMERA_HEIGHT;
 import static org.andengine.GameActivity.CAMERA_WIDTH;
@@ -30,6 +31,7 @@ public class UploadUserScene extends BaseScene implements ButtonSprite.OnClickLi
     private Text confirmButtonHelpText;
     private Text usernameText;
     private String username;
+    private UsernameLoaderManager uLM;
 
     //private Methods
     private void setUpEntities(){
@@ -42,19 +44,43 @@ public class UploadUserScene extends BaseScene implements ButtonSprite.OnClickLi
             @Override
             public void setText(String text) {
                 super.setText(text);
-                if (!text.equals("")) {
+                if(!text.equals("")) {
                     confirmButton.setEnabled(true);
                 } else {
                     confirmButton.setEnabled(false);
                 }
+
+                User.getUsersFromDatabase(uLM);
+            }
+        };
+        userNameInputText.setSize(CAMERA_WIDTH/4, ResourcesManager.getInstance().standardFont.getLineHeight());
+        confirmButton = new ButtonSprite(CAMERA_WIDTH/2, CAMERA_HEIGHT/4, ResourcesManager.getInstance().confirm_region, vbom, this);
+        confirmButton.setSize(CAMERA_WIDTH/5,CAMERA_WIDTH/10);
+        confirmButton.setEnabled(false);
+        confirmButtonHelpText = new Text(confirmButton.getWidth()/2, confirmButton.getHeight()/2, ResourcesManager.getInstance().standardFont, "CONFIRM", vbom);
+        usernameText = new Text(CAMERA_WIDTH/4, CAMERA_HEIGHT/4*3, ResourcesManager.getInstance().standardFont, "Username: (already used)", vbom);
+        usernameText.setText("Username:");
+
+        confirmButton.attachChild(confirmButtonHelpText);
+        this.attachChild(userNameInputText);    this.attachChild(confirmButton);    this.attachChild(usernameText);
+        this.registerTouchArea(confirmButton);  this.registerTouchArea(userNameInputText);
+    }
+    private void setUpULM(){
+        uLM = new UsernameLoaderManager() {
+            @Override
+            public void startLoadingNames() {
+                confirmButton.setEnabled(false);
+            }
+
+            @Override
+            public void finishLoadingNames(LinkedList<String> userNames) {
                 boolean enabled = confirmButton.isEnabled();
-                List checkNull = User.getUsersFromDatabase();
-                if (checkNull == null) Log.i("User", "NULL NULL!!!");
-                for(String name: User.getUsersFromDatabase()) {
-                    Log.i("UploadUserScene", "Also User!");
-                    if (name.equals(userNameInputText.getText())) {
+                if(userNameInputText.getText().equals("")) enabled = false; else enabled = true;
+                for(String username: userNames) {
+                    if (username.equals(userNameInputText.getText())) {
                         enabled = false;
                         usernameText.setText("Username:" + " (already used)");
+                        activity.toastOnUiThread("This name already exists!", 0);
                     } else {
                         usernameText.setText("Username:");
                     }
@@ -63,16 +89,6 @@ public class UploadUserScene extends BaseScene implements ButtonSprite.OnClickLi
                 confirmButton.setVisible(enabled);
             }
         };
-        userNameInputText.setSize(CAMERA_WIDTH/4, ResourcesManager.getInstance().standardFont.getLineHeight());
-        confirmButton = new ButtonSprite(CAMERA_WIDTH/2, CAMERA_HEIGHT/4, ResourcesManager.getInstance().confirm_region, vbom, this);
-        confirmButton.setSize(CAMERA_WIDTH/5,CAMERA_WIDTH/10);
-        confirmButton.setEnabled(false);
-        confirmButtonHelpText = new Text(confirmButton.getWidth()/2, confirmButton.getHeight()/2, ResourcesManager.getInstance().standardFont, "CONFIRM", vbom);
-        usernameText = new Text(CAMERA_WIDTH/4, CAMERA_HEIGHT/4*3, ResourcesManager.getInstance().standardFont, "Username:", vbom);
-
-        confirmButton.attachChild(confirmButtonHelpText);
-        this.attachChild(userNameInputText);    this.attachChild(confirmButton);    this.attachChild(usernameText);
-        this.registerTouchArea(confirmButton);  this.registerTouchArea(userNameInputText);
     }
     //override Methods from superclass
     @Override
@@ -80,6 +96,7 @@ public class UploadUserScene extends BaseScene implements ButtonSprite.OnClickLi
         SpriteBackground spriteBackground = new SpriteBackground(new Sprite(camera.getCenterX(), camera.getCenterY(),
                 camera.getWidth(), camera.getHeight(), resourcesManager.upload_background_region, vbom));
         this.setBackground(spriteBackground);
+        setUpULM();
         setUpEntities();
     }
 
