@@ -74,7 +74,12 @@ public class MainMenuScene extends BaseScene implements IOnMenuItemClickListener
         showRandomAd();
         activity.showSlowMoHintMenu();
         if (!activity.isNameOnline()) {
-            this.setChildScene(new UploadUserScene());
+            this.setChildScene(new UploadUserScene(){
+                @Override
+                public void onBackKeyPressed() {
+                    MainMenuScene.this.clearChildScene();
+                }
+            });
         } else {
             User.setUserData(activity.getCurrentWorld(), (activity.getCurrentWorld()-1)*40); //TODO update User data
         }

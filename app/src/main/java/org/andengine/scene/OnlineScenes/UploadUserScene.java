@@ -100,7 +100,7 @@ public class UploadUserScene extends BaseScene implements ButtonSprite.OnClickLi
 
     @Override
     public void onBackKeyPressed() {
-        this.back(); //TODO cannot go back to parent scene
+        //TODO cannot go back to parent scene
     }
 
     @Override
