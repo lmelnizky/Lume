@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.util.Log;
 
+import org.andengine.OnlineUsers.User;
 import org.andengine.base.BaseScene;
 import org.andengine.entity.scene.background.SpriteBackground;
 import org.andengine.entity.scene.menu.MenuScene;
@@ -32,6 +33,7 @@ public class MainMenuScene extends BaseScene implements IOnMenuItemClickListener
 
     private boolean loudVisible;
     private boolean helpVisible;
+    private boolean isOnline;
 
     IMenuItem loudMenuItem;
     IMenuItem psstMenuItem;
@@ -66,12 +68,16 @@ public class MainMenuScene extends BaseScene implements IOnMenuItemClickListener
     @Override
     public void createScene() {
         Log.i("MainMennuScene", "CreateScene()");
-        /*createBackground();
+        createBackground();
         createWorldText();
         createMenuChildScene();
         showRandomAd();
-        activity.showSlowMoHintMenu();*/
-        this.setChildScene(new UploadUserScene());
+        activity.showSlowMoHintMenu();
+        if (!activity.isNameOnline()) {
+            this.setChildScene(new UploadUserScene());
+        } else {
+            User.setUserData(activity.getCurrentWorld(), (activity.getCurrentWorld()-1)*40); //TODO update User data
+        }
     }
 
     @Override

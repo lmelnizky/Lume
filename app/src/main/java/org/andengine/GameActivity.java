@@ -23,10 +23,6 @@ import com.google.android.gms.ads.MobileAds;
 import com.google.android.gms.ads.reward.RewardItem;
 import com.google.android.gms.ads.reward.RewardedVideoAd;
 import com.google.android.gms.ads.reward.RewardedVideoAdListener;
-//import com.tappx.sdk.android.Tappx;
-//import com.tappx.sdk.android.TappxAdError;
-//import com.tappx.sdk.android.TappxInterstitial;
-//import com.tappx.sdk.android.TappxInterstitialListener;
 
 import org.andengine.engine.Engine;
 import org.andengine.engine.LimitedFPSEngine;
@@ -48,6 +44,11 @@ import java.io.IOException;
 
 import me.drakeet.support.toast.ToastCompat;
 
+//import com.tappx.sdk.android.Tappx;
+//import com.tappx.sdk.android.TappxAdError;
+//import com.tappx.sdk.android.TappxInterstitial;
+//import com.tappx.sdk.android.TappxInterstitialListener;
+
 public class GameActivity extends BaseGameActivity implements RewardedVideoAdListener {
 
     private static final int REQUEST_ENABLE_BT = 7;
@@ -59,6 +60,8 @@ public class GameActivity extends BaseGameActivity implements RewardedVideoAdLis
     private static final String TUTORIALMULTI = "TUTORIALMULTI";
     private static final String FIRSTSLOWMOWORLD = "FIRSTSLOWMOWORLD";
     private static final String FIRSTSLOWMOMENU = "FIRSTSLOWMOMENU";
+    private static final String IS_NAME_ONLINE = "IS_NAME_ONLINE"; //boolean
+    private static final String NAME_ONLINE = "IS_NAME_ONLINE"; //TODO String online name
 
     private BoundCamera camera;
     private EngineOptions engineOptions;
@@ -195,6 +198,15 @@ public class GameActivity extends BaseGameActivity implements RewardedVideoAdLis
 
     public int getCurrentWorld() {
         return pref.getInt(CURRENTWORLD, 0);
+    }
+
+    public boolean isNameOnline() {
+        return pref.getBoolean(IS_NAME_ONLINE, false);
+    }
+
+    public void setNameOnline(boolean isOnline) {
+        editor.putBoolean(IS_NAME_ONLINE, isOnline);
+        editor.commit();
     }
 
     public boolean isLoudVisible() {

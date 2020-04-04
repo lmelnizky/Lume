@@ -19,16 +19,20 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.ValueEventListener;
 
+import org.andengine.GameActivity;
+
 import java.util.LinkedList;
 import java.util.Random;
 
 public class User {
-  //variables
+
+    //variables
+    protected GameActivity activity;
     private GameState gameState;
     private int iD;
     private DatabaseReference iDRef;
-    //constructor
 
+    //constructor
     public User(int iD) {
         Log.i("User", "constructor");
         this.iD = iD;
@@ -118,8 +122,8 @@ public class User {
         DataBaseManager.getInstance().getUserPath().child("" + iD).
         child("coin").setValue(gS.getCoins()); DatabaseReference dF = DataBaseManager.getInstance().getUserPath().child(""+iD);
         dF.child("name").setValue(gS.getName());
-        int value;
-        switch (gS.getWorld()){
+        int value = gS.getWorld().ordinal();
+  /*      switch (gS.getWorld()){
             case WORLD1:
                 value = 1;
                 break;
@@ -147,9 +151,15 @@ public class User {
             default:
                 value = 1;
 
-        }
+        }*/
         dF.child("world").setValue(value);
         return iD;
+    }
+
+    //TODO code here
+    public static void setUserData(int world, int coins) { //name cannot be changed
+        World newWorld = World.getWorld(world);
+        int newCoin = coins;
     }
 
     private static int createNewId() {
