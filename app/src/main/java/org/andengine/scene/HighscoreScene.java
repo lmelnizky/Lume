@@ -882,39 +882,67 @@ public class HighscoreScene extends BaseScene {
         }
     }
 
-    private void showMode2(boolean firstHalf, int directionVariant, char showArrow) {
+    private void showMode2(boolean firstHalf, int direction, char showArrow) {
         float levF = 1 + (level/10);
-        float dirF = (directionVariant%2 == 0) ? ratio : 1f;
+        float dirF = (direction%2 == 0) ? ratio : 1f;
         float speed = 1f;
         int randomPos = randomGenerator.nextInt(3);
         if (firstHalf) {
-
+            addBall((randomPos == 0) ? 'C' : 'T', direction, 0, speed*levF*dirF);
+            addBall((randomPos == 1) ? 'C' : 'T', direction, 1, speed*levF*dirF);
+            addBall((randomPos == 2) ? 'C' : 'T', direction, 2, speed*levF*dirF);
         } else {
-
+            addBall((randomPos == 0) ? 'C' : 'T', direction, 0, speed*levF*dirF);
+            addBall((randomPos == 1) ? 'C' : 'T', direction, 1, speed*levF*dirF);
+            addBall((randomPos == 2) ? 'C' : 'T', direction, 2, speed*levF*dirF);
         }
     }
 
-    private void showMode3(boolean firstHalf, int directionVariant, char showArrow) {
+    private void showMode3(boolean firstHalf, int direction, char showArrow) {
+        float levF = 1 + (level/10);
+        float dirF = (direction%2 == 0) ? ratio : 1f;
+        float speed = 1f;
+        int randomPos = randomGenerator.nextInt(3);
         if (firstHalf) {
-
+            addBall((randomPos == 0) ? 'C' : 'T', direction, 0, speed*levF*dirF);
+            addBall((randomPos == 1) ? 'C' : 'T', direction, 1, speed*levF*dirF);
+            addBall((randomPos == 2) ? 'C' : 'T', direction, 2, speed*levF*dirF);
         } else {
-
+            addBall((randomPos == 0) ? 'C' : 'T', direction, 0, speed*levF*dirF);
+            addBall((randomPos == 1) ? 'C' : 'T', direction, 1, speed*levF*dirF);
+            addBall((randomPos == 2) ? 'C' : 'T', direction, 2, speed*levF*dirF);
         }
     }
 
-    private void showMode4(boolean firstHalf, int directionVariant, char showArrow) {
+    private void showMode4(boolean firstHalf, int direction, char showArrow) {
+        float levF = 1 + (level/10);
+        float dirF = (direction%2 == 0) ? ratio : 1f;
+        float speed = 1f;
+        int randomPos = randomGenerator.nextInt(3);
         if (firstHalf) {
-
+            addBall((randomPos == 0) ? 'C' : 'T', direction, 0, speed*levF*dirF);
+            addBall((randomPos == 1) ? 'C' : 'T', direction, 1, speed*levF*dirF);
+            addBall((randomPos == 2) ? 'C' : 'T', direction, 2, speed*levF*dirF);
         } else {
-
+            addBall((randomPos == 0) ? 'C' : 'T', direction, 0, speed*levF*dirF);
+            addBall((randomPos == 1) ? 'C' : 'T', direction, 1, speed*levF*dirF);
+            addBall((randomPos == 2) ? 'C' : 'T', direction, 2, speed*levF*dirF);
         }
     }
 
-    private void showMode5(boolean firstHalf, int directionVariant, char showArrow) {
+    private void showMode5(boolean firstHalf, int direction, char showArrow) {
+        float levF = 1 + (level/10);
+        float dirF = (direction%2 == 0) ? ratio : 1f;
+        float speed = 1f;
+        int randomPos = randomGenerator.nextInt(3);
         if (firstHalf) {
-
+            addBall((randomPos == 0) ? 'C' : 'T', direction, 0, speed*levF*dirF);
+            addBall((randomPos == 1) ? 'C' : 'T', direction, 1, speed*levF*dirF);
+            addBall((randomPos == 2) ? 'C' : 'T', direction, 2, speed*levF*dirF);
         } else {
-
+            addBall((randomPos == 0) ? 'C' : 'T', direction, 0, speed*levF*dirF);
+            addBall((randomPos == 1) ? 'C' : 'T', direction, 1, speed*levF*dirF);
+            addBall((randomPos == 2) ? 'C' : 'T', direction, 2, speed*levF*dirF);
         }
     }
 
@@ -1089,7 +1117,8 @@ public class HighscoreScene extends BaseScene {
                 lumeCircle = new Circle(lumeSprite.getX(), lumeSprite.getY(), lumeSprite.getWidth() / 2);
                 stoneCircle = new Circle(this.getX(), this.getY(), this.getWidth() / 2);
 
-                if (stoneCircle.collision(lumeCircle) && !gameOverDisplayed) { //TODO make variant 5
+                if ((stoneCircle.collision(lumeCircle) && !gameOverDisplayed && !isLamporghina) ||
+                        (isLamporghina && type == 'T' && !gameOverDisplayed)) {
                     luserSprite = new Sprite(lumeSprite.getX()-lumeSprite.getWidth()*4/10,
                             lumeSprite.getY() + lumeSprite.getHeight()*5/10,
                             lumeSprite.getWidth(), lumeSprite.getWidth(),
@@ -1097,6 +1126,16 @@ public class HighscoreScene extends BaseScene {
                     secondLayer.attachChild(luserSprite);
                     displayGameOverText();
                     score = 0;
+                } else if (stoneCircle.collision(lumeCircle) && isLamporghina && type == 'C') {
+                    final Sprite crackyBallToRemove = this;
+
+                    engine.runOnUpdateThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            crackyBallToRemove.detachSelf();
+                            crackyBallToRemove.dispose();
+                        }
+                    });
                 }
 
 

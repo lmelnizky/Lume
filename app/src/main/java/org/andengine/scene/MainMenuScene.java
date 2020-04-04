@@ -234,8 +234,8 @@ public class MainMenuScene extends BaseScene implements IOnMenuItemClickListener
                 }
                 return true;
             case MENU_HIGH:
-                activity.showHighHint();
-                //SceneManager.getInstance().loadHighscoreScene(engine);
+                //activity.showHighHint();
+                SceneManager.getInstance().loadHighscoreScene(engine);
                 return true;
             default:
                 return false;
