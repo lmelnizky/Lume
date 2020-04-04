@@ -3,6 +3,7 @@ package org.andengine.manager;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
 import android.graphics.Color;
+import android.graphics.Typeface;
 
 import org.andengine.GameActivity;
 import org.andengine.audio.music.Music;
@@ -49,6 +50,7 @@ public class ResourcesManager {
     public BoundCamera camera;
     public VertexBufferObjectManager vbom;
 
+    public Font standardFont;
     public Font smallFont;
     public Font worldNumberFont;
     public Font bigFont;
@@ -174,6 +176,11 @@ public class ResourcesManager {
     public ITextureRegion finger_watch;
     public ITextureRegion finger_middle;
 
+    //UploadUser Graphics
+    public ITextureRegion upload_background_region;
+    public ITextureRegion confirm_region;
+    public ITextureRegion inputtext_region;
+
     //Bluetooth and Multiplayer
     public BluetoothSocket bluetoothSocket;
     public BluetoothDevice bluetoothDevice;
@@ -248,6 +255,10 @@ public class ResourcesManager {
             ball_fall = BitmapTextureAtlasTextureRegionFactory.createFromAsset(menuTextureAtlas, activity, "ball_fall.png");
             military = BitmapTextureAtlasTextureRegionFactory.createFromAsset(menuTextureAtlas, activity, "military.png");
             play_coin_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(menuTextureAtlas, activity, "play_coin.png");
+            upload_background_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(menuTextureAtlas, activity, "upload_background.png");
+            confirm_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(menuTextureAtlas, activity, "confirm.png");
+            inputtext_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(menuTextureAtlas, activity, "inputtext.png");
+
 
             try {
                 this.menuTextureAtlas.build(new BlackPawnTextureAtlasBuilder<IBitmapTextureAtlasSource, BitmapTextureAtlas>(0, 1, 0));
@@ -292,6 +303,10 @@ public class ResourcesManager {
         final ITexture mainFontTexture = new BitmapTextureAtlas(activity.getTextureManager(), 512, 512, TextureOptions.BILINEAR_PREMULTIPLYALPHA);
         final ITexture bigFontTexture = new BitmapTextureAtlas(activity.getTextureManager(), 1024, 1024, TextureOptions.BILINEAR_PREMULTIPLYALPHA);
         final ITexture veryBigFontTexture = new BitmapTextureAtlas(activity.getTextureManager(), 1024, 1024, TextureOptions.BILINEAR_PREMULTIPLYALPHA);
+
+        standardFont = FontFactory.create(engine.getFontManager(), engine.getTextureManager(), 256, 256,
+                Typeface.create(Typeface.DEFAULT, Typeface.NORMAL),  32f, true, org.andengine.util.adt.color.Color.BLACK_ABGR_PACKED_INT);
+        standardFont.load();
 
         smallFont = FontFactory.createStrokeFromAsset(activity.getFontManager(), mainFontTexture, activity.getAssets(), "lumefont.otf", 55, true, Color.WHITE, 2, Color.BLACK);
         smallFont.load();
