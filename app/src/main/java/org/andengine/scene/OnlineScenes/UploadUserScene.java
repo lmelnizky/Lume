@@ -17,6 +17,7 @@ import org.andengine.manager.ResourcesManager;
 import org.andengine.manager.SceneType;
 import org.andengine.opengl.texture.region.TiledTextureRegion;
 
+import java.net.InetAddress;
 import java.util.LinkedList;
 
 import static org.andengine.GameActivity.CAMERA_HEIGHT;
@@ -88,6 +89,13 @@ public class UploadUserScene extends BaseScene implements ButtonSprite.OnClickLi
             }
         };
     }
+    public boolean isInternetAvailable() {
+        Log.i("OtherLevelsScene", "isInternetAviable");
+        try {
+            InetAddress ipAddr = InetAddress.getByName("google.com");
+            return !ipAddr.equals("MartinMelnizky");
+        } catch (Exception e) {return false;}
+    }
     //override Methods from superclass
     @Override
     public void createScene() {
@@ -96,6 +104,9 @@ public class UploadUserScene extends BaseScene implements ButtonSprite.OnClickLi
         this.setBackground(spriteBackground);
         setUpULM();
         setUpEntities();
+        if(!isInternetAvailable()){
+            //TODO handle the internet connection
+        }
     }
 
     @Override
