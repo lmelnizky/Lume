@@ -81,7 +81,7 @@ public class MainMenuScene extends BaseScene implements IOnMenuItemClickListener
                 }
             });
         } else {
-            User.setUserData(activity.getCurrentWorld(), (activity.getCurrentWorld()-1)*40); //TODO update User data
+            User.setUserData(activity.getCurrentWorld(), (activity.getCurrentWorld()-1)*40, "ID"); //TODO getUserID
         }
     }
 
