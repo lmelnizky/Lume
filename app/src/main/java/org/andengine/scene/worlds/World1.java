@@ -676,7 +676,7 @@ public class World1 extends BaseScene {
                 break;
             case 3:
                 age = (new Date()).getTime() - stoneTime;
-                interval = (long) (3800*slowMotionFactor);
+                interval = (long) (4400*slowMotionFactor);
                 if (firstStonesInLevel) interval = (long) (1000*slowMotionFactor);
                 if (!this.variantUsed &&  age >= interval) {
                     if (firstStonesInLevel) createCoin();

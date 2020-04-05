@@ -14,6 +14,7 @@ import org.andengine.engine.handler.timer.ITimerCallback;
 import org.andengine.engine.handler.timer.TimerHandler;
 import org.andengine.entity.Entity;
 import org.andengine.entity.IEntity;
+import org.andengine.entity.modifier.RotationModifier;
 import org.andengine.entity.modifier.ScaleModifier;
 import org.andengine.entity.primitive.Rectangle;
 import org.andengine.entity.scene.CameraScene;
@@ -162,11 +163,6 @@ public class HighscoreScene extends BaseScene {
                     int displayTime = Math.round(time / 60);
                     timeText.setText(String.valueOf(displayTime));
                     if (time <= 0 && !gameOverDisplayed) {
-                        luserSprite = new Sprite(lumeSprite.getX()-lumeSprite.getWidth()*4/10,
-                                lumeSprite.getY() + lumeSprite.getHeight()*5/10,
-                                lumeSprite.getWidth(), lumeSprite.getWidth(),
-                                ResourcesManager.getInstance().finger_luser, vbom);
-                        secondLayer.attachChild(luserSprite);
                         displayGameOverText(true);
                     }
                     if (displayTime <= 5) {
@@ -263,11 +259,7 @@ public class HighscoreScene extends BaseScene {
                     setIgnoreUpdate(false);
                     gameOverDisplayed = false;
                     registerUpdateHandler(physicsWorld);
-                    if (cameFromLevelsScene) {
-                        SceneManager.getInstance().loadWorlds5to8Scene(engine);
-                    } else {
-                        SceneManager.getInstance().loadMenuScene(engine);
-                    }
+                    SceneManager.getInstance().loadMenuScene(engine);
                     disposeHUD();
                     return true;
                 } else {
@@ -275,6 +267,13 @@ public class HighscoreScene extends BaseScene {
                 }
             }
         };
+
+        luserSprite = new Sprite(lumeSprite.getX()-lumeSprite.getWidth()*4/10,
+                lumeSprite.getY() + lumeSprite.getHeight()*5/10,
+                lumeSprite.getWidth(), lumeSprite.getWidth(),
+                ResourcesManager.getInstance().finger_luser, vbom);
+        secondLayer.attachChild(luserSprite);
+        luserSprite.setVisible(false);
 
         replaySprite = new Sprite(camera.getCenterX(), camera.getHeight()*2/9, sideLength, sideLength,
                 ResourcesManager.getInstance().replay_region, vbom) {
@@ -300,14 +299,28 @@ public class HighscoreScene extends BaseScene {
         gameOverScene.registerTouchArea(gameOverText);
         gameOverScene.attachChild(gameOverText);
 
+        RotationModifier rotMod = new RotationModifier(0.7f, 180, 720) {
+            @Override
+            protected void onModifierFinished(IEntity item) {
+                //stop things
+                //unregisterUpdateHandler(physicsWorld);
+                setIgnoreUpdate(true);
+                luserSprite.setVisible(true);
+                //setChildScene(gameOverScene, false, true, true); //set gameOverScene as a child scene - so game will be paused
+                ResourcesManager.getInstance().activity.showLevelHint();
+            }
+        };
+        gameOverText.registerEntityModifier(new ScaleModifier(0.7f, 0.1f, 1.3f));
+        //gameOverText.registerEntityModifier(new RotationModifier(2, 180, 720));
+        gameOverText.registerEntityModifier(rotMod);
+
         gameOverScene.registerTouchArea(replaySprite);
         gameOverScene.attachChild(replaySprite);
 
         //stop things
         unregisterUpdateHandler(physicsWorld);
-        this.setIgnoreUpdate(true);
-        this.setChildScene(gameOverScene, false, true, true); //set gameOverScene as a child scene - so game will be paused
-        ResourcesManager.getInstance().activity.showLevelHint();
+        setChildScene(gameOverScene, false, true, true);
+
 
         engine.registerUpdateHandler(new TimerHandler(0.8f, new ITimerCallback() {
             public void onTimePassed(final TimerHandler pTimerHandler) {
@@ -604,7 +617,8 @@ public class HighscoreScene extends BaseScene {
         float y = 0;
         float xVel = 0;
         float yVel = 0;
-        float speed = (rebound) ? sideLength/3 : sideLength/4; //faster cannonballs with mirror stones
+        float levF = 1 + (level/10);
+        float speed = levF*sideLength/4;
         switch (direction) {
             case 1: //up to down
                 x = lumeSprite.getX();
@@ -637,11 +651,6 @@ public class HighscoreScene extends BaseScene {
 
                 //if mirror stones are present, cannonball is deadly
                 if (cannonCircle.collision(lumeCircle) && !gameOverDisplayed && rebound) {
-                    luserSprite = new Sprite(lumeSprite.getX()-lumeSprite.getWidth()*4/10,
-                            lumeSprite.getY() + lumeSprite.getHeight()*5/10,
-                            lumeSprite.getWidth(), lumeSprite.getWidth(),
-                            ResourcesManager.getInstance().finger_luser, vbom);
-                    secondLayer.attachChild(luserSprite);
                     displayGameOverText(false);
                     score = 0;
                 }
@@ -807,12 +816,18 @@ public class HighscoreScene extends BaseScene {
 
     private void createStones() {
         double levelFactor = 1 + (level/10);
+        double modeFactor = 1.0;
         long interval, age;
         int direction;
+        int mode = playVariants[((level-1)%5)];
+
+        if (mode == 2) modeFactor = 0.7f;
+        if (mode == 3) modeFactor = 1.3f;
+        if (mode == 4) modeFactor = 1.3f;
 
         age = (new Date()).getTime() - stoneTime;
         direction = (randomGenerator.nextInt(4) + 1);
-        interval = (long) (2500/levelFactor);
+        interval = (long) (2500*modeFactor/levelFactor);
         if (firstStonesInLevel) interval = 1200;
         if (age >= interval) {
             if (firstStonesInLevel) createCoin();
@@ -850,21 +865,28 @@ public class HighscoreScene extends BaseScene {
         float speed = 1f;
         int randomPos = randomGenerator.nextInt(3);
         if (firstHalf) {
-            int secondPos = randomPos+1;
-            if (secondPos > 2) secondPos = 0;
-            addBall('T', direction, randomPos, 1, speed*levF*dirF); //thorny stone
-            addBall('C', direction, secondPos, 1, speed*levF*dirF); //cracky stone
-        } else {
             addBall((randomPos == 0) ? 'C' : 'T', direction, 0, 1, speed*levF*dirF);
             addBall((randomPos == 1) ? 'C' : 'T', direction, 1, 1, speed*levF*dirF);
             addBall((randomPos == 2) ? 'C' : 'T', direction, 2, 1, speed*levF*dirF);
+        } else {
+            int plusOrMinus = randomGenerator.nextInt(2)*2 - 1; //1 or -1
+            int pos2 = randomPos+plusOrMinus;
+            if (pos2 > 2) pos2 = 0;
+            if (pos2 < 0) pos2 = 2;
+            addBall((randomPos == 0) ? 'C' : 'T', direction, 0, 1, speed*levF*dirF);
+            addBall((randomPos == 1) ? 'C' : 'T', direction, 1, 1, speed*levF*dirF);
+            addBall((randomPos == 2) ? 'C' : 'T', direction, 2, 1, speed*levF*dirF);
+
+            addBall((pos2 == 0) ? 'C' : 'T', direction, 0, 3, speed*levF*dirF);
+            addBall((pos2 == 1) ? 'C' : 'T', direction, 1, 3, speed*levF*dirF);
+            addBall((pos2 == 2) ? 'C' : 'T', direction, 2, 3, speed*levF*dirF);
         }
     }
 
     private void showMode2(boolean firstHalf, int direction) {
         float levF = 1 + (level/10);
-        float dirF = (direction%2 == 0) ? ratio : 1f;
-        float speed = 1.3f;
+        float dirF = (direction%2 == 0) ? ratio : ratio*2/3;
+        float speed = 1.1f;
         int randomPos1 = randomGenerator.nextInt(3);
         int randomPos2 = randomGenerator.nextInt(3);
         int dir2 = (direction > 2) ? direction-2 : direction+2;
@@ -891,32 +913,32 @@ public class HighscoreScene extends BaseScene {
     private void showMode3(boolean firstHalf, int direction) {
         float levF = 1 + (level/10);
         float dirF = (direction%2 == 0) ? ratio : 1f;
-        float speed = 1f;
+        float speed = 0.8f;
         int randomPos = randomGenerator.nextInt(3);
         if (firstHalf) {
             boolean middleFirst = randomGenerator.nextBoolean();
             if (middleFirst) {
-                addBall('T', direction, 1, 1, 1*levF*dirF);
-                addBall('C', direction, 0, 1, 1*levF*dirF);
-                addBall('C', direction, 2, 1, 1*levF*dirF);
-                addBall('T', direction, 0, 2.3f, 1*levF*dirF);
-                addBall('T', direction, 2, 2.3f, 1*levF*dirF);
+                addBall('T', direction, 1, 1, speed*levF*dirF);
+                addBall('C', direction, 0, 1, speed*levF*dirF);
+                addBall('C', direction, 2, 1, speed*levF*dirF);
+                addBall('T', direction, 0, 2.3f, speed*levF*dirF);
+                addBall('T', direction, 2, 2.3f, speed*levF*dirF);
             } else {
-                addBall('C', direction, 1, 1, 1*levF*dirF);
-                addBall('T', direction, 0, 1, 1*levF*dirF);
-                addBall('T', direction, 2, 1, 1*levF*dirF);
-                addBall('T', direction, 1, 2.3f, 1*levF*dirF);
+                addBall('C', direction, 1, 1, speed*levF*dirF);
+                addBall('T', direction, 0, 1, speed*levF*dirF);
+                addBall('T', direction, 2, 1, speed*levF*dirF);
+                addBall('T', direction, 1, 2.3f, speed*levF*dirF);
             }
         } else {
             boolean variant = randomGenerator.nextBoolean();
             int randomDiaDir = randomGenerator.nextInt(4)+5; //values betw 5 and 8
             if (variant) { //three dia
-                addBall('T', randomDiaDir, 0, 1, 1f*levF);
-                addBall('T', randomDiaDir, 1, 2, 1f*levF);
-                addBall('T', randomDiaDir, 2, 3, 1f*levF);
+                addBall('T', randomDiaDir, 0, 1, speed*levF);
+                addBall('T', randomDiaDir, 1, 2, speed*levF);
+                addBall('T', randomDiaDir, 2, 3, speed*levF);
             } else { //two dia
-                addBall('T', randomDiaDir, 1, 1, 1f*levF);
-                addBall('T', randomDiaDir, 2, 2, 1f*levF);
+                addBall('T', randomDiaDir, 1, 1, speed*levF);
+                addBall('T', randomDiaDir, 2, 2, speed*levF);
             }
             addBall('C', direction, 0, 1, 1*levF*dirF);
             addBall('C', direction, 1, 1, 1*levF*dirF);
@@ -927,6 +949,7 @@ public class HighscoreScene extends BaseScene {
     private void showMode4(boolean firstHalf, int direction) {
         float levF = 1 + (level/10);
         float dirF = (direction%2 == 0) ? ratio : 1f;
+        float otherDirF = (direction%2 == 0) ? 1f : ratio;
         float speed = 1f;
         int randomPos = randomGenerator.nextInt(3);
         if (firstHalf) {
@@ -934,9 +957,16 @@ public class HighscoreScene extends BaseScene {
             addBall('M', direction, 1, 1, speed*levF*dirF);
             addBall('M', direction, 2, 1, speed*levF*dirF);
         } else {
-            addBall((randomPos == 0) ? 'M' : 'T', direction, 0, 1, speed*levF*dirF);
-            addBall((randomPos == 1) ? 'M' : 'T', direction, 1, 1, speed*levF*dirF);
-            addBall((randomPos == 2) ? 'M' : 'T', direction, 2, 1, speed*levF*dirF);
+            int pos2 = randomGenerator.nextInt(3);
+            int dir2 = direction+1;
+            if (dir2 > 4) dir2 = 1;
+            addBall((randomPos == 0) ? 'T' : 'M', direction, 0, 1, speed*levF*dirF);
+            addBall((randomPos == 1) ? 'T' : 'M', direction, 1, 1, speed*levF*dirF);
+            addBall((randomPos == 2) ? 'T' : 'M', direction, 2, 1, speed*levF*dirF);
+
+            addBall((pos2 == 0) ? 'T' : 'M', dir2, 0, 1, speed*levF*dirF);
+            addBall((pos2 == 1) ? 'T' : 'M', dir2, 1, 1, speed*levF*dirF);
+            addBall((pos2 == 2) ? 'T' : 'M', dir2, 2, 1, speed*levF*dirF);
         }
     }
 
@@ -944,18 +974,21 @@ public class HighscoreScene extends BaseScene {
         float levF = 1 + (level/10);
         float dirF = (direction%2 == 0) ? ratio : 1f;
         float otherDirF = (direction%2 == 0) ? 1f : ratio;
-        float speed = 0.8f;
+        float speed = 0.7f;
         int randomPos = randomGenerator.nextInt(3);
         if (firstHalf) {
-            addBall((randomPos == 0) ? 'C' : 'T', direction, 0, 1, speed*levF*dirF);
-            addBall((randomPos == 1) ? 'C' : 'T', direction, 1, 1, speed*levF*dirF);
-            addBall((randomPos == 2) ? 'C' : 'T', direction, 2, 1, speed*levF*dirF);
+            int secondPos = randomPos+1;
+            if (secondPos > 2) secondPos = 0;
+            addBall('T', direction, randomPos, 1, speed*levF*dirF); //thorny stone
+            addBall('C', direction, secondPos, 1, speed*levF*dirF); //cracky stone
         } else {
             int plusDir = direction+1;
             int minusDir = direction-1;
-            addBall('C', direction, 0, 1, speed*levF*dirF);
-            addBall('C', direction, 1, 1, speed*levF*dirF);
-            addBall('C', direction, 2,  1, speed*levF*dirF);
+            int pos1 = randomGenerator.nextInt(3);
+            int pos2 = pos1+1;
+            if (pos2 == 3) pos2 = 0;
+            addBall('C', direction, pos1, 1, speed*levF*dirF);
+            addBall('C', direction, pos2, 1, speed*levF*dirF);
             addBall('T', plusDir, randomPos, 1, speed*levF*otherDirF);
             addBall('T', plusDir, randomPos, 2, speed*levF*otherDirF);
             addBall('T', minusDir, randomPos, 1, speed*levF*otherDirF);
@@ -1092,9 +1125,13 @@ public class HighscoreScene extends BaseScene {
         switch (type) {
             case 'T':
                 textureRegion = resourcesManager.thorny_stone_region;
+                FIXTURE_DEF.filter.categoryBits = CATEGORY_THORNY;
+                FIXTURE_DEF.filter.maskBits = MASK_THORNY;
                 break;
             case 'C':
                 textureRegion = resourcesManager.cracky_stone_region;
+                FIXTURE_DEF.filter.categoryBits = CATEGORY_CRACKY;
+                FIXTURE_DEF.filter.maskBits = MASK_CRACKY;
                 break;
             case 'M':
                 textureRegion = resourcesManager.cracky_mirror;
@@ -1166,11 +1203,6 @@ public class HighscoreScene extends BaseScene {
 
                 if ((stoneCircle.collision(lumeCircle) && !gameOverDisplayed && !isLamporghina) ||
                         (stoneCircle.collision(lumeCircle) && isLamporghina && type == 'T' && !gameOverDisplayed)) {
-                    luserSprite = new Sprite(lumeSprite.getX()-lumeSprite.getWidth()*4/10,
-                            lumeSprite.getY() + lumeSprite.getHeight()*5/10,
-                            lumeSprite.getWidth(), lumeSprite.getWidth(),
-                            ResourcesManager.getInstance().finger_luser, vbom);
-                    secondLayer.attachChild(luserSprite);
                     displayGameOverText(false);
                     score = 0;
                 } else if (stoneCircle.collision(lumeCircle) && isLamporghina && type == 'C') {
@@ -1198,11 +1230,6 @@ public class HighscoreScene extends BaseScene {
                     final Circle lamporghinaCircle;
                     lamporghinaCircle = new Circle(lamporghinaSprite.getX(), lamporghinaSprite.getY(), lamporghinaSprite.getWidth()/2);
                     if (stoneCircle.collision(lamporghinaCircle) && !gameOverDisplayed) {
-                        luserSprite = new Sprite(lumeSprite.getX()-lumeSprite.getWidth()*4/10,
-                                lumeSprite.getY() + lumeSprite.getHeight()*5/10,
-                                lumeSprite.getWidth(), lumeSprite.getWidth(),
-                                ResourcesManager.getInstance().finger_luser, vbom);
-                        secondLayer.attachChild(luserSprite);
                         displayGameOverText(false);
                     }
                 }
@@ -1269,11 +1296,6 @@ public class HighscoreScene extends BaseScene {
                 body.applyForce(gravity, body.getWorldCenter());
 
                 if (stoneCircle.collision(lumeCircle) && !gameOverDisplayed) {
-                    luserSprite = new Sprite(lumeSprite.getX()-lumeSprite.getWidth()*4/10,
-                            lumeSprite.getY() + lumeSprite.getHeight()*5/10,
-                            lumeSprite.getWidth(), lumeSprite.getWidth(),
-                            ResourcesManager.getInstance().finger_luser, vbom);
-                    secondLayer.attachChild(luserSprite);
                     displayGameOverText(false);
                     score = 0;
                 }
@@ -1305,8 +1327,8 @@ public class HighscoreScene extends BaseScene {
         int direction = 0;
         float xVel = 0;
         float yVel = 0;
-        float speed = (level == 4) ? resourcesManager.screenWidth*4/400 :
-                resourcesManager.screenWidth*6/400;
+        float levF = 1 + (level/10);
+        float speed = levF*sideLength/4;
         Ball ball = (Ball) cannonBall.getUserData();
         Body body = ball.getBody();
         switch (ball.getDirection()) {
