@@ -10,12 +10,13 @@ import com.badlogic.gdx.physics.box2d.FixtureDef;
 import org.andengine.base.BaseScene;
 import org.andengine.engine.camera.hud.HUD;
 import org.andengine.engine.handler.IUpdateHandler;
+import org.andengine.engine.handler.timer.ITimerCallback;
+import org.andengine.engine.handler.timer.TimerHandler;
 import org.andengine.entity.Entity;
 import org.andengine.entity.IEntity;
 import org.andengine.entity.modifier.ScaleModifier;
 import org.andengine.entity.primitive.Rectangle;
 import org.andengine.entity.scene.CameraScene;
-import org.andengine.entity.scene.IOnSceneTouchListener;
 import org.andengine.entity.scene.Scene;
 import org.andengine.entity.scene.background.SpriteBackground;
 import org.andengine.entity.sprite.Sprite;
@@ -55,12 +56,13 @@ public class HighscoreScene extends BaseScene {
     private boolean firstStonesInLevel = true;
     private boolean cameFromLevelsScene;
     private boolean waitingForStonesToDisappear = false;
+    private boolean gameFinished = false;
 
-    private boolean shootNormal = true;
-    private boolean moveNormal = true;
-    private boolean isGravity = false;
-    private boolean rebound = false;
-    private boolean isLamporghina = false;
+    private boolean shootNormal;
+    private boolean moveNormal;
+    private boolean isGravity;
+    private boolean rebound;
+    private boolean isLamporghina;
 
     private static final int FIRST_LAYER = 0; //is used for ground, player and coin
     private static final int SECOND_LAYER = 1; //is used for  stones
@@ -74,6 +76,7 @@ public class HighscoreScene extends BaseScene {
     private int time = 100*60; //100 seconds
     private int sideLength;
     private int xPosLume, yPosLume;
+    private int xPosGrume, yPosGrume;
     private int xPosCoin, yPosCoin;
 
     private int[] playVariants;
@@ -92,6 +95,7 @@ public class HighscoreScene extends BaseScene {
     private IEntity firstLayer, secondLayer;
 
     private Sprite lumeSprite;
+    private Sprite lamporghinaSprite;
     private Sprite coinSprite;
     private Sprite cannonsN, cannonsE, cannonsS, cannonsW;
     private ArrayList<Sprite> crackyStones, crackyStonesToRemove, cannonBallsToRemove,
@@ -111,6 +115,7 @@ public class HighscoreScene extends BaseScene {
     private static final int SWIPE_MIN_DISTANCE = 10;
 
     private Text gameOverText;
+    private Sprite replaySprite;
 
     public HighscoreScene() { //default constructor
         this.level = 1;
@@ -138,6 +143,7 @@ public class HighscoreScene extends BaseScene {
         makePlayVariants();
         createLayers();
         createBackground();
+        createMusic();
         createPhysics();
         createBoard();
         createLume();
@@ -150,17 +156,10 @@ public class HighscoreScene extends BaseScene {
         this.registerUpdateHandler(new IUpdateHandler() {
             @Override
             public void onUpdate(float pSecondsElapsed) {
-                if (!waitingForStonesToDisappear) {
-                    createStones(playVariants[((level-1)%5)]);
-                    time--;
-                    int subtrahend = (int)(time/(10*60));
-                    int newLevel = 10 - subtrahend;
-                    if (level != newLevel) {
-                        if (newLevel == 0) newLevel = 1;
-                        level = newLevel;
-                        resetData();
-                    }
-                    int displayTime = (int) Math.round(time / 60);
+                //if (!waitingForStonesToDisappear) {
+                     if (!waitingForStonesToDisappear) createStones();
+                    if (increaseLevelCheck()) time--;
+                    int displayTime = Math.round(time / 60);
                     timeText.setText(String.valueOf(displayTime));
                     if (time <= 0 && !gameOverDisplayed) {
                         luserSprite = new Sprite(lumeSprite.getX()-lumeSprite.getWidth()*4/10,
@@ -168,12 +167,13 @@ public class HighscoreScene extends BaseScene {
                                 lumeSprite.getWidth(), lumeSprite.getWidth(),
                                 ResourcesManager.getInstance().finger_luser, vbom);
                         secondLayer.attachChild(luserSprite);
-                        displayGameOverText();
+                        displayGameOverText(true);
                     }
                     if (displayTime <= 5) {
                         timeText.setColor(Color.RED);
                     }
-                }
+                //}
+                if (isGravity) moveStones();
             }
 
             @Override
@@ -193,7 +193,6 @@ public class HighscoreScene extends BaseScene {
         makeSignsInvisible();
         setPlayVariant(playVariants[((level-1)%5)]);
         levelText.setText("L"+String.valueOf(level));
-        firstStonesInLevel = true;
         variantUsed = false;
     }
 
@@ -215,20 +214,15 @@ public class HighscoreScene extends BaseScene {
         timeText.detachSelf();
         timeText.dispose();
 
+        gameHUD.detachChildren();
         gameHUD.detachSelf();
         gameHUD.dispose();
     }
 
     @Override
     public void onBackKeyPressed() {
-        if (cameFromLevelsScene) {
-            SceneManager.getInstance().loadWorlds1to4Scene(engine);
-            disposeHUD();
-        } else {
-            SceneManager.getInstance().loadMenuScene(engine);
-            disposeHUD();
-        }
-
+        ResourcesManager.getInstance().backgroundMusic.stop();
+        SceneManager.getInstance().loadMenuScene(engine);
     }
 
     @Override
@@ -246,43 +240,84 @@ public class HighscoreScene extends BaseScene {
         // removing all game scene objects.
     }
 
-    private void displayGameOverText() {
+    private void displayGameOverText(boolean finished) {
         gameOverDisplayed = true;
 
         Scene gameOverScene = new CameraScene(camera);
         gameOverScene.setBackgroundEnabled(false);
 
-        gameOverText = new Text(camera.getCenterX(), camera.getCenterY(), resourcesManager.smallFont, "Game Over!", vbom);
+        ResourcesManager.getInstance().backgroundMusic.stop();
+        ResourcesManager.getInstance().backgroundMusic.pause();
+        ResourcesManager.getInstance().luserSound.play();
+        if (cameFromLevelsScene) activity.showSlowMoHintWorld();
+
+        float textY = (yPosLume == 2) ? camera.getCenterY() + sideLength : camera.getCenterY();
+        gameOverText = new Text(camera.getCenterX(), textY,
+                resourcesManager.smallFont, "L u s e r !", vbom) {
+            @Override
+            public boolean onAreaTouched(final TouchEvent pSceneTouchEvent, final float pTouchAreaLocalX,
+                                         final float pTouchAreaLocalY) {
+                if (pSceneTouchEvent.isActionDown()) {
+                    //clear child scenes - game will be resumed
+                    clearChildScene();
+                    setIgnoreUpdate(false);
+                    gameOverDisplayed = false;
+                    registerUpdateHandler(physicsWorld);
+                    if (cameFromLevelsScene) {
+                        SceneManager.getInstance().loadWorlds5to8Scene(engine);
+                    } else {
+                        SceneManager.getInstance().loadMenuScene(engine);
+                    }
+                    disposeHUD();
+                    return true;
+                } else {
+                    return false;
+                }
+            }
+        };
+
+        replaySprite = new Sprite(camera.getCenterX(), camera.getHeight()*2/9, sideLength, sideLength,
+                ResourcesManager.getInstance().replay_region, vbom) {
+            @Override
+            public boolean onAreaTouched(final TouchEvent pSceneTouchEvent, final float pTouchAreaLocalX,
+                                         final float pTouchAreaLocalY) {
+                if (pSceneTouchEvent.isActionDown()) {
+                    //clear child scenes - game will be resumed
+                    clearChildScene();
+                    setIgnoreUpdate(false);
+                    gameOverDisplayed = false;
+                    registerUpdateHandler(physicsWorld);
+                    SceneManager.getInstance().loadHighscoreScene(engine);
+                    disposeHUD();
+                    return true;
+                } else {
+                    return false;
+                }
+            }
+        };
+
         gameOverText.setColor(Color.RED);
+        gameOverScene.registerTouchArea(gameOverText);
         gameOverScene.attachChild(gameOverText);
+
+        gameOverScene.registerTouchArea(replaySprite);
+        gameOverScene.attachChild(replaySprite);
 
         //stop things
         unregisterUpdateHandler(physicsWorld);
         this.setIgnoreUpdate(true);
         this.setChildScene(gameOverScene, false, true, true); //set gameOverScene as a child scene - so game will be paused
+        ResourcesManager.getInstance().activity.showLevelHint();
 
-        //show interstitial setAdVisibility
-        if (!cameFromLevelsScene) {
-            ResourcesManager.getInstance().activity.showMultiInterstitial();
-        }
-
-        gameOverScene.setOnSceneTouchListener(new IOnSceneTouchListener() {
-            @Override
-            public boolean onSceneTouchEvent(Scene pScene, TouchEvent pSceneTouchEvent) {
-                //clear child scenes - game will be resumed
-                clearChildScene();
-                setIgnoreUpdate(false);
-                gameOverDisplayed = false;
-                registerUpdateHandler(physicsWorld);
-                if (cameFromLevelsScene) {
-                    SceneManager.getInstance().loadWorlds1to4Scene(engine);
-                } else {
-                    SceneManager.getInstance().loadMenuScene(engine);
+        engine.registerUpdateHandler(new TimerHandler(0.8f, new ITimerCallback() {
+            public void onTimePassed(final TimerHandler pTimerHandler) {
+                engine.unregisterUpdateHandler(pTimerHandler);
+                //show interstitial setAdVisibility
+                if (!cameFromLevelsScene) {
+                    ResourcesManager.getInstance().activity.showSingleInterstitial();
                 }
-                disposeHUD();
-                return true;
             }
-        });
+        }));
     }
 
     private void createLayers() {
@@ -340,6 +375,10 @@ public class HighscoreScene extends BaseScene {
         this.setBackground(spriteBackground);
     }
 
+    private void createMusic() {
+        ResourcesManager.getInstance().backgroundMusic.play();
+    }
+
     private void createBoard() {
         Sprite boardSprite = new Sprite(camera.getCenterX(), camera.getCenterY(), sideLength * 3, sideLength * 3, resourcesManager.board_region, vbom);
         firstLayer.attachChild(boardSprite);
@@ -350,6 +389,32 @@ public class HighscoreScene extends BaseScene {
         yPosLume = 1;
         lumeSprite = new Sprite(camera.getCenterX() - sideLength, camera.getCenterY() - sideLength, sideLength * 3 / 4, sideLength * 3 / 4, resourcesManager.lume_region, vbom);
         secondLayer.attachChild(lumeSprite);
+    }
+
+    private void createLamporghina() {
+        if (xPosLume == 1) {
+            xPosGrume = xPosLume+1;
+            yPosGrume = yPosLume;
+        } else {
+            xPosGrume = xPosLume-1;
+            yPosGrume = yPosLume;
+        }
+        if (lamporghinaSprite == null) {
+            lamporghinaSprite = new Sprite(camera.getCenterX() - sideLength + (sideLength*(xPosGrume -1)),
+                    camera.getCenterY() - sideLength + (sideLength*(yPosGrume -1)),
+                    sideLength*3/4, sideLength*3/4, resourcesManager.lamporghina_region, vbom);
+            secondLayer.attachChild(lamporghinaSprite);
+        } else {
+            lamporghinaSprite.setVisible(true);
+        }
+    }
+
+    private void removeLamporghina() {
+        if (lamporghinaSprite != null) {
+            lamporghinaSprite.setVisible(false);
+            xPosGrume = 0;
+            yPosGrume = 0;
+        }
     }
 
     private void createCoin() {
@@ -395,15 +460,31 @@ public class HighscoreScene extends BaseScene {
                         if (shootNormal) {
                             if (Math.abs(deltaX) > Math.abs(deltaY)) { //horizontal swipe
                                 if (deltaX > 0) { //left to right
-                                    createCannonball(4);
+                                    if (isLamporghina) {
+                                        moveGrume('R');
+                                    } else {
+                                        createCannonball(4);
+                                    }
                                 } else { //right to left
-                                    createCannonball(2);
+                                    if (isLamporghina) {
+                                        moveGrume('L');
+                                    } else {
+                                        createCannonball(2);
+                                    }
                                 }
                             } else { //vertical swipe
                                 if (deltaY > 0) { //up to down
-                                    createCannonball(3);
+                                    if (isLamporghina) {
+                                        moveGrume('U');
+                                    } else {
+                                        createCannonball(3);
+                                    }
                                 } else { //down to up
-                                    createCannonball(1);
+                                    if (isLamporghina) {
+                                        moveGrume('D');
+                                    } else {
+                                        createCannonball(1);
+                                    }
                                 }
                             }
                         } else {
@@ -523,8 +604,7 @@ public class HighscoreScene extends BaseScene {
         float y = 0;
         float xVel = 0;
         float yVel = 0;
-//        float speed = 1.4f*sideLength/5;
-        float speed = resourcesManager.screenWidth*6/400;
+        float speed = (rebound) ? sideLength/3 : sideLength/4; //faster cannonballs with mirror stones
         switch (direction) {
             case 1: //up to down
                 x = lumeSprite.getX();
@@ -562,7 +642,7 @@ public class HighscoreScene extends BaseScene {
                             lumeSprite.getWidth(), lumeSprite.getWidth(),
                             ResourcesManager.getInstance().finger_luser, vbom);
                     secondLayer.attachChild(luserSprite);
-                    displayGameOverText();
+                    displayGameOverText(false);
                     score = 0;
                 }
 
@@ -725,224 +805,161 @@ public class HighscoreScene extends BaseScene {
         physicsWorld.registerPhysicsConnector(new PhysicsConnector(cannonball, body, true, false));
     }
 
-    private void createStones(int mode) {
-        char stoneType = 'C';
-        float randomNumber = randomGenerator.nextFloat();
+    private void createStones() {
         double levelFactor = 1 + (level/10);
-        long interval;
+        long interval, age;
+        int direction;
 
-        switch (mode) {
-            case 1:
-                long age = (new Date()).getTime() - stoneTime;
-                int direction = (randomGenerator.nextInt(4) + 1);
-                if (level <= 5) {
-                    interval = (long) (2500/levelFactor);
-                    if (firstStonesInLevel) interval = 500;
-                    if (age >= interval) {
-                        if (firstStonesInLevel) createCoin();
-                        firstStonesInLevel = false;
-                        if (randomNumber < 0.4f) stoneType = 'T';
-                        this.showStonesToScreen(direction, stoneType);
-                        stoneTime = new Date().getTime();
-                    }
-                } else {
-                    interval = (long) (2500/levelFactor);
-                    if (firstStonesInLevel) interval = 500;
-                    if (age >= interval) {
-                        if (firstStonesInLevel) createCoin();
-                        firstStonesInLevel = false;
-                        if (randomNumber < 0.4f) stoneType = 'T';
-                        this.showStonesToScreen(direction, stoneType);
-                        stoneTime = new Date().getTime();
-                    }
-                }
-                break;
-            case 2:
-                age = (new Date()).getTime() - stoneTime;
-                direction = (randomGenerator.nextInt(4) + 1);
-                if (level <= 5) {
-
-                } else {
-
-                }
-
-                interval = (long) (2500/levelFactor);
-                if (firstStonesInLevel) interval = 500;
-                if (age >= interval) {
-                    firstStonesInLevel = false;
-                    if (randomNumber < 0.4f) stoneType = 'T';
-                    this.showStonesToScreen(direction, stoneType);
-                    stoneTime = new Date().getTime();
-                }
-                break;
-            case 3:
-                age = (new Date()).getTime() - stoneTime;
-                direction = (randomGenerator.nextInt(4) + 1);
-                if (level <= 5) {
-
-                } else {
-
-                }
-
-                interval = (long) (2400/levelFactor);
-                if (firstStonesInLevel) interval = 500;
-                if (age >= interval) {
-                    firstStonesInLevel = false;
-                    if (randomNumber < 0.4f) stoneType = 'T';
-                    this.showStonesToScreen(direction, stoneType);
-                    stoneTime = new Date().getTime();
-                }
-                break;
-            case 4:
-                age = (new Date()).getTime() - stoneTime;
-                direction = (randomGenerator.nextInt(4) + 1);
-                if (level <= 5) {
-
-                } else {
-
-                }
-
-                interval = (long) (2600/levelFactor);
-                if (firstStonesInLevel) interval = 500;
-                if (age >= interval) {
-                    firstStonesInLevel = false;
-                    if (randomNumber < 0.4f) stoneType = 'T';
-                    this.showStonesToScreen(direction, stoneType);
-                    stoneTime = new Date().getTime();
-                }
-                break;
-            case 5:
-                age = (new Date()).getTime() - stoneTime;
-                direction = (randomGenerator.nextInt(4) + 1);
-                if (level <= 5) {
-
-                } else {
-
-                }
-
-                interval = (long) (3000/levelFactor);
-                if (firstStonesInLevel) interval = 500;
-                if (age >= interval) {
-                    firstStonesInLevel = false;
-                    if (randomNumber < 0.4f) stoneType = 'T';
-                    this.showStonesToScreen(direction, stoneType);
-                    stoneTime = new Date().getTime();
-                }
-                break;
+        age = (new Date()).getTime() - stoneTime;
+        direction = (randomGenerator.nextInt(4) + 1);
+        interval = (long) (2500/levelFactor);
+        if (firstStonesInLevel) interval = 1200;
+        if (age >= interval) {
+            if (firstStonesInLevel) createCoin();
+            firstStonesInLevel = false;
+            this.showStonesToScreen(direction);
+            stoneTime = new Date().getTime();
         }
     }
 
-    private void showStonesToScreen(int directionVariant, char showArrow) {
-        float speed = 1f;
+    private void showStonesToScreen(int direction) {
         boolean firstHalf = level <= 5;
-        int randomPos = randomGenerator.nextInt(3);
         switch (playVariants[((level-1)%5)]) {
             case 1: //showing two stones next to each other
-                showMode1(firstHalf, directionVariant, showArrow);
+                showMode1(firstHalf, direction);
                 break;
             case 2: //showing two stones next to each other
-                showMode2(firstHalf, directionVariant, showArrow);
+                showMode2(firstHalf, direction);
                 break;
             case 3:
-                showMode3(firstHalf, directionVariant, showArrow);
-
-                float randomNum = randomGenerator.nextFloat();
-                if (randomNum < 0.3f) {
-                    speed = 2.5f;
-                } else {
-                    speed = 1.1f;
-                }
-                addBall(showArrow, directionVariant, randomPos, speed);
-                addArrow(directionVariant, speed);
+                showMode3(firstHalf, direction);
                 break;
             case 4:
-                showMode4(firstHalf, directionVariant, showArrow);
+                showMode4(firstHalf, direction);
                 break;
             case 5:
-                showMode5(firstHalf, directionVariant, showArrow);
+                showMode5(firstHalf, direction);
                 break;
         }
 
     }
 
-    private void showMode1(boolean firstHalf, int direction, char showArrow) {
+    private void showMode1(boolean firstHalf, int direction) {
         float levF = 1 + (level/10);
         float dirF = (direction%2 == 0) ? ratio : 1f;
         float speed = 1f;
         int randomPos = randomGenerator.nextInt(3);
         if (firstHalf) {
             int secondPos = randomPos+1;
-            if (secondPos > 3) secondPos = 0;
-            addBall('T', direction, randomPos, speed*levF*dirF); //thorny stone
-            addBall('C', direction, secondPos, speed*levF*dirF); //cracky stone
+            if (secondPos > 2) secondPos = 0;
+            addBall('T', direction, randomPos, 1, speed*levF*dirF); //thorny stone
+            addBall('C', direction, secondPos, 1, speed*levF*dirF); //cracky stone
         } else {
-            addBall((randomPos == 0) ? 'C' : 'T', direction, 0, speed*levF*dirF);
-            addBall((randomPos == 1) ? 'C' : 'T', direction, 1, speed*levF*dirF);
-            addBall((randomPos == 2) ? 'C' : 'T', direction, 2, speed*levF*dirF);
+            addBall((randomPos == 0) ? 'C' : 'T', direction, 0, 1, speed*levF*dirF);
+            addBall((randomPos == 1) ? 'C' : 'T', direction, 1, 1, speed*levF*dirF);
+            addBall((randomPos == 2) ? 'C' : 'T', direction, 2, 1, speed*levF*dirF);
         }
     }
 
-    private void showMode2(boolean firstHalf, int direction, char showArrow) {
+    private void showMode2(boolean firstHalf, int direction) {
+        float levF = 1 + (level/10);
+        float dirF = (direction%2 == 0) ? ratio : 1f;
+        float speed = 1.3f;
+        int randomPos1 = randomGenerator.nextInt(3);
+        int randomPos2 = randomGenerator.nextInt(3);
+        int dir2 = (direction > 2) ? direction-2 : direction+2;
+        if (firstHalf) {
+            dirF = ratio;
+            addBall('C', 2, randomPos1, 1, speed*dirF);
+            addBall('C', 4, randomPos2, 1, speed*dirF);
+        } else {
+            int pos2 = randomPos1+1;
+            if (pos2 == 3) pos2 = 0;
+            boolean firstCracky = randomGenerator.nextBoolean();
+            addBall((firstCracky) ? 'C' : 'T', direction, randomPos1, 1, speed*dirF);
+            addBall((firstCracky) ? 'T' : 'C', direction, pos2, 1, speed*dirF);
+
+            randomPos1 = randomGenerator.nextInt(3);
+            pos2 = randomPos1+1;
+            if (pos2 == 3) pos2 = 0;
+            firstCracky = randomGenerator.nextBoolean();
+            addBall((firstCracky) ? 'C' : 'T', dir2, randomPos1, 1, speed*dirF);
+            addBall((firstCracky) ? 'T' : 'C', dir2, pos2, 1, speed*dirF);
+        }
+    }
+
+    private void showMode3(boolean firstHalf, int direction) {
         float levF = 1 + (level/10);
         float dirF = (direction%2 == 0) ? ratio : 1f;
         float speed = 1f;
         int randomPos = randomGenerator.nextInt(3);
         if (firstHalf) {
-            addBall((randomPos == 0) ? 'C' : 'T', direction, 0, speed*levF*dirF);
-            addBall((randomPos == 1) ? 'C' : 'T', direction, 1, speed*levF*dirF);
-            addBall((randomPos == 2) ? 'C' : 'T', direction, 2, speed*levF*dirF);
+            boolean middleFirst = randomGenerator.nextBoolean();
+            if (middleFirst) {
+                addBall('T', direction, 1, 1, 1*levF*dirF);
+                addBall('C', direction, 0, 1, 1*levF*dirF);
+                addBall('C', direction, 2, 1, 1*levF*dirF);
+                addBall('T', direction, 0, 2.3f, 1*levF*dirF);
+                addBall('T', direction, 2, 2.3f, 1*levF*dirF);
+            } else {
+                addBall('C', direction, 1, 1, 1*levF*dirF);
+                addBall('T', direction, 0, 1, 1*levF*dirF);
+                addBall('T', direction, 2, 1, 1*levF*dirF);
+                addBall('T', direction, 1, 2.3f, 1*levF*dirF);
+            }
         } else {
-            addBall((randomPos == 0) ? 'C' : 'T', direction, 0, speed*levF*dirF);
-            addBall((randomPos == 1) ? 'C' : 'T', direction, 1, speed*levF*dirF);
-            addBall((randomPos == 2) ? 'C' : 'T', direction, 2, speed*levF*dirF);
+            boolean variant = randomGenerator.nextBoolean();
+            int randomDiaDir = randomGenerator.nextInt(4)+5; //values betw 5 and 8
+            if (variant) { //three dia
+                addBall('T', randomDiaDir, 0, 1, 1f*levF);
+                addBall('T', randomDiaDir, 1, 2, 1f*levF);
+                addBall('T', randomDiaDir, 2, 3, 1f*levF);
+            } else { //two dia
+                addBall('T', randomDiaDir, 1, 1, 1f*levF);
+                addBall('T', randomDiaDir, 2, 2, 1f*levF);
+            }
+            addBall('C', direction, 0, 1, 1*levF*dirF);
+            addBall('C', direction, 1, 1, 1*levF*dirF);
+            addBall('C', direction, 2, 1, 1*levF*dirF);
         }
     }
 
-    private void showMode3(boolean firstHalf, int direction, char showArrow) {
+    private void showMode4(boolean firstHalf, int direction) {
         float levF = 1 + (level/10);
         float dirF = (direction%2 == 0) ? ratio : 1f;
         float speed = 1f;
         int randomPos = randomGenerator.nextInt(3);
         if (firstHalf) {
-            addBall((randomPos == 0) ? 'C' : 'T', direction, 0, speed*levF*dirF);
-            addBall((randomPos == 1) ? 'C' : 'T', direction, 1, speed*levF*dirF);
-            addBall((randomPos == 2) ? 'C' : 'T', direction, 2, speed*levF*dirF);
+            addBall('M', direction, 0, 1, speed*levF*dirF);
+            addBall('M', direction, 1, 1, speed*levF*dirF);
+            addBall('M', direction, 2, 1, speed*levF*dirF);
         } else {
-            addBall((randomPos == 0) ? 'C' : 'T', direction, 0, speed*levF*dirF);
-            addBall((randomPos == 1) ? 'C' : 'T', direction, 1, speed*levF*dirF);
-            addBall((randomPos == 2) ? 'C' : 'T', direction, 2, speed*levF*dirF);
+            addBall((randomPos == 0) ? 'M' : 'T', direction, 0, 1, speed*levF*dirF);
+            addBall((randomPos == 1) ? 'M' : 'T', direction, 1, 1, speed*levF*dirF);
+            addBall((randomPos == 2) ? 'M' : 'T', direction, 2, 1, speed*levF*dirF);
         }
     }
 
-    private void showMode4(boolean firstHalf, int direction, char showArrow) {
+    private void showMode5(boolean firstHalf, int direction) {
         float levF = 1 + (level/10);
         float dirF = (direction%2 == 0) ? ratio : 1f;
-        float speed = 1f;
+        float otherDirF = (direction%2 == 0) ? 1f : ratio;
+        float speed = 0.8f;
         int randomPos = randomGenerator.nextInt(3);
         if (firstHalf) {
-            addBall((randomPos == 0) ? 'C' : 'T', direction, 0, speed*levF*dirF);
-            addBall((randomPos == 1) ? 'C' : 'T', direction, 1, speed*levF*dirF);
-            addBall((randomPos == 2) ? 'C' : 'T', direction, 2, speed*levF*dirF);
+            addBall((randomPos == 0) ? 'C' : 'T', direction, 0, 1, speed*levF*dirF);
+            addBall((randomPos == 1) ? 'C' : 'T', direction, 1, 1, speed*levF*dirF);
+            addBall((randomPos == 2) ? 'C' : 'T', direction, 2, 1, speed*levF*dirF);
         } else {
-            addBall((randomPos == 0) ? 'C' : 'T', direction, 0, speed*levF*dirF);
-            addBall((randomPos == 1) ? 'C' : 'T', direction, 1, speed*levF*dirF);
-            addBall((randomPos == 2) ? 'C' : 'T', direction, 2, speed*levF*dirF);
-        }
-    }
-
-    private void showMode5(boolean firstHalf, int direction, char showArrow) {
-        float levF = 1 + (level/10);
-        float dirF = (direction%2 == 0) ? ratio : 1f;
-        float speed = 1f;
-        int randomPos = randomGenerator.nextInt(3);
-        if (firstHalf) {
-            addBall((randomPos == 0) ? 'C' : 'T', direction, 0, speed*levF*dirF);
-            addBall((randomPos == 1) ? 'C' : 'T', direction, 1, speed*levF*dirF);
-            addBall((randomPos == 2) ? 'C' : 'T', direction, 2, speed*levF*dirF);
-        } else {
-            addBall((randomPos == 0) ? 'C' : 'T', direction, 0, speed*levF*dirF);
-            addBall((randomPos == 1) ? 'C' : 'T', direction, 1, speed*levF*dirF);
-            addBall((randomPos == 2) ? 'C' : 'T', direction, 2, speed*levF*dirF);
+            int plusDir = direction+1;
+            int minusDir = direction-1;
+            addBall('C', direction, 0, 1, speed*levF*dirF);
+            addBall('C', direction, 1, 1, speed*levF*dirF);
+            addBall('C', direction, 2,  1, speed*levF*dirF);
+            addBall('T', plusDir, randomPos, 1, speed*levF*otherDirF);
+            addBall('T', plusDir, randomPos, 2, speed*levF*otherDirF);
+            addBall('T', minusDir, randomPos, 1, speed*levF*otherDirF);
+            addBall('T', minusDir, randomPos, 2, speed*levF*otherDirF);
         }
     }
 
@@ -951,7 +968,7 @@ public class HighscoreScene extends BaseScene {
         int stonesOverHalf = 0;
         for (Sprite stone : elements) {
             Ball ball = (Ball) stone.getUserData();
-            int direction = ball.getDirection()%4;
+            int direction = ball.getDirection()%4; //TODO CHECK useful?
             if (direction == 0) direction = 4;
 
             switch (direction) {
@@ -1059,8 +1076,10 @@ public class HighscoreScene extends BaseScene {
         }
     }
 
-    public Sprite addBall(final char type, int direction, int position, float speedFactor) {
+    public Sprite addBall(final char type, int direction, int position, float row, float speedFactor) {
         final FixtureDef FIXTURE_DEF = PhysicsFactory.createFixtureDef(0, 0.01f, 0.5f);
+        final Vector2 gravity;
+        final Body body;
         float x = 0;
         float y = 0;
         float xVel = 0;
@@ -1086,27 +1105,55 @@ public class HighscoreScene extends BaseScene {
         switch (direction) {
             case 1:
                 x = camera.getCenterX() - sideLength + sideLength*position;
-                y = camera.getHeight() - sideLength / 2;
+                y = camera.getHeight() - sideLength / 2 + sideLength*row;
                 xVel = (isGravity) ? (gravityDirection-3)*speed : 0;
                 yVel = -speed;
                 break;
             case 2:
-                x = camera.getWidth() - sideLength / 2;
+                x = camera.getWidth() - sideLength / 2 + sideLength*row;
                 y = camera.getCenterY()-sideLength + sideLength*position;
                 xVel = -speed;
                 yVel = (isGravity) ? (gravityDirection-2)*speed : 0;
                 break;
             case 3:
                 x = camera.getCenterX()-sideLength + sideLength*position;
-                y = sideLength / 2;
+                y = sideLength / 2 - sideLength*row;
                 xVel = (isGravity) ? (gravityDirection-3)*speed : 0;
                 yVel = speed;
                 break;
             case 4:
-                x = sideLength / 2;
+                x = sideLength / 2 - sideLength*row;
                 y = camera.getCenterY()-sideLength + sideLength*position;
                 xVel = speed;
                 yVel = (isGravity) ? (gravityDirection-2)*speed : 0;
+                break;
+            case 5:
+                x = camera.getCenterX() - camera.getCenterY() +
+                        sideLength/2 - sideLength*3 + sideLength*position;
+                y = camera.getHeight() - sideLength/2 + sideLength*row;
+                xVel = speed;
+                yVel = -speed;
+                break;
+            case 6:
+                x = camera.getCenterX() + camera.getCenterY() -
+                        sideLength/2 + sideLength*3 - sideLength*position;
+                y = camera.getHeight() - sideLength/2 + sideLength*row;
+                xVel = -speed;
+                yVel = -speed;
+                break;
+            case 7:
+                x = camera.getCenterX() + camera.getCenterY() -
+                        sideLength/2 + sideLength*3 - sideLength*position;
+                y = sideLength/2 - sideLength*row;
+                xVel = -speed;
+                yVel = speed;
+                break;
+            case 8:
+                x = camera.getCenterX() - camera.getCenterY() +
+                        sideLength/2 - sideLength*3 + sideLength*position;
+                y = sideLength/2 - sideLength*row;
+                xVel = speed;
+                yVel = speed;
                 break;
         }
 
@@ -1118,29 +1165,51 @@ public class HighscoreScene extends BaseScene {
                 stoneCircle = new Circle(this.getX(), this.getY(), this.getWidth() / 2);
 
                 if ((stoneCircle.collision(lumeCircle) && !gameOverDisplayed && !isLamporghina) ||
-                        (isLamporghina && type == 'T' && !gameOverDisplayed)) {
+                        (stoneCircle.collision(lumeCircle) && isLamporghina && type == 'T' && !gameOverDisplayed)) {
                     luserSprite = new Sprite(lumeSprite.getX()-lumeSprite.getWidth()*4/10,
                             lumeSprite.getY() + lumeSprite.getHeight()*5/10,
                             lumeSprite.getWidth(), lumeSprite.getWidth(),
                             ResourcesManager.getInstance().finger_luser, vbom);
                     secondLayer.attachChild(luserSprite);
-                    displayGameOverText();
+                    displayGameOverText(false);
                     score = 0;
                 } else if (stoneCircle.collision(lumeCircle) && isLamporghina && type == 'C') {
-                    final Sprite crackyBallToRemove = this;
+                    crackyStonesToRemove.add(this);
+                    elementsToRemove.add(this);
 
                     engine.runOnUpdateThread(new Runnable() {
                         @Override
                         public void run() {
-                            crackyBallToRemove.detachSelf();
-                            crackyBallToRemove.dispose();
+                            if (crackyStonesToRemove.size() > 0) {
+                                for (Sprite sprite : crackyStonesToRemove) {
+                                    sprite.detachSelf();
+                                    sprite.dispose();
+                                }
+                                elementsToRemove.clear();
+                                crackyStonesToRemove.clear();
+                            }
                         }
                     });
+                    elements.removeAll(elementsToRemove);
+                    crackyStones.removeAll(crackyStonesToRemove);
+                }
+
+                if (isLamporghina) {
+                    final Circle lamporghinaCircle;
+                    lamporghinaCircle = new Circle(lamporghinaSprite.getX(), lamporghinaSprite.getY(), lamporghinaSprite.getWidth()/2);
+                    if (stoneCircle.collision(lamporghinaCircle) && !gameOverDisplayed) {
+                        luserSprite = new Sprite(lumeSprite.getX()-lumeSprite.getWidth()*4/10,
+                                lumeSprite.getY() + lumeSprite.getHeight()*5/10,
+                                lumeSprite.getWidth(), lumeSprite.getWidth(),
+                                ResourcesManager.getInstance().finger_luser, vbom);
+                        secondLayer.attachChild(luserSprite);
+                        displayGameOverText(false);
+                    }
                 }
 
 
-                if (this.getX() < -sideLength || this.getY() < -sideLength ||
-                        this.getX() > camera.getWidth() + sideLength || this.getY() > camera.getWidth() + sideLength) {
+                if (this.getX() < -4*sideLength || this.getY() < -4*sideLength ||
+                        this.getX() > camera.getWidth() + 4*sideLength || this.getY() > camera.getWidth() + 4*sideLength) {
                     elementsToRemove.add(this);
                     if (type == 'C') crackyStonesToRemove.add(this);
                     if (type == 'M') mirrorStonesToRemove.add(this);
@@ -1167,16 +1236,69 @@ public class HighscoreScene extends BaseScene {
             }
         };
         secondLayer.attachChild(stone);
-        final Body body = PhysicsFactory.createCircleBody(physicsWorld, stone, BodyType.KinematicBody, FIXTURE_DEF);
+        if (isGravity) {
+            gravity = getGravity(gravityDirection);
+            body = PhysicsFactory.createCircleBody(physicsWorld, stone, BodyType.DynamicBody, FIXTURE_DEF);
+        } else {
+            gravity = null;
+            body = PhysicsFactory.createCircleBody(physicsWorld, stone, BodyType.KinematicBody, FIXTURE_DEF);
+        }
         if (type == 'C') {
             crackyStones.add(stone);
         } else if (type == 'M') mirrorStones.add(stone);
         body.setLinearVelocity(xVel, yVel);
         physicsWorld.registerPhysicsConnector(new PhysicsConnector(stone, body, true, false));
-        ball = new Ball(direction, null, body, stone, (type == 'T'), false, speedFactor);
+        ball = new Ball(direction, gravity, body, stone, (type == 'T'), false, speedFactor);
         stone.setUserData(ball);
         elements.add(stone);
         return stone;
+    }
+
+    private void moveStones() {
+        for (Sprite stone : elements) {
+            final Circle lumeCircle, stoneCircle;
+            Ball ball = (Ball) stone.getUserData();
+            Vector2 gravity = ball.getGravity();
+            Body body = ball.getBody();
+            boolean thorny = ball.isThorny();
+            lumeCircle = new Circle(lumeSprite.getX(), lumeSprite.getY(), lumeSprite.getWidth() / 2);
+            stoneCircle = new Circle(stone.getX(), stone.getY(), stone.getWidth() / 2);
+
+
+            if (gravity != null) {
+                body.applyForce(gravity, body.getWorldCenter());
+
+                if (stoneCircle.collision(lumeCircle) && !gameOverDisplayed) {
+                    luserSprite = new Sprite(lumeSprite.getX()-lumeSprite.getWidth()*4/10,
+                            lumeSprite.getY() + lumeSprite.getHeight()*5/10,
+                            lumeSprite.getWidth(), lumeSprite.getWidth(),
+                            ResourcesManager.getInstance().finger_luser, vbom);
+                    secondLayer.attachChild(luserSprite);
+                    displayGameOverText(false);
+                    score = 0;
+                }
+                if (stone.getX() < -sideLength || stone.getY() < -sideLength ||
+                        stone.getX() > camera.getWidth() + sideLength || stone.getY() > camera.getWidth() + sideLength) {
+                    elementsToRemove.add(stone);
+                    if (!thorny) crackyStonesToRemove.add(stone);
+
+                    engine.runOnUpdateThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            for (Sprite sprite : elementsToRemove) {
+                                sprite.detachSelf();
+                                sprite.dispose();
+                            }
+                            crackyStonesToRemove.clear();
+                            elementsToRemove.clear();
+                        }
+
+                    });
+                }
+            }
+        }
+        crackyStones.removeAll(crackyStonesToRemove);
+        elements.removeAll(elementsToRemove);
     }
 
     private void rebound(Sprite cannonBall) {
@@ -1327,7 +1449,7 @@ public class HighscoreScene extends BaseScene {
                 line = new Line(this.getX(), this.getY(), peakX, peakY);
 
                 if (line.collision(lumeCircle)) {
-                    displayGameOverText();
+                    displayGameOverText(false);
                 }
 
                 if (this.getX() < -sideLength || this.getY() < -sideLength ||
@@ -1369,27 +1491,54 @@ public class HighscoreScene extends BaseScene {
         createCoin();
     }
 
+    private boolean increaseLevelCheck() {
+        boolean continueCounting = true;
+        int subtrahend = (int)(time/(10*60));
+        int newLevel = 10 - subtrahend;
+        if (level != newLevel) { //time for a new level
+            continueCounting = false;
+            if (newLevel == 0) newLevel = 1;
+            waitingForStonesToDisappear = true;
+            if (allStonesGone() && waitingForStonesToDisappear) {
+                level = newLevel;
+                resetData();
+                if (isLamporghina) {
+                    createLamporghina();
+                } else {
+                    removeLamporghina();
+                }
+                waitingForStonesToDisappear = false;
+                continueCounting = true;
+            }
+        }
+        return continueCounting;
+    }
+
     //moves the player in X or Y direction
     public void movePlayer(char direction) {
         switch (direction) {
             case 'R':
-                if (xPosLume < 3) {
+                if (xPosLume < 3 && !(xPosLume+1 == xPosGrume && yPosLume == yPosGrume)) {
                     xPosLume++;
+                    lumeSprite.setPosition(lumeSprite.getX() + sideLength, lumeSprite.getY());
                 }
                 break;
             case 'L':
-                if (xPosLume > 1) {
+                if (xPosLume > 1 && !(xPosLume-1 == xPosGrume && yPosLume == yPosGrume)) {
                     xPosLume--;
+                    lumeSprite.setPosition(lumeSprite.getX() - sideLength, lumeSprite.getY());
                 }
                 break;
             case 'D':
-                if (yPosLume > 1) {
+                if (yPosLume > 1 && !(xPosLume == xPosGrume && yPosLume-1 == yPosGrume)) {
                     yPosLume--;
+                    lumeSprite.setPosition(lumeSprite.getX(), lumeSprite.getY() - sideLength);
                 }
                 break;
             case 'U':
-                if (yPosLume < 3) {
+                if (yPosLume < 3 && !(xPosLume == xPosGrume && yPosLume+1 == yPosGrume)) {
                     yPosLume++;
+                    lumeSprite.setPosition(lumeSprite.getX(), lumeSprite.getY() + sideLength);
                 }
                 break;
             case '1':
@@ -1427,6 +1576,37 @@ public class HighscoreScene extends BaseScene {
         }
         lumeSprite.setPosition(camera.getCenterX() - sideLength + (xPosLume-1)*sideLength,
                 camera.getCenterY() - sideLength + (yPosLume-1)*sideLength);
+        coinCheck();
+    }
+
+    //moves the player in X or Y direction
+    public void moveGrume(char direction) {
+        switch (direction) {
+            case 'R':
+                if (xPosGrume < 3 && !(xPosLume == xPosGrume+1 && yPosLume == yPosGrume)) {
+                    xPosGrume++;
+                    lamporghinaSprite.setPosition(lamporghinaSprite.getX() + sideLength, lamporghinaSprite.getY());
+                }
+                break;
+            case 'L':
+                if (xPosGrume > 1 && !(xPosLume == xPosGrume-1 && yPosLume == yPosGrume)) {
+                    xPosGrume--;
+                    lamporghinaSprite.setPosition(lamporghinaSprite.getX() - sideLength, lamporghinaSprite.getY());
+                }
+                break;
+            case 'D':
+                if (yPosGrume > 1 && !(xPosLume == xPosGrume && yPosLume == yPosGrume-1)) {
+                    yPosGrume--;
+                    lamporghinaSprite.setPosition(lamporghinaSprite.getX(), lamporghinaSprite.getY() - sideLength);
+                }
+                break;
+            case 'U':
+                if (yPosGrume < 3 && !(xPosLume == xPosGrume && yPosLume == yPosGrume+1)) {
+                    yPosGrume++;
+                    lamporghinaSprite.setPosition(lamporghinaSprite.getX(), lamporghinaSprite.getY() + sideLength);
+                }
+                break;
+        }
         coinCheck();
     }
 
