@@ -52,6 +52,7 @@ public class MainMenuScene extends BaseScene implements IOnMenuItemClickListener
     private final int MENU_AD_PARTNER = 5;
     private final int MENU_MILITARY = 6;
     private final int MENU_HIGH = 7;
+    private final int MENU_SHOPPING = 8;
 
     private Text worldText;
 
@@ -237,6 +238,10 @@ public class MainMenuScene extends BaseScene implements IOnMenuItemClickListener
                 //activity.showHighHint();
                 SceneManager.getInstance().loadHighscoreScene(engine);
                 return true;
+            case MENU_SHOPPING:
+                activity.toastOnUiThread("Making a photo", 0);
+                //TODO camera
+                return true;
             default:
                 return false;
         }
@@ -295,6 +300,7 @@ public class MainMenuScene extends BaseScene implements IOnMenuItemClickListener
         final IMenuItem highMenuItem = new ScaleMenuItemDecorator(new SpriteMenuItem(MENU_HIGH, 60, 60, resourcesManager.play_coin_region, vbom), 1.2f, 1);
         final IMenuItem playMenuItem = new ScaleMenuItemDecorator(new SpriteMenuItem(MENU_PLAY, 60, 60, resourcesManager.play_region, vbom), 1.2f, 1);
         final IMenuItem levelsMenuItem = new ScaleMenuItemDecorator(new SpriteMenuItem(MENU_LEVELS, 60, 60, resourcesManager.world_region, vbom), 1.2f, 1);
+        final IMenuItem shoppingMenuItem = new ScaleMenuItemDecorator(new SpriteMenuItem(MENU_SHOPPING, 60, 60, resourcesManager.shopping_region, vbom), 1.2f, 1);
         final IMenuItem multiMenuItem = new ScaleMenuItemDecorator(new SpriteMenuItem(MENU_MULTI, 60, 60, resourcesManager.play_multi_region, vbom), 1.2f, 1);
         ballFallMenuItem = new ScaleMenuItemDecorator(new SpriteMenuItem(MENU_AD_PARTNER, 110, 110, resourcesManager.ball_fall, vbom), 1.2f, 1);
         militaryMenuItem = new ScaleMenuItemDecorator(new SpriteMenuItem(MENU_AD_PARTNER, 110, 110, resourcesManager.military, vbom), 1.2f, 1);
@@ -310,6 +316,7 @@ public class MainMenuScene extends BaseScene implements IOnMenuItemClickListener
         menuChildScene.addMenuItem(highMenuItem);
         menuChildScene.addMenuItem(playMenuItem);
         menuChildScene.addMenuItem(levelsMenuItem);
+        menuChildScene.addMenuItem(shoppingMenuItem);
         menuChildScene.addMenuItem(multiMenuItem);
         menuChildScene.addMenuItem(ballFallMenuItem);
         menuChildScene.addMenuItem(militaryMenuItem);
@@ -329,6 +336,7 @@ public class MainMenuScene extends BaseScene implements IOnMenuItemClickListener
         highMenuItem.setPosition(camera.getCenterX()-100, camera.getCenterY());
         playMenuItem.setPosition(camera.getCenterX(), camera.getCenterY());
         levelsMenuItem.setPosition(camera.getCenterX()+100, camera.getCenterY());
+        shoppingMenuItem.setPosition(camera.getCenterX()+200, camera.getCenterY());
         multiMenuItem.setPosition(camera.getCenterX()-50, playMenuItem.getY() - 170);
         ballFallMenuItem.setPosition(resourcesManager.screenWidth*6.8f/32, camera.getCenterY()-110);
         militaryMenuItem.setPosition(resourcesManager.screenWidth*6.8f/32, camera.getCenterY()-110);

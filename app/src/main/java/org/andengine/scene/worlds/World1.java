@@ -651,21 +651,21 @@ public class World1 extends BaseScene {
                 } else if (variantUsed) {
                     switch (variant) {
                         case 1:
-                            if (v1FirstStone != null && v1FirstStone.getX() <= (camera.getWidth()/2) + (camera.getHeight()/2) - (sideLength*3/4) && v1FirstStone.getX() != 0) {
+                            if (v1FirstStone != null && v1FirstStone.getX() <= (camera.getWidth()/2) + (camera.getHeight()/2) + sideLength/4 && v1FirstStone.getX() != 0) {
                                 showStonesToScreen(variant, false);
                                 v1FirstStone = null;
                                 variantUsed = false;
                             }
                             break;
                         case 2:
-                            if (v2FirstStone != null && v2FirstStone.getX() <= (camera.getWidth()/2) + (camera.getHeight()/2) - (sideLength*3/4) && v2FirstStone.getX() != 0) {
+                            if (v2FirstStone != null && v2FirstStone.getX() <= (camera.getWidth()/2) + (camera.getHeight()/2) + sideLength/4 && v2FirstStone.getX() != 0) {
                                 showStonesToScreen(variant, false);
                                 v2FirstStone = null;
                                 variantUsed = false;
                             }
                             break;
                         case 3:
-                            if (v3FirstStone != null && v3FirstStone.getX() <= (camera.getWidth()/2) + (camera.getHeight()/2) - (sideLength*3/4) && v3FirstStone.getX() != 0) {
+                            if (v3FirstStone != null && v3FirstStone.getX() <= (camera.getWidth()/2) + (camera.getHeight()/2) + sideLength/4 && v3FirstStone.getX() != 0) {
                                 showStonesToScreen(variant, false);
                                 v3FirstStone = null;
                                 variantUsed = false;
@@ -688,14 +688,14 @@ public class World1 extends BaseScene {
                 } else if (variantUsed) {
                     switch (variant) {
                         case 1:
-                            if (v1FirstStone != null && v1FirstStone.getX() <= (camera.getWidth()/2) + (camera.getHeight()/2) - (sideLength*3/4) && v1FirstStone.getX() != 0) {
+                            if (v1FirstStone != null && v1FirstStone.getX() <= (camera.getWidth()/2) + (camera.getHeight()/2) + sideLength/4 && v1FirstStone.getX() != 0) {
                                 showStonesToScreen(variant, false);
                                 v1FirstStone = null;
                                 variantUsed = false;
                             }
                             break;
                         case 2:
-                            if (v2FirstStone != null && v2FirstStone.getX() <= (camera.getWidth()/2) + (camera.getHeight()/2) - (sideLength*3/4) && v2FirstStone.getX() != 0) {
+                            if (v2FirstStone != null && v2FirstStone.getX() <= (camera.getWidth()/2) + (camera.getHeight()/2) + sideLength/4 && v2FirstStone.getX() != 0) {
                                 showStonesToScreen(variant, false);
                                 v2FirstStone = null;
                                 variantUsed = false;
@@ -765,29 +765,30 @@ public class World1 extends BaseScene {
                 }
                 break;
             case 3:
+                float lev3Factor = 0.85f;
                 switch (directionVariant) {
                     case 1:
                         if (thornyFirst) {
-                            v1FirstStone = addBall(true, 2, 1, 1.5f);
-                            addBall(true, 4, 1, 1.5f);
-                            addBall(false, 1, 0, 1.3f);
-                            addBall(false, 1, 2, 1.3f);
-                            addBall(false, 3, 0, 1.3f);
-                            addBall(false, 3, 2, 1.3f);
+                            v1FirstStone = addBall(true, 2, 1, 1.5f*lev3Factor);
+                            addBall(true, 4, 1, 1.5f*lev3Factor);
+                            addBall(false, 1, 0, 1.3f*lev3Factor);
+                            addBall(false, 1, 2, 1.3f*lev3Factor);
+                            addBall(false, 3, 0, 1.3f*lev3Factor);
+                            addBall(false, 3, 2, 1.3f*lev3Factor);
                         } else {
-                            addBall(true, 1, 1, 1.5f);
-                            addBall(true, 3, 1, 1.5f);
+                            addBall(true, 1, 1, 1.5f*lev3Factor);
+                            addBall(true, 3, 1, 1.5f*lev3Factor);
                         }
                         break;
                     case 2:
                         if (thornyFirst) {
-                            v2FirstStone = addBall(true, 2, 0, 1.5f);
-                            addBall(true, 4, 2, 1.5f);
-                            addBall(false, 1, 1, 1.3f);
-                            addBall(false, 3, 1, 1.3f);
+                            v2FirstStone = addBall(true, 2, 0, 1.5f*lev3Factor);
+                            addBall(true, 4, 2, 1.5f*lev3Factor);
+                            addBall(false, 1, 1, 1.3f*lev3Factor);
+                            addBall(false, 3, 1, 1.3f*lev3Factor);
                         } else {
-                            addBall(true, 1, 0, 1.5f);
-                            addBall(true, 3, 2, 1.5f);
+                            addBall(true, 1, 0, 1.5f*lev3Factor);
+                            addBall(true, 3, 2, 1.5f*lev3Factor);
                         }
                         break;
                 }
@@ -892,21 +893,21 @@ public class World1 extends BaseScene {
         switch (direction) {
             case 1:
                 x = camera.getCenterX() - sideLength + sideLength*position;
-                y = camera.getHeight() - sideLength / 2;
+                y = (float) (camera.getHeight() + sideLength/2);
                 yVel = -speed;
                 break;
             case 2:
-                x = camera.getWidth() - sideLength / 2;
+                x = (float) (camera.getWidth() + sideLength/2);
                 y = camera.getCenterY()-sideLength + sideLength*position;
                 xVel = -speed;
                 break;
             case 3:
                 x = camera.getCenterX()-sideLength + sideLength*position;
-                y = sideLength / 2;
+                y = -sideLength/2;
                 yVel = speed;
                 break;
             case 4:
-                x = sideLength / 2;
+                x = -sideLength/2;
                 y = camera.getCenterY()-sideLength + sideLength*position;
                 xVel = speed;
                 break;
@@ -937,8 +938,8 @@ public class World1 extends BaseScene {
 //                }
 
 
-                if (this.getX() < -sideLength || this.getY() < -sideLength ||
-                        this.getX() > camera.getWidth() + sideLength || this.getY() > camera.getWidth() + sideLength) {
+                if (this.getX() < -3*sideLength || this.getY() < -3*sideLength ||
+                        this.getX() > camera.getWidth() + 3*sideLength || this.getY() > camera.getWidth() + 3*sideLength) {
                     stonesToRemove.add(this);
                     if (!thorny) crackyStonesToRemove.add(this);
 

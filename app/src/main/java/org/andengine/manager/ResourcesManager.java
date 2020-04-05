@@ -72,6 +72,7 @@ public class ResourcesManager {
     public ITextureRegion ball_fall;
     public ITextureRegion military;
     public ITextureRegion play_coin_region;
+    public ITextureRegion shopping_region;
 
     //Help Region
     public ITextureRegion help_background_region;
@@ -186,10 +187,6 @@ public class ResourcesManager {
     public BluetoothDevice bluetoothDevice;
     public String player;
 
-    // Level Complete Window
-    public ITextureRegion complete_window_region;
-    public ITiledTextureRegion complete_stars_region;
-
     //Sound and Music
     public Music backgroundMusic;
     public Sound luserSound;
@@ -255,6 +252,7 @@ public class ResourcesManager {
             ball_fall = BitmapTextureAtlasTextureRegionFactory.createFromAsset(menuTextureAtlas, activity, "ball_fall.png");
             military = BitmapTextureAtlasTextureRegionFactory.createFromAsset(menuTextureAtlas, activity, "military.png");
             play_coin_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(menuTextureAtlas, activity, "play_coin.png");
+            shopping_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(menuTextureAtlas, activity, "shopping.png");
             upload_background_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(menuTextureAtlas, activity, "upload_background.png");
             confirm_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(menuTextureAtlas, activity, "confirm.png");
             inputtext_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(menuTextureAtlas, activity, "inputtext.png");
@@ -518,9 +516,12 @@ public class ResourcesManager {
             BitmapTextureAtlasTextureRegionFactory.setAssetBasePath("gfx/game/");
             highScoreAtlas = new BuildableBitmapTextureAtlas(activity.getTextureManager(), 2048, 2048, TextureOptions.BILINEAR);
             background_world0_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(highScoreAtlas, activity, "background_world1.png");
+            arrow_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(highScoreAtlas, activity, "arrow.png");
+            arrow_yellow_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(highScoreAtlas, activity, "arrow_yellow.png");
             cracky_mirror_sign_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(highScoreAtlas, activity, "cracky_mirror_sign.png");
             cracky_mirror = BitmapTextureAtlasTextureRegionFactory.createFromAsset(highScoreAtlas, activity, "cracky_mirror.png");
             lamporghina_sign_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(highScoreAtlas, activity, "lamporghina_sign.png");
+            lamporghina_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(highScoreAtlas, activity, "lamporghina.png");
             helmet_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(highScoreAtlas, activity, "helmet_sign.png");
             try {
                 this.highScoreAtlas.build(new BlackPawnTextureAtlasBuilder<IBitmapTextureAtlasSource, BitmapTextureAtlas>(0, 1, 0));
