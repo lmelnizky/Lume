@@ -61,6 +61,7 @@ public class GameActivity extends BaseGameActivity implements RewardedVideoAdLis
     private static final String FIRSTSLOWMOMENU = "FIRSTSLOWMOMENU";
     private static final String IS_NAME_ONLINE = "IS_NAME_ONLINE"; //boolean
     private static final String NAME_ONLINE = "IS_NAME_ONLINE"; //TODO String online name
+    private static final String COINS = "COINS";
 
     private BoundCamera camera;
     private EngineOptions engineOptions;
