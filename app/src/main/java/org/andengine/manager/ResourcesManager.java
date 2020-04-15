@@ -301,7 +301,7 @@ public class ResourcesManager {
 
     public void loadShopResources() {
         if (shopTextureAtlas == null) {
-            BitmapTextureAtlasTextureRegionFactory.setAssetBasePath("gfx/game");
+            BitmapTextureAtlasTextureRegionFactory.setAssetBasePath("gfx/game/");
             shopTextureAtlas = new BuildableBitmapTextureAtlas(activity.getTextureManager(), 512, 512, TextureOptions.BILINEAR);
             background_shop_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(shopTextureAtlas, activity, "background_shop.png");
             lume_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(shopTextureAtlas, activity, "lume.png");
