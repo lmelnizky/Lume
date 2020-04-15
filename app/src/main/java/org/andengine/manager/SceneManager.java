@@ -8,6 +8,7 @@ import org.andengine.engine.handler.timer.TimerHandler;
 import org.andengine.scene.HelpScene;
 import org.andengine.scene.HighscoreScene;
 import org.andengine.scene.MultiScene;
+import org.andengine.scene.ShopScene;
 import org.andengine.scene.Worlds1to4Scene;
 import org.andengine.scene.LoadingScene;
 import org.andengine.scene.MainMenuScene;
@@ -35,6 +36,7 @@ public class SceneManager {
     public BaseScene gameScene;
     public BaseScene multiScene;
     public BaseScene highscoreScene;
+    public BaseScene shopScene;
     public BaseScene helpScene;
     public BaseScene loadingScene;
     public BaseScene worlds1to4Scene;
@@ -329,6 +331,21 @@ public class SceneManager {
         }));
     }
 
+    public void loadShopScene(final Engine mEngine) {
+        loadingScene = new LoadingScene();
+        setScene(loadingScene);
+        ResourcesManager.getInstance().unloadMenuTextures();
+        mEngine.registerUpdateHandler(new TimerHandler(0.1f, new ITimerCallback() {
+            @Override
+            public void onTimePassed(TimerHandler pTimerHandler) {
+                mEngine.unregisterUpdateHandler(pTimerHandler);
+                ResourcesManager.getInstance().loadShopResources();
+                shopScene = new ShopScene();
+                setScene(shopScene);
+            }
+        }));
+    }
+
     public void loadMultiScene(final Engine mEngine) {
         loadingScene = new LoadingScene();
         setScene(loadingScene);
@@ -359,6 +376,7 @@ public class SceneManager {
                 ResourcesManager.getInstance().loadMenuTextures();
                 setScene(menuScene);
                 menuScene.updateWorldText();
+                menuScene.updateCoinText();
             }
         }));
     }

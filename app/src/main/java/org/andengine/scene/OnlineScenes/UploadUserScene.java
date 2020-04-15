@@ -9,6 +9,7 @@ import org.andengine.OnlineUsers.User;
 import org.andengine.OnlineUsers.UsernameLoaderManager;
 import org.andengine.OnlineUsers.World;
 import org.andengine.base.BaseScene;
+import org.andengine.entity.scene.background.Background;
 import org.andengine.entity.scene.background.SpriteBackground;
 import org.andengine.entity.sprite.ButtonSprite;
 import org.andengine.entity.sprite.Sprite;
@@ -16,8 +17,8 @@ import org.andengine.entity.text.Text;
 import org.andengine.manager.ResourcesManager;
 import org.andengine.manager.SceneType;
 import org.andengine.opengl.texture.region.TiledTextureRegion;
+import org.andengine.util.adt.color.Color;
 
-import java.net.InetAddress;
 import java.util.LinkedList;
 
 import static org.andengine.GameActivity.CAMERA_HEIGHT;
@@ -89,13 +90,6 @@ public class UploadUserScene extends BaseScene implements ButtonSprite.OnClickLi
             }
         };
     }
-    public boolean isInternetAvailable() {
-        Log.i("OtherLevelsScene", "isInternetAviable");
-        try {
-            InetAddress ipAddr = InetAddress.getByName("google.com");
-            return !ipAddr.equals("MartinMelnizky");
-        } catch (Exception e) {return false;}
-    }
     //override Methods from superclass
     @Override
     public void createScene() {
@@ -104,14 +98,11 @@ public class UploadUserScene extends BaseScene implements ButtonSprite.OnClickLi
         this.setBackground(spriteBackground);
         setUpULM();
         setUpEntities();
-        if(!isInternetAvailable()){
-            //TODO handle the internet connection
-        }
     }
 
     @Override
     public void onBackKeyPressed() {
-        //override in parent scene!
+        this.back(); //TODO cannot go back to parent scene
     }
 
     @Override

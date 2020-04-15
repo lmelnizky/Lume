@@ -677,7 +677,7 @@ public class World5 extends BaseScene {
                 break;
             case 4:
                 age = (new Date()).getTime() - stoneTime;
-                interval = (long) 3500*slowMotionFactor;
+                interval = (long) 3900*slowMotionFactor;
                 if (firstStonesInLevel) interval = 700*slowMotionFactor;
                 //!this.variantUsed && randomNumber < probabilityStone &&
 
@@ -690,8 +690,6 @@ public class World5 extends BaseScene {
                 }
                 break;
         }
-
-
     }
 
     private void showStonesToScreen(int directionVariant, final boolean middleFirst) {
@@ -816,91 +814,91 @@ public class World5 extends BaseScene {
     private void showLevel4(int direction) {
         switch (variant) {
             case 1:
-                addBall(true, 4, 2, 1, 1.8f * ratio);
-                addBall(true, 4, 2, 2, 1.8f * ratio);
-                addBall(true, 4, 1, 3, 1.8f * ratio);
-                addBall(true, 4, 0, 1, 1.8f * ratio);
-                addBall(true, 4, 0, 2, 1.8f * ratio);
-                addBall(false, 4, 1,2, 1.8f * ratio);
+                addBall(true, 4, 2, 1, 1.6f * ratio);
+                addBall(true, 4, 2, 2, 1.6f * ratio);
+                addBall(true, 4, 1, 3, 1.6f * ratio);
+                addBall(true, 4, 0, 1, 1.6f * ratio);
+                addBall(true, 4, 0, 2, 1.6f * ratio);
+                addBall(false, 4, 1,2, 1.6f * ratio);
 
-                addBall(true, 1, 2, 3, 1.8f);
-                addBall(true, 1, 2, 4, 1.8f);
-                addBall(true, 1, 2, 5, 1.8f);
-                addBall(true, 1, 1, 3, 1.8f);
-                addBall(true, 1, 1, 4, 1.8f);
-                addBall(true, 1, 1, 5, 1.8f);
+                addBall(true, 1, 2, 3, 1.6f);
+                addBall(true, 1, 2, 4, 1.6f);
+                addBall(true, 1, 2, 5, 1.6f);
+                addBall(true, 1, 1, 3, 1.6f);
+                addBall(true, 1, 1, 4, 1.6f);
+                addBall(true, 1, 1, 5, 1.6f);
 
-                addBall(true, 3, 2, 3, 1.8f);
-                addBall(true, 3, 2, 4, 1.8f);
-                addBall(true, 3, 2, 5, 1.8f);
-                addBall(true, 3, 1, 3, 1.8f);
-                addBall(true, 3, 1, 4, 1.8f);
-                addBall(true, 3, 1, 5, 1.8f);
+                addBall(true, 3, 2, 3, 1.6f);
+                addBall(true, 3, 2, 4, 1.6f);
+                addBall(true, 3, 2, 5, 1.6f);
+                addBall(true, 3, 1, 3, 1.6f);
+                addBall(true, 3, 1, 4, 1.6f);
+                addBall(true, 3, 1, 5, 1.6f);
                 break;
             case 2:
-                addBall(true, 2, 1, 1, 1.8f * ratio);
-                addBall(true, 2, 2, 1, 1.8f * ratio);
-                addBall(true, 2, 1, 2, 1.8f * ratio);
-                addBall(true, 2, 0, 3, 1.8f * ratio);
-                addBall(false, 2, 1, 3, 1.8f * ratio);
+                addBall(true, 2, 1, 1, 1.6f * ratio);
+                addBall(true, 2, 2, 1, 1.6f * ratio);
+                addBall(true, 2, 1, 2, 1.6f * ratio);
+                addBall(true, 2, 0, 3, 1.6f * ratio);
+                addBall(false, 2, 1, 3, 1.6f * ratio);
 
-                addBall(true, 3, 0, 5, 1.8f);
-                addBall(true, 3, 0, 6, 1.8f);
-                addBall(true, 3, 0, 7, 1.8f);
-                addBall(true, 3, 2, 5, 1.8f);
-                addBall(true, 3, 2, 6, 1.8f);
-                addBall(true, 3, 2, 7, 1.8f);
+                addBall(true, 3, 0, 5, 1.6f);
+                addBall(true, 3, 0, 6, 1.6f);
+                addBall(true, 3, 0, 7, 1.6f);
+                addBall(true, 3, 2, 5, 1.6f);
+                addBall(true, 3, 2, 6, 1.6f);
+                addBall(true, 3, 2, 7, 1.6f);
 
-                addBall(true, 1, 0, 3, 1.8f);
-                addBall(true, 1, 0, 4, 1.8f);
-                addBall(true, 1, 0, 5, 1.8f);
-                addBall(true, 1, 2, 3, 1.8f);
-                addBall(true, 1, 2, 4, 1.8f);
-                addBall(true, 1, 2, 5, 1.8f);
+                addBall(true, 1, 0, 3, 1.6f);
+                addBall(true, 1, 0, 4, 1.6f);
+                addBall(true, 1, 0, 5, 1.6f);
+                addBall(true, 1, 2, 3, 1.6f);
+                addBall(true, 1, 2, 4, 1.6f);
+                addBall(true, 1, 2, 5, 1.6f);
                 break;
             case 3:
-                addBall(true, 2, 2, 1, 1.8f * ratio);
-                addBall(true, 2, 2, 2, 1.8f * ratio);
-                addBall(true, 2, 1, 3, 1.8f * ratio);
-                addBall(true, 2, 0, 1, 1.8f * ratio);
-                addBall(true, 2, 0, 2, 1.8f * ratio);
-                addBall(false, 2, 0,3, 1.8f * ratio);
-                addBall(false, 2, 2,3, 1.8f * ratio);
+                addBall(true, 2, 2, 1, 1.6f * ratio);
+                addBall(true, 2, 2, 2, 1.6f * ratio);
+                addBall(true, 2, 1, 3, 1.6f * ratio);
+                addBall(true, 2, 0, 1, 1.6f * ratio);
+                addBall(true, 2, 0, 2, 1.6f * ratio);
+                addBall(false, 2, 0,3, 1.6f * ratio);
+                addBall(false, 2, 2,3, 1.6f * ratio);
 
-                addBall(true, 1, 0, 3, 1.8f);
-                addBall(true, 1, 0, 4, 1.8f);
-                addBall(true, 1, 0, 5, 1.8f);
-                addBall(true, 1, 1, 3, 1.8f);
-                addBall(true, 1, 1, 4, 1.8f);
-                addBall(true, 1, 1, 5, 1.8f);
+                addBall(true, 1, 0, 3, 1.6f);
+                addBall(true, 1, 0, 4, 1.6f);
+                addBall(true, 1, 0, 5, 1.6f);
+                addBall(true, 1, 1, 3, 1.6f);
+                addBall(true, 1, 1, 4, 1.6f);
+                addBall(true, 1, 1, 5, 1.6f);
 
-                addBall(true, 3, 0, 3, 1.8f);
-                addBall(true, 3, 0, 4, 1.8f);
-                addBall(true, 3, 0, 5, 1.8f);
-                addBall(true, 3, 1, 3, 1.8f);
-                addBall(true, 3, 1, 4, 1.8f);
-                addBall(true, 3, 1, 5, 1.8f);
+                addBall(true, 3, 0, 3, 1.6f);
+                addBall(true, 3, 0, 4, 1.6f);
+                addBall(true, 3, 0, 5, 1.6f);
+                addBall(true, 3, 1, 3, 1.6f);
+                addBall(true, 3, 1, 4, 1.6f);
+                addBall(true, 3, 1, 5, 1.6f);
                 break;
             case 4:
-                addBall(true, 4, 1, 1, 1.8f * ratio);
-                addBall(true, 4, 0, 1, 1.8f * ratio);
-                addBall(true, 4, 1, 2, 1.8f * ratio);
-                addBall(true, 4, 2, 3, 1.8f * ratio);
-                addBall(false, 4, 2, 2, 1.8f * ratio);
+                addBall(true, 4, 1, 1, 1.6f * ratio);
+                addBall(true, 4, 0, 1, 1.6f * ratio);
+                addBall(true, 4, 1, 2, 1.6f * ratio);
+                addBall(true, 4, 2, 3, 1.6f * ratio);
+                addBall(false, 4, 2, 2, 1.6f * ratio);
 
-                addBall(true, 1, 0, 5, 1.8f);
-                addBall(true, 1, 0, 6, 1.8f);
-                addBall(true, 1, 0, 7, 1.8f);
-                addBall(true, 1, 2, 5, 1.8f);
-                addBall(true, 1, 2, 6, 1.8f);
-                addBall(true, 1, 2, 7, 1.8f);
+                addBall(true, 1, 0, 5, 1.6f);
+                addBall(true, 1, 0, 6, 1.6f);
+                addBall(true, 1, 0, 7, 1.6f);
+                addBall(true, 1, 2, 5, 1.6f);
+                addBall(true, 1, 2, 6, 1.6f);
+                addBall(true, 1, 2, 7, 1.6f);
 
-                addBall(true, 3, 0, 3, 1.8f);
-                addBall(true, 3, 0, 4, 1.8f);
-                addBall(true, 3, 0, 5, 1.8f);
-                addBall(true, 3, 2, 3, 1.8f);
-                addBall(true, 3, 2, 4, 1.8f);
-                addBall(true, 3, 2, 5, 1.8f);
+                addBall(true, 3, 0, 3, 1.6f);
+                addBall(true, 3, 0, 4, 1.6f);
+                addBall(true, 3, 0, 5, 1.6f);
+                addBall(true, 3, 2, 3, 1.6f);
+                addBall(true, 3, 2, 4, 1.6f);
+                addBall(true, 3, 2, 5, 1.6f);
                 break;
         }
     }

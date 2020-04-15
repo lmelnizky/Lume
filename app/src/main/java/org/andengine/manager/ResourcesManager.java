@@ -41,7 +41,7 @@ public class ResourcesManager {
     private static final ResourcesManager INSTANCE = new ResourcesManager();
 
     public boolean prepared = false;
-    public int screenWidth, screenHeight;
+    public int screenWidth, screenHeight, sideLength;
     public float screenRatio;
 
     public Engine engine;
@@ -84,6 +84,7 @@ public class ResourcesManager {
     public BuildableBitmapTextureAtlas chooseLevelTextureAtlas = null;
     public BuildableBitmapTextureAtlas multiTextureAtlas = null;
     public BuildableBitmapTextureAtlas menuTextureAtlas = null;
+    public BuildableBitmapTextureAtlas shopTextureAtlas = null;
     public BuildableBitmapTextureAtlas helpTextureAtlas = null;
     public BitmapTextureAtlas splashTextureAtlas = null;
     public BuildableBitmapTextureAtlas world0TextureAtlas = null;
@@ -109,6 +110,7 @@ public class ResourcesManager {
     public ITextureRegion cannons_s_region;
     public ITextureRegion cannons_w_region;
     public ITextureRegion replay_region;
+    public ITextureRegion finish_region;
 
     //Signs Texture Regions
     public ITextureRegion shoot_normal_region;
@@ -118,6 +120,10 @@ public class ResourcesManager {
     public ITextureRegion cracky_mirror_sign_region;
     public ITextureRegion snail_sign_region;
     public ITextureRegion no_snail_sign_region;
+
+    //Overlay Regions
+    public ITextureRegion outer_overlay1_region;
+    public ITextureRegion inner_overlay1_region;
 
     //World 0 TextureRegions
     public ITextureRegion kimmelnitz_region;
@@ -181,6 +187,10 @@ public class ResourcesManager {
     public ITextureRegion upload_background_region;
     public ITextureRegion confirm_region;
     public ITextureRegion inputtext_region;
+
+    //Shop Graphics
+    public ITextureRegion background_shop_region;
+    public ITextureRegion personal_region;
 
     //Bluetooth and Multiplayer
     public BluetoothSocket bluetoothSocket;
@@ -252,6 +262,7 @@ public class ResourcesManager {
             ball_fall = BitmapTextureAtlasTextureRegionFactory.createFromAsset(menuTextureAtlas, activity, "ball_fall.png");
             military = BitmapTextureAtlasTextureRegionFactory.createFromAsset(menuTextureAtlas, activity, "military.png");
             play_coin_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(menuTextureAtlas, activity, "play_coin.png");
+            coin_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(menuTextureAtlas, activity, "coin.png");
             shopping_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(menuTextureAtlas, activity, "shopping.png");
             upload_background_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(menuTextureAtlas, activity, "upload_background.png");
             confirm_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(menuTextureAtlas, activity, "confirm.png");
@@ -288,8 +299,33 @@ public class ResourcesManager {
         loadGameAudio();
     }
 
+    public void loadShopResources() {
+        if (shopTextureAtlas == null) {
+            BitmapTextureAtlasTextureRegionFactory.setAssetBasePath("gfx/game");
+            shopTextureAtlas = new BuildableBitmapTextureAtlas(activity.getTextureManager(), 512, 512, TextureOptions.BILINEAR);
+            background_shop_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(shopTextureAtlas, activity, "background_shop.png");
+            lume_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(shopTextureAtlas, activity, "lume.png");
+            lamporghina_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(shopTextureAtlas, activity, "lamporghina.png");
+            grume_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(shopTextureAtlas, activity, "grume.png");
+            personal_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(shopTextureAtlas, activity, "personal.png");
+            try {
+                this.shopTextureAtlas.build(new BlackPawnTextureAtlasBuilder<IBitmapTextureAtlasSource, BitmapTextureAtlas>(0, 1, 0));
+                this.shopTextureAtlas.load();
+            } catch (final ITextureAtlasBuilder.TextureAtlasBuilderException e) {
+                Debug.e(e);
+            }
+        } else {
+            shopTextureAtlas.load();
+        }
+
+    }
+
     private void unloadHighscoreGraphics() {
         highScoreAtlas.unload();
+    }
+
+    private void unloadShopGraphics() {
+        shopTextureAtlas.unload();
     }
 
     private void loadMenuAudio() {
@@ -336,6 +372,7 @@ public class ResourcesManager {
             cannons_s_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gameTextureAtlas, activity, "cannons_s.png");
             cannons_w_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gameTextureAtlas, activity, "cannons_w.png");
             replay_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gameTextureAtlas, activity, "replay.png");
+            finish_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gameTextureAtlas, activity, "finish.png");
             finger_luser = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gameTextureAtlas, activity, "finger_luser.png");
             finger_watch = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gameTextureAtlas, activity, "finger_watch.png");
             snail_sign_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gameTextureAtlas, activity, "snail_sign.png");
@@ -516,6 +553,8 @@ public class ResourcesManager {
             BitmapTextureAtlasTextureRegionFactory.setAssetBasePath("gfx/game/");
             highScoreAtlas = new BuildableBitmapTextureAtlas(activity.getTextureManager(), 2048, 2048, TextureOptions.BILINEAR);
             background_world0_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(highScoreAtlas, activity, "background_world1.png");
+            inner_overlay1_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(highScoreAtlas, activity, "inner_overlay1.png");
+            outer_overlay1_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(highScoreAtlas, activity, "outer_overlay1.png");
             arrow_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(highScoreAtlas, activity, "arrow.png");
             arrow_yellow_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(highScoreAtlas, activity, "arrow_yellow.png");
             cracky_mirror_sign_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(highScoreAtlas, activity, "cracky_mirror_sign.png");
@@ -673,6 +712,9 @@ public class ResourcesManager {
             case SCENE_LEVELS:
                 this.unloadLevelTextures();
                 break;
+            case SCENE_SHOP:
+                this.unloadShopGraphics();
+                break;
             case SCENE_SPLASH:
                 this.unloadSplashScreen();
                 break;
@@ -761,6 +803,7 @@ public class ResourcesManager {
         getInstance().vbom = vbom;
         getInstance().screenWidth = (int) camera.getWidth();
         getInstance().screenHeight = (int) camera.getHeight();
+        getInstance().sideLength = (int) camera.getHeight()/9;
         getInstance().screenRatio = camera.getWidth()/camera.getHeight();
         getInstance().prepared = true;
     }

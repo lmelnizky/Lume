@@ -627,7 +627,7 @@ public class World2 extends BaseScene {
                 int direction = (randomGenerator.nextInt(2) + 1)*2;
                 boolean thorny = false;
                 long[] ages = new long[4]; //is used to prevent screen from showing too many stones
-                interval = (long) 1400;
+                interval = (long) 1700;
                 ages[direction - 1] = (new Date()).getTime() - stoneTimes[direction - 1];
                 if (firstStonesInLevel) interval = 1000;
                 if (ages[direction - 1] >= interval) {
@@ -647,7 +647,7 @@ public class World2 extends BaseScene {
                 direction = (randomGenerator.nextInt(2) + 1)*2;
                 thorny = false;
                 ages = new long[4]; //is used to prevent screen from showing too many stones
-                interval = (long) 1300;
+                interval = (long) 1500;
                 ages[direction - 1] = (new Date()).getTime() - stoneTimes[direction - 1];
                 if (firstStonesInLevel) interval = 500;
                 if (ages[direction - 1] >= interval) {
@@ -666,7 +666,7 @@ public class World2 extends BaseScene {
                 long age = (new Date()).getTime() - stoneTime;
                 probabilityStone = 0.8;
                 direction = (randomGenerator.nextInt(4) + 1);
-                interval = (long) 700;
+                interval = (long) 900;
                 if (firstStonesInLevel) interval = 1000;
                 if (age >= interval) {
                     if (firstStonesInLevel) createCoin();

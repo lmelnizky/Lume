@@ -157,13 +157,9 @@ public class User {
     }
 
     //TODO code here
-    public static void setUserData(int world, int coins, String userNameID) { //name cannot be changed
+    public static void setUserData(int world, int coins) { //name cannot be changed
         World newWorld = World.getWorld(world);
         int newCoin = coins;
-
-        DatabaseReference dataRef = DataBaseManager.getInstance().getUserPath().child(userNameID);
-        dataRef.child("world").setValue(newWorld.fId);
-        dataRef.child("coin").setValue(newCoin);
     }
 
     private static int createNewId() {

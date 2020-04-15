@@ -10,6 +10,7 @@ public enum SceneType {
     SCENE_LOADING,
     SCENE_LEVELS,
     SCENE_HELP,
+    SCENE_SHOP,
     SCENE_MULTI,
     SCENE_GAME,
     SCENE_WORLD0,

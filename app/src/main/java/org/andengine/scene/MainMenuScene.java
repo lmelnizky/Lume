@@ -54,11 +54,13 @@ public class MainMenuScene extends BaseScene implements IOnMenuItemClickListener
     private final int MENU_HIGH = 7;
     private final int MENU_SHOPPING = 8;
 
-    private Text worldText;
+    private Text worldText, coinText;
+    private Sprite coinSprite;
 
     //CONSTRUCTOR
     public MainMenuScene() {
         updateWorldText();
+        updateCoinText();
     }
 
 
@@ -71,18 +73,14 @@ public class MainMenuScene extends BaseScene implements IOnMenuItemClickListener
         Log.i("MainMennuScene", "CreateScene()");
         createBackground();
         createWorldText();
+        createCoinText();
         createMenuChildScene();
         showRandomAd();
         activity.showSlowMoHintMenu();
         if (!activity.isNameOnline()) {
-            this.setChildScene(new UploadUserScene(){
-                @Override
-                public void onBackKeyPressed() {
-                    MainMenuScene.this.clearChildScene();
-                }
-            });
+            this.setChildScene(new UploadUserScene());
         } else {
-            User.setUserData(activity.getCurrentWorld(), (activity.getCurrentWorld()-1)*40, "ID"); //TODO getUserID
+            User.setUserData(activity.getCurrentWorld(), (activity.getCurrentWorld()-1)*40); //TODO update User data
         }
     }
 
@@ -239,7 +237,8 @@ public class MainMenuScene extends BaseScene implements IOnMenuItemClickListener
                 SceneManager.getInstance().loadHighscoreScene(engine);
                 return true;
             case MENU_SHOPPING:
-                activity.toastOnUiThread("Making a photo", 0);
+                //activity.toastOnUiThread("Making a photo", 0);
+                SceneManager.getInstance().loadShopScene(engine);
                 //TODO camera
                 return true;
             default:
@@ -272,6 +271,23 @@ public class MainMenuScene extends BaseScene implements IOnMenuItemClickListener
         }
     }
 
+    private void createCoinText() {
+        if (coinText == null) {
+            coinText = new Text(camera.getWidth()-55, camera.getHeight()-45,
+                    resourcesManager.smallFont, ":0123456789", new TextOptions(HorizontalAlign.CENTER), vbom);
+            coinText.setText(": " + String.valueOf(activity.getCurrentBeersos()));
+            int color = android.graphics.Color.parseColor("#808080");
+            coinText.setColor(color);
+            this.attachChild(coinText);
+            coinText.setPosition(camera.getWidth()-coinText.getWidth()/2-40, camera.getHeight()-45);
+            coinSprite = new Sprite(coinText.getX()-coinText.getWidth()/2-camera.getHeight()/18, camera.getHeight()-40,
+                    camera.getHeight()/16, camera.getHeight()/16, resourcesManager.coin_region, vbom);
+            this.attachChild(coinSprite);
+        } else {
+            this.updateCoinText();
+        }
+    }
+
     private void showRandomAd() {
         Random random = new Random();
         int partners = 2;
@@ -288,6 +304,10 @@ public class MainMenuScene extends BaseScene implements IOnMenuItemClickListener
                 worldText.setPosition(camera.getHeight()/8, worldText.getY());
             }
         }
+    }
+
+    public void updateCoinText() {
+        coinText.setText(": " + String.valueOf(activity.getCurrentBeersos()));
     }
 
     private void createMenuChildScene() {

@@ -23,6 +23,10 @@ import com.google.android.gms.ads.MobileAds;
 import com.google.android.gms.ads.reward.RewardItem;
 import com.google.android.gms.ads.reward.RewardedVideoAd;
 import com.google.android.gms.ads.reward.RewardedVideoAdListener;
+//import com.tappx.sdk.android.Tappx;
+//import com.tappx.sdk.android.TappxAdError;
+//import com.tappx.sdk.android.TappxInterstitial;
+//import com.tappx.sdk.android.TappxInterstitialListener;
 
 import org.andengine.engine.Engine;
 import org.andengine.engine.LimitedFPSEngine;
@@ -43,11 +47,6 @@ import org.andengine.ui.activity.BaseGameActivity;
 import java.io.IOException;
 
 import me.drakeet.support.toast.ToastCompat;
-
-//import com.tappx.sdk.android.Tappx;
-//import com.tappx.sdk.android.TappxAdError;
-//import com.tappx.sdk.android.TappxInterstitial;
-//import com.tappx.sdk.android.TappxInterstitialListener;
 
 public class GameActivity extends BaseGameActivity implements RewardedVideoAdListener {
 
@@ -181,6 +180,18 @@ public class GameActivity extends BaseGameActivity implements RewardedVideoAdLis
                 alert.show();
             }
         });
+    }
+
+    public void addBeersos(int beersos) {
+        int currentBeersos = pref.getInt(COINS, 0);
+        int newBeersos = currentBeersos + beersos;
+        editor.putInt(COINS, newBeersos);
+        editor.commit();
+    }
+
+    public int getCurrentBeersos() {
+        int beersos = pref.getInt(COINS, 0);
+        return beersos;
     }
 
     public boolean isStartVideo() {
