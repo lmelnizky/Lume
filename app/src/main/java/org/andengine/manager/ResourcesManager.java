@@ -26,7 +26,7 @@ import org.andengine.opengl.texture.atlas.bitmap.source.IBitmapTextureAtlasSourc
 import org.andengine.opengl.texture.atlas.buildable.builder.BlackPawnTextureAtlasBuilder;
 import org.andengine.opengl.texture.atlas.buildable.builder.ITextureAtlasBuilder;
 import org.andengine.opengl.texture.region.ITextureRegion;
-import org.andengine.opengl.texture.region.ITiledTextureRegion;
+import org.andengine.opengl.texture.region.TiledTextureRegion;
 import org.andengine.opengl.vbo.VertexBufferObjectManager;
 import org.andengine.util.debug.Debug;
 
@@ -62,6 +62,10 @@ public class ResourcesManager {
     //Menu TextureRegions
     public ITextureRegion splash_region;
     public ITextureRegion menu_background_region;
+    public ITextureRegion clouds_region;
+    public ITextureRegion lume_text_region;
+    public ITextureRegion zahnrad_red_region;
+    public ITextureRegion zahnrad_blue_region;
     public ITextureRegion play_region;
     public ITextureRegion play_multi_region;
     public ITextureRegion world_region;
@@ -73,6 +77,7 @@ public class ResourcesManager {
     public ITextureRegion military;
     public ITextureRegion play_coin_region;
     public ITextureRegion shopping_region;
+    public ITextureRegion skill_gym_region;
 
     //Help Region
     public ITextureRegion help_background_region;
@@ -97,6 +102,8 @@ public class ResourcesManager {
     public BuildableBitmapTextureAtlas world7TextureAtlas = null;
     public BuildableBitmapTextureAtlas world8TextureAtlas = null;
     public BuildableBitmapTextureAtlas highScoreAtlas = null;
+    public BuildableBitmapTextureAtlas skillGameAtlas = null;
+    public BuildableBitmapTextureAtlas skillMenuAtlas = null;
 
     // Game Texture Regions
     public ITextureRegion cracky_stone_region;
@@ -166,6 +173,10 @@ public class ResourcesManager {
     public ITextureRegion change_page;
     public ITextureRegion video_show_region;
 
+    //Skill Menu Region
+    public ITextureRegion skill_background_region;
+    public ITextureRegion hantel_region;
+
     //Multi TextureRegions
     public ITextureRegion background_multi_region;
     public ITextureRegion board_region4;
@@ -190,7 +201,11 @@ public class ResourcesManager {
 
     //Shop Graphics
     public ITextureRegion background_shop_region;
+    public ITextureRegion shop_overlay_region;
     public ITextureRegion personal_region;
+    public ITextureRegion lume_big_region;
+    public ITextureRegion grume_big_region;
+    public TiledTextureRegion coin_tiled_region;
 
     //Bluetooth and Multiplayer
     public BluetoothSocket bluetoothSocket;
@@ -252,6 +267,10 @@ public class ResourcesManager {
             BitmapTextureAtlasTextureRegionFactory.setAssetBasePath("gfx/menu/");
             menuTextureAtlas = new BuildableBitmapTextureAtlas(activity.getTextureManager(), 4096, 4096, TextureOptions.BILINEAR);
             menu_background_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(menuTextureAtlas, activity, "menu_background.png");
+            clouds_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(menuTextureAtlas, activity, "clouds.png");
+            lume_text_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(menuTextureAtlas, activity, "lume_text.png");
+            zahnrad_blue_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(menuTextureAtlas, activity, "zahnrad_blue.png");
+            zahnrad_red_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(menuTextureAtlas, activity, "zahnrad_red.png");
             play_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(menuTextureAtlas, activity, "play.png");
             play_multi_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(menuTextureAtlas, activity, "play_multi.png");
             world_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(menuTextureAtlas, activity, "world.png");
@@ -264,6 +283,7 @@ public class ResourcesManager {
             play_coin_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(menuTextureAtlas, activity, "play_coin.png");
             coin_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(menuTextureAtlas, activity, "coin.png");
             shopping_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(menuTextureAtlas, activity, "shopping.png");
+            skill_gym_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(menuTextureAtlas, activity, "skill_gym.png");
             upload_background_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(menuTextureAtlas, activity, "upload_background.png");
             confirm_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(menuTextureAtlas, activity, "confirm.png");
             inputtext_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(menuTextureAtlas, activity, "inputtext.png");
@@ -302,12 +322,14 @@ public class ResourcesManager {
     public void loadShopResources() {
         if (shopTextureAtlas == null) {
             BitmapTextureAtlasTextureRegionFactory.setAssetBasePath("gfx/game/");
-            shopTextureAtlas = new BuildableBitmapTextureAtlas(activity.getTextureManager(), 512, 512, TextureOptions.BILINEAR);
+            shopTextureAtlas = new BuildableBitmapTextureAtlas(activity.getTextureManager(), 1024, 1024, TextureOptions.BILINEAR);
             background_shop_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(shopTextureAtlas, activity, "background_shop.png");
-            lume_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(shopTextureAtlas, activity, "lume.png");
+            shop_overlay_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(shopTextureAtlas, activity, "shop_overlay.png");
+            lume_big_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(shopTextureAtlas, activity, "lume_big.png");
             lamporghina_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(shopTextureAtlas, activity, "lamporghina.png");
-            grume_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(shopTextureAtlas, activity, "grume.png");
+            grume_big_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(shopTextureAtlas, activity, "grume_big.png");
             personal_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(shopTextureAtlas, activity, "personal.png");
+            coin_tiled_region = BitmapTextureAtlasTextureRegionFactory.createTiledFromAsset(shopTextureAtlas, activity, "coin_tiled.png", 3, 2);
             try {
                 this.shopTextureAtlas.build(new BlackPawnTextureAtlasBuilder<IBitmapTextureAtlasSource, BitmapTextureAtlas>(0, 1, 0));
                 this.shopTextureAtlas.load();
@@ -318,6 +340,58 @@ public class ResourcesManager {
             shopTextureAtlas.load();
         }
 
+    }
+
+    public void loadSkillMenuResources() {
+        if (skillMenuAtlas == null) {
+            BitmapTextureAtlasTextureRegionFactory.setAssetBasePath("gfx/skill/");
+            skillMenuAtlas = new BuildableBitmapTextureAtlas(activity.getTextureManager(), 2048, 2048, TextureOptions.BILINEAR);
+            skill_background_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(skillMenuAtlas, activity, "skill_background.png");
+            hantel_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(skillMenuAtlas, activity, "hantel.png");
+            try {
+                this.skillMenuAtlas.build(new BlackPawnTextureAtlasBuilder<IBitmapTextureAtlasSource, BitmapTextureAtlas>(0, 1, 0));
+                this.skillMenuAtlas.load();
+            } catch (final ITextureAtlasBuilder.TextureAtlasBuilderException e) {
+                Debug.e(e);
+            }
+        } else {
+            skillMenuAtlas.load();
+        }
+    }
+
+    public void unloadSkillMenuResources() {
+        skillMenuAtlas.unload();
+    }
+
+    public void loadSkillResources() {
+        loadGameGraphics();
+        loadSkillGraphics();
+        loadGameAudio();
+    }
+
+    private void loadSkillGraphics() {
+        if (skillGameAtlas == null) {
+            BitmapTextureAtlasTextureRegionFactory.setAssetBasePath("gfx/game/");
+            skillGameAtlas = new BuildableBitmapTextureAtlas(activity.getTextureManager(), 2048, 2048, TextureOptions.BILINEAR);
+            background_world0_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(skillGameAtlas, activity, "background_world1.png");
+            kimmelnitz_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(skillGameAtlas, activity, "kimmelnitz.png");
+            kimmelnitz_ko_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(skillGameAtlas, activity, "kimmelnitz_ko.png");
+            punch_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(skillGameAtlas, activity, "punch.png");
+            try {
+                this.skillGameAtlas.build(new BlackPawnTextureAtlasBuilder<IBitmapTextureAtlasSource, BitmapTextureAtlas>(0, 1, 0));
+                this.skillGameAtlas.load();
+            } catch (final ITextureAtlasBuilder.TextureAtlasBuilderException e) {
+                Debug.e(e);
+            }
+        } else {
+            skillGameAtlas.load();
+        }
+    }
+
+    private void unloadSkillResources() {
+        unloadGameTextures();
+        skillGameAtlas.unload();
+        unloadGameAudio();
     }
 
     private void unloadHighscoreGraphics() {
@@ -714,6 +788,12 @@ public class ResourcesManager {
                 break;
             case SCENE_SHOP:
                 this.unloadShopGraphics();
+                break;
+            case SCENE_SKILLGAME:
+                this.unloadSkillResources();
+                break;
+            case SCENE_SKILLMENU:
+                this.unloadSkillMenuResources();
                 break;
             case SCENE_SPLASH:
                 this.unloadSplashScreen();

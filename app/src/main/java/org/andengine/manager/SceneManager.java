@@ -1,19 +1,21 @@
 package org.andengine.manager;
 
-import org.andengine.GameActivity;
 import org.andengine.base.BaseScene;
 import org.andengine.engine.Engine;
 import org.andengine.engine.handler.timer.ITimerCallback;
 import org.andengine.engine.handler.timer.TimerHandler;
+import org.andengine.entity.scene.Scene;
 import org.andengine.scene.HelpScene;
 import org.andengine.scene.HighscoreScene;
 import org.andengine.scene.MultiScene;
 import org.andengine.scene.ShopScene;
+import org.andengine.scene.SkillMenu;
 import org.andengine.scene.Worlds1to4Scene;
 import org.andengine.scene.LoadingScene;
 import org.andengine.scene.MainMenuScene;
 import org.andengine.scene.SplashScene;
 import org.andengine.scene.Worlds5to8Scene;
+import org.andengine.scene.skillscenes.Skill11;
 import org.andengine.scene.worlds.World0;
 import org.andengine.scene.worlds.World1;
 import org.andengine.scene.worlds.World2;
@@ -37,6 +39,8 @@ public class SceneManager {
     public BaseScene multiScene;
     public BaseScene highscoreScene;
     public BaseScene shopScene;
+    public BaseScene skillGameScene;
+    public BaseScene skillMenuScene;
     public BaseScene helpScene;
     public BaseScene loadingScene;
     public BaseScene worlds1to4Scene;
@@ -342,6 +346,37 @@ public class SceneManager {
                 ResourcesManager.getInstance().loadShopResources();
                 shopScene = new ShopScene();
                 setScene(shopScene);
+            }
+        }));
+    }
+
+    public void loadSkillGameScene(final Engine mEngine) {
+        loadingScene = new LoadingScene();
+        setScene(loadingScene);
+        ResourcesManager.getInstance().unloadMenuTextures();
+        mEngine.registerUpdateHandler(new TimerHandler(0.1f, new ITimerCallback() {
+            @Override
+            public void onTimePassed(TimerHandler pTimerHandler) {
+                mEngine.unregisterUpdateHandler(pTimerHandler);
+                ResourcesManager.getInstance().loadSkillResources();
+                skillGameScene = new Skill11();
+                setScene(skillGameScene);
+            }
+        }));
+    }
+
+    public void loadSkillMenuScene(final Engine mEngine) {
+        BaseScene currentScene = getCurrentScene();
+        loadingScene = new LoadingScene();
+        setScene(loadingScene);
+        if (currentScene.getSceneType() == SceneType.SCENE_MENU) ResourcesManager.getInstance().unloadMenuTextures();
+        mEngine.registerUpdateHandler(new TimerHandler(0.1f, new ITimerCallback() {
+            @Override
+            public void onTimePassed(TimerHandler pTimerHandler) {
+                mEngine.unregisterUpdateHandler(pTimerHandler);
+                ResourcesManager.getInstance().loadSkillMenuResources();
+                skillMenuScene = new SkillMenu();
+                setScene(skillMenuScene);
             }
         }));
     }

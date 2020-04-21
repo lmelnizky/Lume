@@ -759,14 +759,6 @@ public class World0 extends BaseScene {
                 }
             }
         };
-        if((score%10 != 0 || score == 30 || score == 0) && level == 4) {
-            if (direction%2==0) { //horizontal shot
-                currentPosHor = yPosLume-1;
-            } else { //vertical shot
-                currentPosVer = xPosLume-1;
-            }
-            showStonesToScreen(direction, false); //show stones when the player shoots
-        }
         secondLayer.attachChild(cannonball);
         final Body body = PhysicsFactory.createCircleBody(physicsWorld, cannonball, BodyType.KinematicBody, FIXTURE_DEF);
 //        ball = new Ball(cannonball, "cannonball");

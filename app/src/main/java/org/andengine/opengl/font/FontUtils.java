@@ -42,8 +42,8 @@ public class FontUtils {
     /**
      * measure char {@link CharSequence} given font respecting line-breaks
      *
-     * @param pFont the text font
-     * @param pText the text to measure
+     * @param pFont the kimmelnitzText font
+     * @param pText the kimmelnitzText to measure
      * @return the width of the longest line of pText (\n is a breaker)
      */
     public static float measureMultipleLineText(final IFont pFont, final CharSequence pText) {
@@ -133,7 +133,7 @@ public class FontUtils {
 	}
 
 	/**
-	 * Measure the text, stopping early if the measured width exceeds pMaximumWidth.
+	 * Measure the kimmelnitzText, stopping early if the measured width exceeds pMaximumWidth.
 	 *
 	 * @param pFont
 	 * @param pText

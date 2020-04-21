@@ -228,9 +228,6 @@ public class World1 extends BaseScene {
         camera.setHUD(null);
         camera.setChaseEntity(null);
         camera.setCenter(camera.getCenterX(), camera.getCenterY());
-
-        // TODO code responsible for disposing scene
-        // removing all game scene objects.
     }
 
     private void displayGameOverText() {

@@ -14,6 +14,7 @@ import org.andengine.engine.handler.timer.ITimerCallback;
 import org.andengine.engine.handler.timer.TimerHandler;
 import org.andengine.entity.Entity;
 import org.andengine.entity.IEntity;
+import org.andengine.entity.modifier.LoopEntityModifier;
 import org.andengine.entity.modifier.RotationModifier;
 import org.andengine.entity.modifier.ScaleModifier;
 import org.andengine.entity.primitive.Rectangle;
@@ -122,7 +123,7 @@ public class HighscoreScene extends BaseScene {
 
     private static final int SWIPE_MIN_DISTANCE = 10;
 
-    private Text gameOverText, coinsText;
+    private Text gameOverText, coinsText, highscoreText;
     private Sprite replaySprite, finishSprite;
 
     public HighscoreScene() { //default constructor
@@ -272,8 +273,10 @@ public class HighscoreScene extends BaseScene {
                 }
             }
         };
-        coinsText = new Text(camera.getCenterX(), camera.getHeight()*7/9,
+        coinsText = new Text(camera.getCenterX(), camera.getHeight()*7.5f/9,
                 resourcesManager.smallFont, "coins: 0123456789", vbom);
+        highscoreText = new Text(camera.getCenterX(), camera.getHeight()*6.5f/9,
+                resourcesManager.smallFont, "highscore: 0123456789", vbom);
 
 
         luserSprite = new Sprite(lumeSprite.getX()-lumeSprite.getWidth()*4/10,
@@ -293,6 +296,11 @@ public class HighscoreScene extends BaseScene {
         coinsText.setText("coins: " + String.valueOf(score));
         activity.addBeersos(score);
         gameOverScene.attachChild(coinsText);
+
+        highscoreText.setColor(1f, 0.956f, 0f, 1f);
+        activity.checkHighscore(score);
+        highscoreText.setText("highscore: " + activity.getCurrentHighscore());
+        gameOverScene.attachChild(highscoreText);
 
         RotationModifier rotMod = new RotationModifier(0.7f, 180, 720) {
             @Override

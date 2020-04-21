@@ -23,4 +23,6 @@ public enum SceneType {
     SCENE_WORLD7,
     SCENE_WORLD8,
     SCENE_HIGHSCORE,
+    SCENE_SKILLGAME,
+    SCENE_SKILLMENU,
 }

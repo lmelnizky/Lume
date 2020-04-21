@@ -62,6 +62,7 @@ public class GameActivity extends BaseGameActivity implements RewardedVideoAdLis
     private static final String IS_NAME_ONLINE = "IS_NAME_ONLINE"; //boolean
     private static final String NAME_ONLINE = "IS_NAME_ONLINE"; //TODO String online name
     private static final String COINS = "COINS";
+    private static final String HIGHSCORE = "HIGHSCORE";
 
     private BoundCamera camera;
     private EngineOptions engineOptions;
@@ -180,6 +181,18 @@ public class GameActivity extends BaseGameActivity implements RewardedVideoAdLis
                 alert.show();
             }
         });
+    }
+
+    public void checkHighscore(int score) {
+        int currentHighscore = pref.getInt(HIGHSCORE, 0);
+        if (score > currentHighscore) {
+            editor.putInt(HIGHSCORE, score);
+            editor.commit();
+        }
+    }
+
+    public int getCurrentHighscore() {
+        return pref.getInt(HIGHSCORE, 0);
     }
 
     public void addBeersos(int beersos) {

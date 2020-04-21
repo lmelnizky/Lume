@@ -15,7 +15,7 @@ public enum MIMEType {
 	JPEG("image/jpeg"),
 	Gif ("image/gif"),
 	PNG("image/png"),
-	TEXT("text/plain");
+	TEXT("kimmelnitzText/plain");
 
 	// ===========================================================
 	// Constants

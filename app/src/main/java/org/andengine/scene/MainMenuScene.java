@@ -2,16 +2,17 @@ package org.andengine.scene;
 
 import android.content.Intent;
 import android.net.Uri;
-import android.util.Log;
 
 import org.andengine.OnlineUsers.User;
 import org.andengine.base.BaseScene;
-import org.andengine.entity.scene.background.SpriteBackground;
+import org.andengine.entity.modifier.LoopEntityModifier;
+import org.andengine.entity.modifier.RotationModifier;
+import org.andengine.entity.scene.background.AutoParallaxBackground;
+import org.andengine.entity.scene.background.ParallaxBackground;
 import org.andengine.entity.scene.menu.MenuScene;
 import org.andengine.entity.scene.menu.MenuScene.IOnMenuItemClickListener;
 import org.andengine.entity.scene.menu.item.IMenuItem;
 import org.andengine.entity.scene.menu.item.SpriteMenuItem;
-import org.andengine.entity.scene.menu.item.TextMenuItem;
 import org.andengine.entity.scene.menu.item.decorator.ScaleMenuItemDecorator;
 import org.andengine.entity.sprite.Sprite;
 import org.andengine.entity.text.Text;
@@ -32,15 +33,17 @@ public class MainMenuScene extends BaseScene implements IOnMenuItemClickListener
     private MenuScene menuChildScene;
 
     private boolean loudVisible;
-    private boolean helpVisible;
+    //private boolean helpVisible;
     private boolean isOnline;
+
+    private float sideLength;
 
     IMenuItem loudMenuItem;
     IMenuItem psstMenuItem;
     IMenuItem helpMultiMenuItem;
     IMenuItem knowMultiMenuItem;
-    IMenuItem ballFallMenuItem;
-    IMenuItem militaryMenuItem;
+//    IMenuItem ballFallMenuItem;
+//    IMenuItem militaryMenuItem;
 
     private int adNumber;
 
@@ -53,6 +56,8 @@ public class MainMenuScene extends BaseScene implements IOnMenuItemClickListener
     private final int MENU_MILITARY = 6;
     private final int MENU_HIGH = 7;
     private final int MENU_SHOPPING = 8;
+    private final int MENU_SKILL = 9;
+    //private final int MENU_INFO = 10;
 
     private Text worldText, coinText;
     private Sprite coinSprite;
@@ -70,7 +75,7 @@ public class MainMenuScene extends BaseScene implements IOnMenuItemClickListener
 
     @Override
     public void createScene() {
-        Log.i("MainMennuScene", "CreateScene()");
+        sideLength = resourcesManager.sideLength;
         createBackground();
         createWorldText();
         createCoinText();
@@ -204,13 +209,13 @@ public class MainMenuScene extends BaseScene implements IOnMenuItemClickListener
                 activity.setLoudVisible(loudVisible);
                 return true;
             case MENU_HELP:
-                helpVisible = !helpVisible;
-
-                helpMultiMenuItem.setVisible(helpVisible);
-                knowMultiMenuItem.setVisible(!helpVisible);
-
-                activity.setMultiTutorialSeen(!helpVisible);
-                //SceneManager.getInstance().loadHelpScene(engine);
+//                helpVisible = !helpVisible;
+//
+//                helpMultiMenuItem.setVisible(helpVisible);
+//                knowMultiMenuItem.setVisible(!helpVisible);
+//
+//                activity.setMultiTutorialSeen(!helpVisible);
+//                //SceneManager.getInstance().loadHelpScene(engine);
                 return true;
             case MENU_AD_PARTNER:
                 switch (adNumber) {
@@ -241,6 +246,9 @@ public class MainMenuScene extends BaseScene implements IOnMenuItemClickListener
                 SceneManager.getInstance().loadShopScene(engine);
                 //TODO camera
                 return true;
+            case MENU_SKILL:
+                SceneManager.getInstance().loadSkillMenuScene(engine);
+                return true;
             default:
                 return false;
         }
@@ -251,13 +259,64 @@ public class MainMenuScene extends BaseScene implements IOnMenuItemClickListener
     //---------------------------------------------
 
     private void createBackground() {
-        SpriteBackground spriteBackground = new SpriteBackground(new Sprite(camera.getCenterX(), camera.getCenterY(), camera.getWidth(), camera.getHeight(), resourcesManager.menu_background_region, vbom));
-        this.setBackground(spriteBackground);
+        final AutoParallaxBackground autoParallaxBackground = new AutoParallaxBackground(0, 0, 0, 3);
+
+        autoParallaxBackground.attachParallaxEntity(new ParallaxBackground.ParallaxEntity(0f,
+                new Sprite(camera.getCenterX(), camera.getCenterY(), camera.getWidth(), camera.getHeight(),
+                        resourcesManager.menu_background_region, vbom)));
+        autoParallaxBackground.attachParallaxEntity(new ParallaxBackground.ParallaxEntity(+5f,
+                new Sprite(resourcesManager.sideLength*9.5f, camera.getHeight()-resourcesManager.sideLength*1.3f,
+                        resourcesManager.sideLength*21, resourcesManager.sideLength*2.8f, resourcesManager.clouds_region, vbom)));
+        this.setBackground(autoParallaxBackground);
+
+
+        //attach Lume kimmelnitzText sprite
+        Sprite lumeTextSprite = new Sprite(camera.getCenterX(), camera.getHeight()-resourcesManager.sideLength*1f,
+                resourcesManager.sideLength*5, resourcesManager.sideLength*1.5f, resourcesManager.lume_text_region, vbom);
+        this.attachChild(lumeTextSprite);
+
+        //attach zahnraeder
+        Sprite[] redWheelsL = new Sprite[4];
+        Sprite[] redWheelsR = new Sprite[4];
+        Sprite[] blueWheelsL = new Sprite[3];
+        Sprite[] blueWheelsR = new Sprite[3];
+        Sprite blueWheelLume;
+        float leftX = resourcesManager.sideLength/2;
+        float rightX = camera.getWidth()-resourcesManager.sideLength/2;
+        float distance = resourcesManager.sideLength*2;
+        float lowestYRed = resourcesManager.sideLength/2;
+        float lowestYBlue = resourcesManager.sideLength/2 + resourcesManager.sideLength;
+        for (int i = 0; i < redWheelsL.length; i++) {
+            redWheelsL[i] = new Sprite(leftX, lowestYRed+i*distance, sideLength, 1.06f*sideLength,
+                    resourcesManager.zahnrad_red_region, vbom);
+            this.attachChild(redWheelsL[i]);
+            redWheelsR[i] = new Sprite(rightX, lowestYRed+i*distance, sideLength, 1.06f*sideLength,
+                    resourcesManager.zahnrad_red_region, vbom);
+            this.attachChild(redWheelsR[i]);
+            redWheelsL[i].registerEntityModifier(new LoopEntityModifier(new RotationModifier(2.5f,0, -360)));
+            redWheelsR[i].registerEntityModifier(new LoopEntityModifier(new RotationModifier(2.5f,0, -360)));
+        }
+        for (int i = 0; i < blueWheelsL.length; i++) {
+            blueWheelsL[i] = new Sprite(leftX, lowestYBlue+i*distance, sideLength*1.06f, sideLength,
+                    resourcesManager.zahnrad_blue_region, vbom);
+            this.attachChild(blueWheelsL[i]);
+            blueWheelsR[i] = new Sprite(rightX, lowestYBlue+i*distance, sideLength*1.06f, sideLength,
+                    resourcesManager.zahnrad_blue_region, vbom);
+            this.attachChild(blueWheelsR[i]);
+            //add rotation
+            blueWheelsL[i].registerEntityModifier(new LoopEntityModifier(new RotationModifier(2.5f, 0, 360)));
+            blueWheelsR[i].registerEntityModifier(new LoopEntityModifier(new RotationModifier(2.5f, 0, 360)));
+        }
+        blueWheelLume = new Sprite(rightX-resourcesManager.sideLength, lowestYRed, resourcesManager.sideLength, resourcesManager.sideLength*0.94f,
+                resourcesManager.zahnrad_blue_region, vbom);
+        this.attachChild(blueWheelLume);
+        blueWheelLume.registerEntityModifier(new LoopEntityModifier(new RotationModifier(2.5f, 0, 360)));
     }
 
     private void createWorldText() {
         if (worldText == null) {
-            worldText = new Text(55, camera.getHeight()-45, resourcesManager.smallFont, "WLUME0123456789", new TextOptions(HorizontalAlign.CENTER), vbom);
+            worldText = new Text(55, camera.getHeight()-resourcesManager.sideLength*1f,
+                    resourcesManager.smallFont, "WLUME0123456789", new TextOptions(HorizontalAlign.CENTER), vbom);
             worldText.setText("W" + String.valueOf(activity.getCurrentWorld()));
             if (activity.getCurrentWorld() == 9) {
                 worldText.setText("LUME");
@@ -273,14 +332,14 @@ public class MainMenuScene extends BaseScene implements IOnMenuItemClickListener
 
     private void createCoinText() {
         if (coinText == null) {
-            coinText = new Text(camera.getWidth()-55, camera.getHeight()-45,
+            coinText = new Text(camera.getWidth()-55, camera.getHeight()-resourcesManager.sideLength*1f,
                     resourcesManager.smallFont, ":0123456789", new TextOptions(HorizontalAlign.CENTER), vbom);
             coinText.setText(": " + String.valueOf(activity.getCurrentBeersos()));
             int color = android.graphics.Color.parseColor("#808080");
             coinText.setColor(color);
             this.attachChild(coinText);
-            coinText.setPosition(camera.getWidth()-coinText.getWidth()/2-40, camera.getHeight()-45);
-            coinSprite = new Sprite(coinText.getX()-coinText.getWidth()/2-camera.getHeight()/18, camera.getHeight()-40,
+            coinText.setPosition(camera.getWidth()-coinText.getWidth()/2-40, camera.getHeight()-sideLength*1f);
+            coinSprite = new Sprite(coinText.getX()-coinText.getWidth()/2-camera.getHeight()/18, coinText.getY(),
                     camera.getHeight()/16, camera.getHeight()/16, resourcesManager.coin_region, vbom);
             this.attachChild(coinSprite);
         } else {
@@ -292,8 +351,8 @@ public class MainMenuScene extends BaseScene implements IOnMenuItemClickListener
         Random random = new Random();
         int partners = 2;
         adNumber = random.nextInt(partners);
-        militaryMenuItem.setVisible(adNumber == 0);
-        ballFallMenuItem.setVisible(adNumber == 1);
+//        militaryMenuItem.setVisible(adNumber == 0);
+//        ballFallMenuItem.setVisible(adNumber == 1);
     }
 
     public void updateWorldText() {
@@ -311,64 +370,58 @@ public class MainMenuScene extends BaseScene implements IOnMenuItemClickListener
     }
 
     private void createMenuChildScene() {
+        float f = 1.5f;
         loudVisible = activity.isLoudVisible();
-        helpVisible = !activity.isMultiTutorialSeen();
+        //helpVisible = !activity.isMultiTutorialSeen();
 
         menuChildScene = new MenuScene(camera);
         menuChildScene.setPosition(0, 0);
 
-        final IMenuItem highMenuItem = new ScaleMenuItemDecorator(new SpriteMenuItem(MENU_HIGH, 60, 60, resourcesManager.play_coin_region, vbom), 1.2f, 1);
-        final IMenuItem playMenuItem = new ScaleMenuItemDecorator(new SpriteMenuItem(MENU_PLAY, 60, 60, resourcesManager.play_region, vbom), 1.2f, 1);
-        final IMenuItem levelsMenuItem = new ScaleMenuItemDecorator(new SpriteMenuItem(MENU_LEVELS, 60, 60, resourcesManager.world_region, vbom), 1.2f, 1);
-        final IMenuItem shoppingMenuItem = new ScaleMenuItemDecorator(new SpriteMenuItem(MENU_SHOPPING, 60, 60, resourcesManager.shopping_region, vbom), 1.2f, 1);
-        final IMenuItem multiMenuItem = new ScaleMenuItemDecorator(new SpriteMenuItem(MENU_MULTI, 60, 60, resourcesManager.play_multi_region, vbom), 1.2f, 1);
-        ballFallMenuItem = new ScaleMenuItemDecorator(new SpriteMenuItem(MENU_AD_PARTNER, 110, 110, resourcesManager.ball_fall, vbom), 1.2f, 1);
-        militaryMenuItem = new ScaleMenuItemDecorator(new SpriteMenuItem(MENU_AD_PARTNER, 110, 110, resourcesManager.military, vbom), 1.2f, 1);
+        //create buttons
+        final IMenuItem highMenuItem = new ScaleMenuItemDecorator(new SpriteMenuItem(MENU_HIGH, sideLength*f, sideLength*f, resourcesManager.play_coin_region, vbom), 1.2f, 1);
+        final IMenuItem playMenuItem = new ScaleMenuItemDecorator(new SpriteMenuItem(MENU_PLAY, sideLength*f, sideLength*f, resourcesManager.play_region, vbom), 1.2f, 1);
+        final IMenuItem levelsMenuItem = new ScaleMenuItemDecorator(new SpriteMenuItem(MENU_LEVELS, sideLength*f, sideLength*f, resourcesManager.world_region, vbom), 1.2f, 1);
+        final IMenuItem shoppingMenuItem = new ScaleMenuItemDecorator(new SpriteMenuItem(MENU_SHOPPING, sideLength*1.09f*f, sideLength*f, resourcesManager.shopping_region, vbom), 1.2f, 1);
+        final IMenuItem skillMenuItem = new ScaleMenuItemDecorator(new SpriteMenuItem(MENU_SKILL, sideLength*f, sideLength*f, resourcesManager.skill_gym_region, vbom), 1.2f, 1);
+//        ballFallMenuItem = new ScaleMenuItemDecorator(new SpriteMenuItem(MENU_AD_PARTNER, 110, 110, resourcesManager.ball_fall, vbom), 1.2f, 1);
+//        militaryMenuItem = new ScaleMenuItemDecorator(new SpriteMenuItem(MENU_AD_PARTNER, 110, 110, resourcesManager.military, vbom), 1.2f, 1);
         loudMenuItem = new ScaleMenuItemDecorator(new SpriteMenuItem(MENU_SOUND, 65, 30, resourcesManager.loud_region, vbom), 1.2f, 1);
         psstMenuItem = new ScaleMenuItemDecorator(new SpriteMenuItem(MENU_SOUND, 63, 42, resourcesManager.psst_region, vbom), 1.2f, 1);
-        helpMultiMenuItem = new ScaleMenuItemDecorator(new SpriteMenuItem(MENU_HELP, 60, 60, resourcesManager.help_region, vbom), 1.2f, 1);
-        knowMultiMenuItem = new ScaleMenuItemDecorator(new SpriteMenuItem(MENU_HELP, 60, 60, resourcesManager.know_region, vbom), 1.2f, 1);
-        final IMenuItem singleTextMenuItem = new TextMenuItem(0, resourcesManager.smallFont, "Single Player", vbom);
-        final IMenuItem multiTextMenuItem = new TextMenuItem(1, resourcesManager.smallFont, "Multi Player", vbom);
-        final IMenuItem soundTextMenuItem = new TextMenuItem(MENU_SOUND, resourcesManager.smallFont, "Sound", vbom);
-        final IMenuItem ballFallTextMenuItem = new TextMenuItem(MENU_AD_PARTNER, resourcesManager.smallFont, "Install", vbom);
+        //multi
+//        helpMultiMenuItem = new ScaleMenuItemDecorator(new SpriteMenuItem(MENU_HELP, 60, 60, resourcesManager.help_region, vbom), 1.2f, 1);
+//        knowMultiMenuItem = new ScaleMenuItemDecorator(new SpriteMenuItem(MENU_HELP, 60, 60, resourcesManager.know_region, vbom), 1.2f, 1);
+        final IMenuItem multiMenuItem = new ScaleMenuItemDecorator(new SpriteMenuItem(MENU_MULTI, sideLength, sideLength, resourcesManager.play_multi_region, vbom), 1.2f, 1);
 
         menuChildScene.addMenuItem(highMenuItem);
         menuChildScene.addMenuItem(playMenuItem);
         menuChildScene.addMenuItem(levelsMenuItem);
         menuChildScene.addMenuItem(shoppingMenuItem);
+        menuChildScene.addMenuItem(skillMenuItem);
         menuChildScene.addMenuItem(multiMenuItem);
-        menuChildScene.addMenuItem(ballFallMenuItem);
-        menuChildScene.addMenuItem(militaryMenuItem);
+        /*menuChildScene.addMenuItem(ballFallMenuItem);
+        menuChildScene.addMenuItem(militaryMenuItem);*/
         menuChildScene.addMenuItem(loudMenuItem);
         menuChildScene.addMenuItem(psstMenuItem);
-        menuChildScene.addMenuItem(helpMultiMenuItem);
-        menuChildScene.addMenuItem(knowMultiMenuItem);
-        menuChildScene.addMenuItem(singleTextMenuItem);
-        menuChildScene.addMenuItem(multiTextMenuItem);
-        menuChildScene.addMenuItem(soundTextMenuItem);
-        menuChildScene.addMenuItem(ballFallTextMenuItem);
+//        menuChildScene.addMenuItem(helpMultiMenuItem);
+//        menuChildScene.addMenuItem(knowMultiMenuItem);
 
         menuChildScene.buildAnimations();
         menuChildScene.setBackgroundEnabled(false);
 
 //        playMenuItem.setPosition(playMenuItem.getX(), playMenuItem.getY() + 10);
-        highMenuItem.setPosition(camera.getCenterX()-100, camera.getCenterY());
-        playMenuItem.setPosition(camera.getCenterX(), camera.getCenterY());
-        levelsMenuItem.setPosition(camera.getCenterX()+100, camera.getCenterY());
-        shoppingMenuItem.setPosition(camera.getCenterX()+200, camera.getCenterY());
-        multiMenuItem.setPosition(camera.getCenterX()-50, playMenuItem.getY() - 170);
-        ballFallMenuItem.setPosition(resourcesManager.screenWidth*6.8f/32, camera.getCenterY()-110);
-        militaryMenuItem.setPosition(resourcesManager.screenWidth*6.8f/32, camera.getCenterY()-110);
-        helpMultiMenuItem.setPosition(camera.getCenterX()+50, playMenuItem.getY() - 170);
-        knowMultiMenuItem.setPosition(camera.getCenterX()+50, playMenuItem.getY() - 170);
-        singleTextMenuItem.setPosition(camera.getCenterX(), playMenuItem.getY() + 70);
-        multiTextMenuItem.setPosition(camera.getCenterX(), multiMenuItem.getY() + 70);
-        soundTextMenuItem.setPosition(resourcesManager.screenWidth*25/32, camera.getCenterY()-20);
-        ballFallTextMenuItem.setPosition(resourcesManager.screenWidth*7f/32, camera.getCenterY()-20);
+        highMenuItem.setPosition(sideLength*4, sideLength*5);
+        playMenuItem.setPosition(sideLength*6, sideLength*5);
+        levelsMenuItem.setPosition(sideLength*6, sideLength*3);
+        shoppingMenuItem.setPosition(sideLength*11, sideLength*2.5f);
+        skillMenuItem.setPosition(sideLength*4, sideLength*3);
+        multiMenuItem.setPosition(sideLength*12, sideLength*5.5f);
+        /*ballFallMenuItem.setPosition(resourcesManager.screenWidth*6.8f/32, camera.getCenterY()-110);
+        militaryMenuItem.setPosition(resourcesManager.screenWidth*6.8f/32, camera.getCenterY()-110);*/
+//        helpMultiMenuItem.setPosition(camera.getCenterX()+50, playMenuItem.getY() - 170);
+//        knowMultiMenuItem.setPosition(camera.getCenterX()+50, playMenuItem.getY() - 170);
 
-        loudMenuItem.setPosition(resourcesManager.screenWidth*24.6f/32, camera.getCenterY()-70);
-        psstMenuItem.setPosition(resourcesManager.screenWidth*24.6f/32, camera.getCenterY()-70);
+        loudMenuItem.setPosition(sideLength*13, sideLength*2.5f);
+        psstMenuItem.setPosition(sideLength*13, sideLength*2.5f);
 
         if (loudVisible) {
             loudMenuItem.setVisible(true);
@@ -378,16 +431,16 @@ public class MainMenuScene extends BaseScene implements IOnMenuItemClickListener
             psstMenuItem.setVisible(true);
         }
 
-        if (helpVisible) {
+        /*if (helpVisible) {
             helpMultiMenuItem.setVisible(true);
             knowMultiMenuItem.setVisible(false);
         } else {
             helpMultiMenuItem.setVisible(false);
             knowMultiMenuItem.setVisible(true);
-        }
+        }*/
 
-        ballFallMenuItem.setVisible(true);
-        militaryMenuItem.setVisible(false);
+//        ballFallMenuItem.setVisible(true);
+//        militaryMenuItem.setVisible(false);
 
 
         menuChildScene.setOnMenuItemClickListener(this);
