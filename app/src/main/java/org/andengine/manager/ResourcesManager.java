@@ -68,6 +68,7 @@ public class ResourcesManager {
     public ITextureRegion zahnrad_blue_region;
     public ITextureRegion play_region;
     public ITextureRegion play_multi_region;
+    public ITextureRegion test_multi_region;
     public ITextureRegion world_region;
     public ITextureRegion loud_region;
     public ITextureRegion psst_region;
@@ -116,6 +117,14 @@ public class ResourcesManager {
     public ITextureRegion cannons_e_region;
     public ITextureRegion cannons_s_region;
     public ITextureRegion cannons_w_region;
+    public ITextureRegion cannon_n_region;
+    public ITextureRegion cannon_e_region;
+    public ITextureRegion cannon_s_region;
+    public ITextureRegion cannon_w_region;
+    public ITextureRegion cannon_n_s_region;
+    public ITextureRegion cannon_e_s_region;
+    public ITextureRegion cannon_s_s_region;
+    public ITextureRegion cannon_w_s_region;
     public ITextureRegion replay_region;
     public ITextureRegion finish_region;
 
@@ -273,6 +282,7 @@ public class ResourcesManager {
             zahnrad_red_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(menuTextureAtlas, activity, "zahnrad_red.png");
             play_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(menuTextureAtlas, activity, "play.png");
             play_multi_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(menuTextureAtlas, activity, "play_multi.png");
+            test_multi_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(menuTextureAtlas, activity, "test_multi.png");
             world_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(menuTextureAtlas, activity, "world.png");
             loud_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(menuTextureAtlas, activity, "loud.png");
             psst_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(menuTextureAtlas, activity, "psst.png");
@@ -445,6 +455,14 @@ public class ResourcesManager {
             cannons_e_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gameTextureAtlas, activity, "cannons_e.png");
             cannons_s_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gameTextureAtlas, activity, "cannons_s.png");
             cannons_w_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gameTextureAtlas, activity, "cannons_w.png");
+            cannon_n_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gameTextureAtlas, activity, "cannon_n.png");
+            cannon_e_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gameTextureAtlas, activity, "cannon_e.png");
+            cannon_s_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gameTextureAtlas, activity, "cannon_s.png");
+            cannon_w_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gameTextureAtlas, activity, "cannon_w.png");
+            cannon_n_s_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gameTextureAtlas, activity, "cannon_n_s.png");
+            cannon_e_s_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gameTextureAtlas, activity, "cannon_e_s.png");
+            cannon_s_s_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gameTextureAtlas, activity, "cannon_s_s.png");
+            cannon_w_s_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gameTextureAtlas, activity, "cannon_w_s.png");
             replay_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gameTextureAtlas, activity, "replay.png");
             finish_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gameTextureAtlas, activity, "finish.png");
             finger_luser = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gameTextureAtlas, activity, "finger_luser.png");

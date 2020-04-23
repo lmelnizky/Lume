@@ -57,7 +57,8 @@ public class MainMenuScene extends BaseScene implements IOnMenuItemClickListener
     private final int MENU_HIGH = 7;
     private final int MENU_SHOPPING = 8;
     private final int MENU_SKILL = 9;
-    //private final int MENU_INFO = 10;
+    private final int MENU_INFO = 10;
+    private final int MENU_TEST_MULTI = 11;
 
     private Text worldText, coinText;
     private Sprite coinSprite;
@@ -249,6 +250,9 @@ public class MainMenuScene extends BaseScene implements IOnMenuItemClickListener
             case MENU_SKILL:
                 SceneManager.getInstance().loadSkillMenuScene(engine);
                 return true;
+            case MENU_TEST_MULTI:
+                //TODO test here
+                return true;
             default:
                 return false;
         }
@@ -265,8 +269,8 @@ public class MainMenuScene extends BaseScene implements IOnMenuItemClickListener
                 new Sprite(camera.getCenterX(), camera.getCenterY(), camera.getWidth(), camera.getHeight(),
                         resourcesManager.menu_background_region, vbom)));
         autoParallaxBackground.attachParallaxEntity(new ParallaxBackground.ParallaxEntity(+5f,
-                new Sprite(resourcesManager.sideLength*9.5f, camera.getHeight()-resourcesManager.sideLength*1.3f,
-                        resourcesManager.sideLength*21, resourcesManager.sideLength*2.8f, resourcesManager.clouds_region, vbom)));
+                new Sprite(resourcesManager.sideLength*9f, camera.getHeight()-resourcesManager.sideLength*1.125f,
+                        resourcesManager.sideLength*19, resourcesManager.sideLength*2.5f, resourcesManager.clouds_region, vbom)));
         this.setBackground(autoParallaxBackground);
 
 
@@ -390,7 +394,8 @@ public class MainMenuScene extends BaseScene implements IOnMenuItemClickListener
         //multi
 //        helpMultiMenuItem = new ScaleMenuItemDecorator(new SpriteMenuItem(MENU_HELP, 60, 60, resourcesManager.help_region, vbom), 1.2f, 1);
 //        knowMultiMenuItem = new ScaleMenuItemDecorator(new SpriteMenuItem(MENU_HELP, 60, 60, resourcesManager.know_region, vbom), 1.2f, 1);
-        final IMenuItem multiMenuItem = new ScaleMenuItemDecorator(new SpriteMenuItem(MENU_MULTI, sideLength, sideLength, resourcesManager.play_multi_region, vbom), 1.2f, 1);
+        final IMenuItem multiMenuItem = new ScaleMenuItemDecorator(new SpriteMenuItem(MENU_MULTI, sideLength*f, sideLength*f, resourcesManager.play_multi_region, vbom), 1.2f, 1);
+        final IMenuItem testMultiItem = new ScaleMenuItemDecorator(new SpriteMenuItem(MENU_TEST_MULTI, sideLength*f, sideLength*f, resourcesManager.test_multi_region, vbom), 1.2f, 1);
 
         menuChildScene.addMenuItem(highMenuItem);
         menuChildScene.addMenuItem(playMenuItem);
@@ -398,6 +403,7 @@ public class MainMenuScene extends BaseScene implements IOnMenuItemClickListener
         menuChildScene.addMenuItem(shoppingMenuItem);
         menuChildScene.addMenuItem(skillMenuItem);
         menuChildScene.addMenuItem(multiMenuItem);
+        menuChildScene.addMenuItem(testMultiItem);
         /*menuChildScene.addMenuItem(ballFallMenuItem);
         menuChildScene.addMenuItem(militaryMenuItem);*/
         menuChildScene.addMenuItem(loudMenuItem);
@@ -414,7 +420,8 @@ public class MainMenuScene extends BaseScene implements IOnMenuItemClickListener
         levelsMenuItem.setPosition(sideLength*6, sideLength*3);
         shoppingMenuItem.setPosition(sideLength*11, sideLength*2.5f);
         skillMenuItem.setPosition(sideLength*4, sideLength*3);
-        multiMenuItem.setPosition(sideLength*12, sideLength*5.5f);
+        multiMenuItem.setPosition(sideLength*11, sideLength*5.5f);
+        testMultiItem.setPosition(sideLength*13, sideLength*5.5f);
         /*ballFallMenuItem.setPosition(resourcesManager.screenWidth*6.8f/32, camera.getCenterY()-110);
         militaryMenuItem.setPosition(resourcesManager.screenWidth*6.8f/32, camera.getCenterY()-110);*/
 //        helpMultiMenuItem.setPosition(camera.getCenterX()+50, playMenuItem.getY() - 170);

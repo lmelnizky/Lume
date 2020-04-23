@@ -72,6 +72,7 @@ public class HighscoreScene extends BaseScene {
 
     private static final int FIRST_LAYER = 0; //is used for ground, player and coin
     private static final int SECOND_LAYER = 1; //is used for  stones
+    private static final int THIRD_LAYER = 2; //is used for cannons
     private int variant;
     private int variantStage;
     int timeBetweenStones = 0;
@@ -98,7 +99,7 @@ public class HighscoreScene extends BaseScene {
 
     private Random randomGenerator;
 
-    private IEntity firstLayer, secondLayer;
+    private IEntity firstLayer, secondLayer, thirdLayer;
 
     private Scene gameOverScene;
 
@@ -106,6 +107,8 @@ public class HighscoreScene extends BaseScene {
     private Sprite lamporghinaSprite;
     private Sprite coinSprite;
     private Sprite cannonsN, cannonsE, cannonsS, cannonsW;
+    private Sprite[] cannonN, cannonE, cannonS, cannonW;
+    private Sprite[] cannonNS, cannonES, cannonSS, cannonWS;
     private ArrayList<Sprite> crackyStones, crackyStonesToRemove, cannonBallsToRemove,
             mirrorStonesToRemove, mirrorStones;
 
@@ -386,8 +389,10 @@ public class HighscoreScene extends BaseScene {
     private void createLayers() {
         this.attachChild(new Entity()); // First Layer
         this.attachChild(new Entity()); // Second Layer
+        this.attachChild(new Entity()); // Third Layer
         firstLayer = this.getChildByIndex(FIRST_LAYER);
         secondLayer = this.getChildByIndex(SECOND_LAYER);
+        thirdLayer = this.getChildByIndex(THIRD_LAYER);
     }
 
     private void createHUD() {
@@ -667,14 +672,103 @@ public class HighscoreScene extends BaseScene {
     }
 
     private void createCannons() {
-        cannonsN = new Sprite(camera.getCenterX(), camera.getHeight() - sideLength / 2, sideLength * 3, sideLength, resourcesManager.cannons_n_region, vbom);
-        cannonsE = new Sprite(camera.getWidth() - sideLength / 2, camera.getCenterY(), sideLength, sideLength * 3, resourcesManager.cannons_e_region, vbom);
-        cannonsS = new Sprite(camera.getCenterX(), sideLength / 2, sideLength * 3, sideLength, resourcesManager.cannons_s_region, vbom);
-        cannonsW = new Sprite(sideLength / 2, camera.getCenterY(), sideLength, sideLength * 3, resourcesManager.cannons_w_region, vbom);
-        secondLayer.attachChild(cannonsN);
-        secondLayer.attachChild(cannonsE);
-        secondLayer.attachChild(cannonsS);
-        secondLayer.attachChild(cannonsW);
+//        cannonsN = new Sprite(camera.getCenterX(), camera.getHeight() - sideLength / 2, sideLength * 3, sideLength, resourcesManager.cannons_n_region, vbom);
+//        cannonsE = new Sprite(camera.getWidth() - sideLength / 2, camera.getCenterY(), sideLength, sideLength * 3, resourcesManager.cannons_e_region, vbom);
+//        cannonsS = new Sprite(camera.getCenterX(), sideLength / 2, sideLength * 3, sideLength, resourcesManager.cannons_s_region, vbom);
+//        cannonsW = new Sprite(sideLength / 2, camera.getCenterY(), sideLength, sideLength * 3, resourcesManager.cannons_w_region, vbom);
+//        secondLayer.attachChild(cannonsN);
+//        secondLayer.attachChild(cannonsE);
+//        secondLayer.attachChild(cannonsS);
+//        secondLayer.attachChild(cannonsW);
+
+        //TODO TEST
+        cannonN = new Sprite[3];
+        cannonE = new Sprite[3];
+        cannonS = new Sprite[3];
+        cannonW = new Sprite[3];
+        cannonNS = new Sprite[3];
+        cannonES = new Sprite[3];
+        cannonSS = new Sprite[3];
+        cannonWS = new Sprite[3];
+        for (int i = 0; i < cannonN.length; i++) {
+            cannonN[i] = new Sprite(camera.getCenterX()-sideLength+sideLength*i, camera.getHeight(),
+                    sideLength, sideLength, resourcesManager.cannon_n_region, vbom);
+            cannonE[i] = new Sprite(camera.getWidth(), camera.getCenterY()-sideLength+sideLength*i,
+                    sideLength, sideLength, resourcesManager.cannon_e_region, vbom);
+            cannonS[i] = new Sprite(camera.getCenterX()-sideLength+sideLength*i, 0,
+                    sideLength, sideLength, resourcesManager.cannon_s_region, vbom);
+            cannonW[i] = new Sprite(0, camera.getCenterY()-sideLength+sideLength*i,
+                    sideLength, sideLength, resourcesManager.cannon_w_region, vbom);
+
+            cannonNS[i] = new Sprite(camera.getCenterX()-sideLength+sideLength*i, camera.getHeight(),
+                    sideLength*0.75f, sideLength, resourcesManager.cannon_n_s_region, vbom);
+            cannonES[i] = new Sprite(camera.getWidth(), camera.getCenterY()-sideLength+sideLength*i,
+                    sideLength, sideLength*0.75f, resourcesManager.cannon_e_s_region, vbom);
+            cannonSS[i] = new Sprite(camera.getCenterX()-sideLength+sideLength*i, 0,
+                    sideLength*0.75f, sideLength, resourcesManager.cannon_s_s_region, vbom);
+            cannonWS[i] = new Sprite(0, camera.getCenterY()-sideLength+sideLength*i,
+                    sideLength, sideLength*0.75f, resourcesManager.cannon_w_s_region, vbom);
+
+            thirdLayer.attachChild(cannonN[i]);
+            thirdLayer.attachChild(cannonE[i]);
+            thirdLayer.attachChild(cannonS[i]);
+            thirdLayer.attachChild(cannonW[i]);
+            thirdLayer.attachChild(cannonNS[i]);
+            thirdLayer.attachChild(cannonES[i]);
+            thirdLayer.attachChild(cannonSS[i]);
+            thirdLayer.attachChild(cannonWS[i]);
+
+            //setVisibility of small ones to false
+            cannonNS[i].setVisible(false);
+            cannonES[i].setVisible(false);
+            cannonSS[i].setVisible(false);
+            cannonWS[i].setVisible(false);
+        }
+    }
+
+    private void animateCannon(int direction, int position) {
+        switch (direction){
+            case 1:
+                cannonN[position].setVisible(false);
+                cannonNS[position].setVisible(true);
+                break;
+            case 2:
+                cannonE[position].setVisible(false);
+                cannonES[position].setVisible(true);
+                break;
+            case 3:
+                cannonS[position].setVisible(false);
+                cannonSS[position].setVisible(true);
+                break;
+            case 4:
+                cannonW[position].setVisible(false);
+                cannonWS[position].setVisible(true);
+                break;
+        }
+        engine.registerUpdateHandler(new TimerHandler(0.8f, new ITimerCallback() {
+            public void onTimePassed(final TimerHandler pTimerHandler) {
+                engine.unregisterUpdateHandler(pTimerHandler);
+                switch (direction){
+                    case 1:
+                        cannonN[position].setVisible(true);
+                        cannonNS[position].setVisible(false);
+                        break;
+                    case 2:
+                        cannonE[position].setVisible(true);
+                        cannonES[position].setVisible(false);
+                        break;
+                    case 3:
+                        cannonS[position].setVisible(true);
+                        cannonSS[position].setVisible(false);
+                        break;
+                    case 4:
+                        cannonW[position].setVisible(true);
+                        cannonWS[position].setVisible(false);
+                        break;
+                }
+
+            }
+        }));
     }
 
     private void createCannonball(int direction) {
@@ -1319,6 +1413,8 @@ public class HighscoreScene extends BaseScene {
             }
         };
         secondLayer.attachChild(stone);
+        //animate cannon
+        animateCannon(direction, position);
         if (isGravity) {
             gravity = getGravity(gravityDirection);
             body = PhysicsFactory.createCircleBody(physicsWorld, stone, BodyType.DynamicBody, FIXTURE_DEF);
