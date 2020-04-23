@@ -2,7 +2,9 @@ package org.andengine.scene;
 
 import android.content.Intent;
 import android.net.Uri;
+import android.util.Log;
 
+import org.andengine.OnlineMultiplayer.TestServer;
 import org.andengine.OnlineUsers.User;
 import org.andengine.base.BaseScene;
 import org.andengine.entity.modifier.LoopEntityModifier;
@@ -76,6 +78,9 @@ public class MainMenuScene extends BaseScene implements IOnMenuItemClickListener
 
     @Override
     public void createScene() {
+        Log.w("MainMenuScene", "start connection with server");
+        new TestServer();
+        Log.w("MainMenuScene", "done with connection");
         sideLength = resourcesManager.sideLength;
         createBackground();
         createWorldText();
