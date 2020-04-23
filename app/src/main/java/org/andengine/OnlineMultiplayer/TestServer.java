@@ -10,7 +10,7 @@ import io.socket.emitter.Emitter;
 
 public class TestServer {
     private Socket socket;
-    private final String serverUrl = "http://localhost:8080";
+    private final String serverUrl = "https://lumegameserver.herokuapp.com/";
 
     public TestServer() {
         connectWithServer();
