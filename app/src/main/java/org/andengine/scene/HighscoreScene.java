@@ -106,9 +106,9 @@ public class HighscoreScene extends BaseScene {
     private Sprite lumeSprite;
     private Sprite lamporghinaSprite;
     private Sprite coinSprite;
-    private Sprite cannonsN, cannonsE, cannonsS, cannonsW;
     private Sprite[] cannonN, cannonE, cannonS, cannonW;
     private Sprite[] cannonNS, cannonES, cannonSS, cannonWS;
+    private Sprite[] cannonNU, cannonEU, cannonSU, cannonWU;
     private ArrayList<Sprite> crackyStones, crackyStonesToRemove, cannonBallsToRemove,
             mirrorStonesToRemove, mirrorStones;
 
@@ -159,8 +159,8 @@ public class HighscoreScene extends BaseScene {
         createPhysics();
         createBoard();
         createLume();
-        createCannons();
         createHalves();
+        createCannons();
         createHUD();
 
         resetData();
@@ -174,7 +174,7 @@ public class HighscoreScene extends BaseScene {
                     int displayTime = Math.round(time / 60);
                     timeText.setText(String.valueOf(displayTime));
                     if (time <= 0 && !gameOverDisplayed) {
-                        displayGameOverScene(true);
+                        displayGameOverScene();
                     }
                     if (displayTime <= 5) {
                         timeText.setColor(Color.RED);
@@ -245,7 +245,7 @@ public class HighscoreScene extends BaseScene {
         // removing all game scene objects.
     }
 
-    private void displayGameOverScene(boolean finished) {
+    private void displayGameOverScene() {
         gameOverDisplayed = true;
 
         gameOverScene = new CameraScene(camera);
@@ -258,24 +258,8 @@ public class HighscoreScene extends BaseScene {
 
         float textY = (yPosLume == 2) ? camera.getCenterY() + sideLength : camera.getCenterY();
         gameOverText = new Text(camera.getCenterX(), textY,
-                resourcesManager.smallFont, "L u s e r !", vbom) {
-            @Override
-            public boolean onAreaTouched(final TouchEvent pSceneTouchEvent, final float pTouchAreaLocalX,
-                                         final float pTouchAreaLocalY) {
-                if (pSceneTouchEvent.isActionDown()) {
-                    //clear child scenes - game will be resumed
-                    clearChildScene();
-                    setIgnoreUpdate(false);
-                    gameOverDisplayed = false;
-                    registerUpdateHandler(physicsWorld);
-                    SceneManager.getInstance().loadMenuScene(engine);
-                    disposeHUD();
-                    return true;
-                } else {
-                    return false;
-                }
-            }
-        };
+                resourcesManager.smallFont, "L u s e r !", vbom);
+
         coinsText = new Text(camera.getCenterX(), camera.getHeight()*7.5f/9,
                 resourcesManager.smallFont, "coins: 0123456789", vbom);
         highscoreText = new Text(camera.getCenterX(), camera.getHeight()*6.5f/9,
@@ -672,16 +656,6 @@ public class HighscoreScene extends BaseScene {
     }
 
     private void createCannons() {
-//        cannonsN = new Sprite(camera.getCenterX(), camera.getHeight() - sideLength / 2, sideLength * 3, sideLength, resourcesManager.cannons_n_region, vbom);
-//        cannonsE = new Sprite(camera.getWidth() - sideLength / 2, camera.getCenterY(), sideLength, sideLength * 3, resourcesManager.cannons_e_region, vbom);
-//        cannonsS = new Sprite(camera.getCenterX(), sideLength / 2, sideLength * 3, sideLength, resourcesManager.cannons_s_region, vbom);
-//        cannonsW = new Sprite(sideLength / 2, camera.getCenterY(), sideLength, sideLength * 3, resourcesManager.cannons_w_region, vbom);
-//        secondLayer.attachChild(cannonsN);
-//        secondLayer.attachChild(cannonsE);
-//        secondLayer.attachChild(cannonsS);
-//        secondLayer.attachChild(cannonsW);
-
-        //TODO TEST
         cannonN = new Sprite[3];
         cannonE = new Sprite[3];
         cannonS = new Sprite[3];
@@ -690,39 +664,62 @@ public class HighscoreScene extends BaseScene {
         cannonES = new Sprite[3];
         cannonSS = new Sprite[3];
         cannonWS = new Sprite[3];
+        cannonNU = new Sprite[3];
+        cannonEU = new Sprite[3];
+        cannonSU = new Sprite[3];
+        cannonWU = new Sprite[3];
+
         for (int i = 0; i < cannonN.length; i++) {
-            cannonN[i] = new Sprite(camera.getCenterX()-sideLength+sideLength*i, camera.getHeight(),
+            cannonN[i] = new Sprite(camera.getCenterX()-sideLength+sideLength*i, camera.getHeight()-sideLength/2,
                     sideLength, sideLength, resourcesManager.cannon_n_region, vbom);
-            cannonE[i] = new Sprite(camera.getWidth(), camera.getCenterY()-sideLength+sideLength*i,
+            cannonE[i] = new Sprite(camera.getWidth()-sideLength/2, camera.getCenterY()-sideLength+sideLength*i,
                     sideLength, sideLength, resourcesManager.cannon_e_region, vbom);
-            cannonS[i] = new Sprite(camera.getCenterX()-sideLength+sideLength*i, 0,
+            cannonS[i] = new Sprite(camera.getCenterX()-sideLength+sideLength*i, sideLength/2,
                     sideLength, sideLength, resourcesManager.cannon_s_region, vbom);
-            cannonW[i] = new Sprite(0, camera.getCenterY()-sideLength+sideLength*i,
+            cannonW[i] = new Sprite(sideLength/2, camera.getCenterY()-sideLength+sideLength*i,
                     sideLength, sideLength, resourcesManager.cannon_w_region, vbom);
 
-            cannonNS[i] = new Sprite(camera.getCenterX()-sideLength+sideLength*i, camera.getHeight(),
-                    sideLength*0.75f, sideLength, resourcesManager.cannon_n_s_region, vbom);
-            cannonES[i] = new Sprite(camera.getWidth(), camera.getCenterY()-sideLength+sideLength*i,
-                    sideLength, sideLength*0.75f, resourcesManager.cannon_e_s_region, vbom);
-            cannonSS[i] = new Sprite(camera.getCenterX()-sideLength+sideLength*i, 0,
-                    sideLength*0.75f, sideLength, resourcesManager.cannon_s_s_region, vbom);
-            cannonWS[i] = new Sprite(0, camera.getCenterY()-sideLength+sideLength*i,
-                    sideLength, sideLength*0.75f, resourcesManager.cannon_w_s_region, vbom);
+            cannonNS[i] = new Sprite(camera.getCenterX()-sideLength+sideLength*i, camera.getHeight()-sideLength*3/8,
+                    sideLength, sideLength*0.75f, resourcesManager.cannon_n_s_region, vbom);
+            cannonES[i] = new Sprite(camera.getWidth()-sideLength*3/8, camera.getCenterY()-sideLength+sideLength*i,
+                    sideLength*0.75f, sideLength, resourcesManager.cannon_e_s_region, vbom);
+            cannonSS[i] = new Sprite(camera.getCenterX()-sideLength+sideLength*i, sideLength*3/8,
+                    sideLength, sideLength*0.75f, resourcesManager.cannon_s_s_region, vbom);
+            cannonWS[i] = new Sprite(sideLength*3/8, camera.getCenterY()-sideLength+sideLength*i,
+                    sideLength*0.75f, sideLength, resourcesManager.cannon_w_s_region, vbom);
 
-            thirdLayer.attachChild(cannonN[i]);
-            thirdLayer.attachChild(cannonE[i]);
-            thirdLayer.attachChild(cannonS[i]);
-            thirdLayer.attachChild(cannonW[i]);
-            thirdLayer.attachChild(cannonNS[i]);
-            thirdLayer.attachChild(cannonES[i]);
-            thirdLayer.attachChild(cannonSS[i]);
-            thirdLayer.attachChild(cannonWS[i]);
+            cannonNU[i] = new Sprite(camera.getCenterX()-sideLength+sideLength*i, camera.getHeight()-sideLength*0.222f,
+                    sideLength, sideLength*0.444f, resourcesManager.cannon_n_u_region, vbom);
+            cannonEU[i] = new Sprite(camera.getWidth()-sideLength*0.222f, camera.getCenterY()-sideLength+sideLength*i,
+                    sideLength*0.444f, sideLength, resourcesManager.cannon_e_u_region, vbom);
+            cannonSU[i] = new Sprite(camera.getCenterX()-sideLength+sideLength*i, sideLength*0.222f,
+                    sideLength, sideLength*0.444f, resourcesManager.cannon_s_u_region, vbom);
+            cannonWU[i] = new Sprite(sideLength*0.222f, camera.getCenterY()-sideLength+sideLength*i,
+                    sideLength*0.444f, sideLength, resourcesManager.cannon_w_u_region, vbom);
+
+            secondLayer.attachChild(cannonN[i]);
+            secondLayer.attachChild(cannonE[i]);
+            secondLayer.attachChild(cannonS[i]);
+            secondLayer.attachChild(cannonW[i]);
+            secondLayer.attachChild(cannonNS[i]);
+            secondLayer.attachChild(cannonES[i]);
+            secondLayer.attachChild(cannonSS[i]);
+            secondLayer.attachChild(cannonWS[i]);
+
+            thirdLayer.attachChild(cannonNU[i]);
+            thirdLayer.attachChild(cannonEU[i]);
+            thirdLayer.attachChild(cannonSU[i]);
+            thirdLayer.attachChild(cannonWU[i]);
 
             //setVisibility of small ones to false
             cannonNS[i].setVisible(false);
             cannonES[i].setVisible(false);
             cannonSS[i].setVisible(false);
             cannonWS[i].setVisible(false);
+            cannonNU[i].setVisible(false);
+            cannonEU[i].setVisible(false);
+            cannonSU[i].setVisible(false);
+            cannonWU[i].setVisible(false);
         }
     }
 
@@ -731,18 +728,22 @@ public class HighscoreScene extends BaseScene {
             case 1:
                 cannonN[position].setVisible(false);
                 cannonNS[position].setVisible(true);
+                cannonNU[position].setVisible(true);
                 break;
             case 2:
                 cannonE[position].setVisible(false);
                 cannonES[position].setVisible(true);
+                cannonEU[position].setVisible(true);
                 break;
             case 3:
                 cannonS[position].setVisible(false);
                 cannonSS[position].setVisible(true);
+                cannonSU[position].setVisible(true);
                 break;
             case 4:
                 cannonW[position].setVisible(false);
                 cannonWS[position].setVisible(true);
+                cannonWU[position].setVisible(true);
                 break;
         }
         engine.registerUpdateHandler(new TimerHandler(0.8f, new ITimerCallback() {
@@ -752,18 +753,22 @@ public class HighscoreScene extends BaseScene {
                     case 1:
                         cannonN[position].setVisible(true);
                         cannonNS[position].setVisible(false);
+                        cannonNU[position].setVisible(false);
                         break;
                     case 2:
                         cannonE[position].setVisible(true);
                         cannonES[position].setVisible(false);
+                        cannonEU[position].setVisible(false);
                         break;
                     case 3:
                         cannonS[position].setVisible(true);
                         cannonSS[position].setVisible(false);
+                        cannonSU[position].setVisible(false);
                         break;
                     case 4:
                         cannonW[position].setVisible(true);
                         cannonWS[position].setVisible(false);
+                        cannonWU[position].setVisible(false);
                         break;
                 }
 
@@ -814,7 +819,7 @@ public class HighscoreScene extends BaseScene {
 
                 //if mirror stones are present, cannonball is deadly
                 if (cannonCircle.collision(lumeCircle) && !gameOverDisplayed && rebound) {
-                    displayGameOverScene(false);
+                    displayGameOverScene();
                     score = 0;
                 }
 
@@ -1353,7 +1358,7 @@ public class HighscoreScene extends BaseScene {
 
                 if ((stoneCircle.collision(lumeCircle) && !gameOverDisplayed && !isLamporghina) ||
                         (stoneCircle.collision(lumeCircle) && isLamporghina && type == 'T' && !gameOverDisplayed)) {
-                    displayGameOverScene(false);
+                    displayGameOverScene();
                     score = 0;
                 } else if (stoneCircle.collision(lumeCircle) && isLamporghina && type == 'C') {
                     crackyStonesToRemove.add(this);
@@ -1380,7 +1385,7 @@ public class HighscoreScene extends BaseScene {
                     final Circle lamporghinaCircle;
                     lamporghinaCircle = new Circle(lamporghinaSprite.getX(), lamporghinaSprite.getY(), lamporghinaSprite.getWidth()/2);
                     if (stoneCircle.collision(lamporghinaCircle) && !gameOverDisplayed) {
-                        displayGameOverScene(false);
+                        displayGameOverScene();
                     }
                 }
 
@@ -1448,7 +1453,7 @@ public class HighscoreScene extends BaseScene {
                 body.applyForce(gravity, body.getWorldCenter());
 
                 if (stoneCircle.collision(lumeCircle) && !gameOverDisplayed) {
-                    displayGameOverScene(false);
+                    displayGameOverScene();
                     score = 0;
                 }
                 if (stone.getX() < -sideLength || stone.getY() < -sideLength ||
@@ -1623,7 +1628,7 @@ public class HighscoreScene extends BaseScene {
                 line = new Line(this.getX(), this.getY(), peakX, peakY);
 
                 if (line.collision(lumeCircle)) {
-                    displayGameOverScene(false);
+                    displayGameOverScene();
                 }
 
                 if (this.getX() < -sideLength || this.getY() < -sideLength ||

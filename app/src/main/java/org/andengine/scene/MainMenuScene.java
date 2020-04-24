@@ -17,6 +17,7 @@ import org.andengine.entity.scene.menu.item.decorator.ScaleMenuItemDecorator;
 import org.andengine.entity.sprite.Sprite;
 import org.andengine.entity.text.Text;
 import org.andengine.entity.text.TextOptions;
+import org.andengine.input.touch.TouchEvent;
 import org.andengine.manager.ResourcesManager;
 import org.andengine.manager.SceneManager;
 import org.andengine.manager.SceneType;
@@ -35,6 +36,7 @@ public class MainMenuScene extends BaseScene implements IOnMenuItemClickListener
     private boolean loudVisible;
     //private boolean helpVisible;
     private boolean isOnline;
+    private boolean leftRun, rightRun;
 
     private float sideLength;
 
@@ -60,13 +62,15 @@ public class MainMenuScene extends BaseScene implements IOnMenuItemClickListener
     private final int MENU_INFO = 10;
     private final int MENU_TEST_MULTI = 11;
 
-    private Text worldText, coinText;
+    private Text worldText, coinText, hsText;
     private Sprite coinSprite;
+    private LoopEntityModifier clockWiseL, counterWiseL, clockWiseR, counterWiseR;
 
     //CONSTRUCTOR
     public MainMenuScene() {
         updateWorldText();
         updateCoinText();
+        updateHSText();
     }
 
 
@@ -80,6 +84,7 @@ public class MainMenuScene extends BaseScene implements IOnMenuItemClickListener
         createBackground();
         createWorldText();
         createCoinText();
+        createHSText();
         createMenuChildScene();
         showRandomAd();
         activity.showSlowMoHintMenu();
@@ -280,16 +285,24 @@ public class MainMenuScene extends BaseScene implements IOnMenuItemClickListener
         this.attachChild(lumeTextSprite);
 
         //attach zahnraeder
-        Sprite[] redWheelsL = new Sprite[4];
-        Sprite[] redWheelsR = new Sprite[4];
+        RotationModifier rotClockWise = new RotationModifier(10f, 0, 360);
+        RotationModifier rotCounterWise = new RotationModifier(10f, 0, -360);
+        clockWiseL = new LoopEntityModifier(rotClockWise);
+        counterWiseL = new LoopEntityModifier(rotCounterWise);
+        clockWiseR = new LoopEntityModifier(rotClockWise);
+        counterWiseR = new LoopEntityModifier(rotCounterWise);
+
+        Sprite[] redWheelsL = new Sprite[3];
+        Sprite[] redWheelsR = new Sprite[3];
         Sprite[] blueWheelsL = new Sprite[3];
         Sprite[] blueWheelsR = new Sprite[3];
-        Sprite blueWheelLume;
+        Sprite blueWheelLume, stopWheelL, stopWheelR, runWheelL, runWheelR;
         float leftX = resourcesManager.sideLength/2;
         float rightX = camera.getWidth()-resourcesManager.sideLength/2;
         float distance = resourcesManager.sideLength*2;
         float lowestYRed = resourcesManager.sideLength/2;
         float lowestYBlue = resourcesManager.sideLength/2 + resourcesManager.sideLength;
+        float highestY = lowestYRed+6*sideLength;
         for (int i = 0; i < redWheelsL.length; i++) {
             redWheelsL[i] = new Sprite(leftX, lowestYRed+i*distance, sideLength, 1.06f*sideLength,
                     resourcesManager.zahnrad_red_region, vbom);
@@ -297,8 +310,7 @@ public class MainMenuScene extends BaseScene implements IOnMenuItemClickListener
             redWheelsR[i] = new Sprite(rightX, lowestYRed+i*distance, sideLength, 1.06f*sideLength,
                     resourcesManager.zahnrad_red_region, vbom);
             this.attachChild(redWheelsR[i]);
-            redWheelsL[i].registerEntityModifier(new LoopEntityModifier(new RotationModifier(2.5f,0, -360)));
-            redWheelsR[i].registerEntityModifier(new LoopEntityModifier(new RotationModifier(2.5f,0, -360)));
+            redWheelsL[i].registerEntityModifier(new LoopEntityModifier(new RotationModifier(2.5f, 0, -360)));
         }
         for (int i = 0; i < blueWheelsL.length; i++) {
             blueWheelsL[i] = new Sprite(leftX, lowestYBlue+i*distance, sideLength*1.06f, sideLength,
@@ -309,12 +321,91 @@ public class MainMenuScene extends BaseScene implements IOnMenuItemClickListener
             this.attachChild(blueWheelsR[i]);
             //add rotation
             blueWheelsL[i].registerEntityModifier(new LoopEntityModifier(new RotationModifier(2.5f, 0, 360)));
-            blueWheelsR[i].registerEntityModifier(new LoopEntityModifier(new RotationModifier(2.5f, 0, 360)));
+            //blueWheelsR[i].registerEntityModifier(new LoopEntityModifier(new RotationModifier(2.5f, 0, 360)));
         }
-        blueWheelLume = new Sprite(rightX-resourcesManager.sideLength, lowestYRed, resourcesManager.sideLength, resourcesManager.sideLength*0.94f,
+        blueWheelLume = new Sprite(rightX-resourcesManager.sideLength, lowestYRed, resourcesManager.sideLength*1.06f, resourcesManager.sideLength,
                 resourcesManager.zahnrad_blue_region, vbom);
         this.attachChild(blueWheelLume);
-        blueWheelLume.registerEntityModifier(new LoopEntityModifier(new RotationModifier(2.5f, 0, 360)));
+        //blueWheelLume.registerEntityModifier(new LoopEntityModifier(new RotationModifier(2.5f, 0, 360)));
+
+        //add touch wheels
+        rightRun = false;
+        leftRun = true;
+        stopWheelL = new Sprite(leftX, highestY, sideLength, sideLength*1.06f,
+                resourcesManager.zahnrad_stop_region, vbom);
+        runWheelL = new Sprite(leftX, highestY, sideLength, sideLength*1.06f,
+                resourcesManager.zahnrad_run_region, vbom) {
+            @Override
+            public boolean onAreaTouched(final TouchEvent pSceneTouchEvent, final float pTouchAreaLocalX,
+                                         final float pTouchAreaLocalY) {
+                if (pSceneTouchEvent.isActionDown()) {
+                    leftRun = !leftRun;
+                    if (leftRun) {
+                        this.setVisible(true);
+                        stopWheelL.setVisible(false);
+                        for (int i = 0; i < blueWheelsL.length; i++) {
+                            blueWheelsL[i].registerEntityModifier(new LoopEntityModifier(new RotationModifier(2.5f, 0, 360)));
+                            redWheelsL[i].registerEntityModifier(new LoopEntityModifier(new RotationModifier(2.5f, 0, -360)));
+                        }
+                        this.registerEntityModifier(new LoopEntityModifier(new RotationModifier(2.5f, 0, -360)));
+                    } else {
+                        this.setVisible(false);
+                        stopWheelL.setVisible(true);
+                        for (int i = 0; i < blueWheelsL.length; i++) {
+                            blueWheelsL[i].clearEntityModifiers();
+                            redWheelsL[i].clearEntityModifiers();
+                        }
+                        this.clearEntityModifiers();
+                    }
+                    return true;
+                } else {
+                    return false;
+                }
+            }
+        };
+        runWheelL.registerEntityModifier(new LoopEntityModifier(new RotationModifier(2.5f, 0, -360)));
+        stopWheelR = new Sprite(rightX, highestY, sideLength, sideLength*1.06f,
+                resourcesManager.zahnrad_stop_region, vbom);
+        runWheelR = new Sprite(rightX, highestY, sideLength, sideLength*1.06f,
+                resourcesManager.zahnrad_run_region, vbom) {
+            @Override
+            public boolean onAreaTouched(final TouchEvent pSceneTouchEvent, final float pTouchAreaLocalX,
+                                         final float pTouchAreaLocalY) {
+                if (pSceneTouchEvent.isActionDown()) {
+                    rightRun = !rightRun;
+                    if (rightRun) {
+                        this.setVisible(true);
+                        stopWheelR.setVisible(false);
+                        for (int i = 0; i < blueWheelsR.length; i++) {
+                            blueWheelsR[i].registerEntityModifier(new LoopEntityModifier(new RotationModifier(2.5f, 0, 360)));
+                            redWheelsR[i].registerEntityModifier(new LoopEntityModifier(new RotationModifier(2.5f, 0, -360)));
+                        }
+                        blueWheelLume.registerEntityModifier(new LoopEntityModifier(new RotationModifier(2.5f, 0, 360)));
+                        this.registerEntityModifier(new LoopEntityModifier(new RotationModifier(2.5f, 0, -360)));
+                    } else {
+                        this.setVisible(false);
+                        stopWheelR.setVisible(true);
+                        for (int i = 0; i < blueWheelsL.length; i++) {
+                            blueWheelsR[i].clearEntityModifiers();
+                            redWheelsR[i].clearEntityModifiers();
+                        }
+                        blueWheelLume.clearEntityModifiers();
+                        this.clearEntityModifiers();
+                    }
+                    return true;
+                } else {
+                    return false;
+                }
+            }
+        };
+        this.attachChild(stopWheelL);
+        this.attachChild(stopWheelR);
+        this.attachChild(runWheelL);
+        this.attachChild(runWheelR);
+        this.registerTouchArea(runWheelL);
+        this.registerTouchArea(runWheelR);
+        stopWheelL.setVisible(false);
+        runWheelR.setVisible(false);
     }
 
     private void createWorldText() {
@@ -337,17 +428,31 @@ public class MainMenuScene extends BaseScene implements IOnMenuItemClickListener
     private void createCoinText() {
         if (coinText == null) {
             coinText = new Text(camera.getWidth()-55, camera.getHeight()-resourcesManager.sideLength*1f,
-                    resourcesManager.smallFont, ":0123456789", new TextOptions(HorizontalAlign.CENTER), vbom);
-            coinText.setText(": " + String.valueOf(activity.getCurrentBeersos()));
-            int color = android.graphics.Color.parseColor("#808080");
+                    resourcesManager.smallFont, "C: 0123456789", new TextOptions(HorizontalAlign.CENTER), vbom);
+            coinText.setText("C: " + String.valueOf(activity.getCurrentBeersos()));
+            int color = android.graphics.Color.parseColor("#ffed00");
             coinText.setColor(color);
             this.attachChild(coinText);
             coinText.setPosition(camera.getWidth()-coinText.getWidth()/2-40, camera.getHeight()-sideLength*1f);
-            coinSprite = new Sprite(coinText.getX()-coinText.getWidth()/2-camera.getHeight()/18, coinText.getY(),
-                    camera.getHeight()/16, camera.getHeight()/16, resourcesManager.coin_region, vbom);
-            this.attachChild(coinSprite);
+//            coinSprite = new Sprite(coinText.getX()-coinText.getWidth()/2-camera.getHeight()/18, coinText.getY(),
+//                    camera.getHeight()/16, camera.getHeight()/16, resourcesManager.coin_region, vbom);
+//            this.attachChild(coinSprite);
         } else {
             this.updateCoinText();
+        }
+    }
+
+    private void createHSText() {
+        if (hsText == null) {
+            hsText = new Text(sideLength*2, camera.getHeight()-resourcesManager.sideLength*1f,
+                    resourcesManager.smallFont, "HS: 0123456789", new TextOptions(HorizontalAlign.CENTER), vbom);
+            hsText.setText("HS: " + String.valueOf(activity.getCurrentBeersos()));
+            int color = android.graphics.Color.parseColor("#ffc300");
+            hsText.setColor(color);
+            this.attachChild(hsText);
+            hsText.setPosition(sideLength*2 + hsText.getWidth()/2, camera.getHeight()-sideLength*1f);
+        } else {
+            this.updateHSText();
         }
     }
 
@@ -370,7 +475,10 @@ public class MainMenuScene extends BaseScene implements IOnMenuItemClickListener
     }
 
     public void updateCoinText() {
-        coinText.setText(": " + String.valueOf(activity.getCurrentBeersos()));
+        coinText.setText("C: " + String.valueOf(activity.getCurrentBeersos()));
+    }
+    public void updateHSText() {
+        hsText.setText("HS: " + String.valueOf(activity.getCurrentHighscore()));
     }
 
     private void createMenuChildScene() {
