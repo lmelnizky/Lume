@@ -123,6 +123,7 @@ public class UploadUserScene extends BaseScene implements ButtonSprite.OnClickLi
             User.createUser(new GameState((activity.getCurrentWorld()-1)*40,
                     World.getWorld(activity.getCurrentWorld()), username));
             activity.setNameOnline(true);
+            activity.setUserName(username);
         }
     }
 }

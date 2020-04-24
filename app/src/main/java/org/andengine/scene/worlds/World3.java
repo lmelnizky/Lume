@@ -1,8 +1,5 @@
 package org.andengine.scene.worlds;
 
-import android.util.Log;
-import android.widget.Toast;
-
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
@@ -15,12 +12,10 @@ import org.andengine.engine.handler.timer.ITimerCallback;
 import org.andengine.engine.handler.timer.TimerHandler;
 import org.andengine.entity.Entity;
 import org.andengine.entity.IEntity;
-import org.andengine.entity.modifier.LoopEntityModifier;
+import org.andengine.entity.modifier.RotationModifier;
 import org.andengine.entity.modifier.ScaleModifier;
-import org.andengine.entity.modifier.SequenceEntityModifier;
 import org.andengine.entity.primitive.Rectangle;
 import org.andengine.entity.scene.CameraScene;
-import org.andengine.entity.scene.IOnSceneTouchListener;
 import org.andengine.entity.scene.Scene;
 import org.andengine.entity.scene.background.SpriteBackground;
 import org.andengine.entity.sprite.Sprite;
@@ -57,6 +52,8 @@ public class World3 extends BaseScene {
 
     private static final int FIRST_LAYER = 0; //is used for ground, player and coin
     private static final int SECOND_LAYER = 1; //is used for  stones
+    private static final int THIRD_LAYER = 2; //is used for cannons
+
     private int variant;
     private int variantStage;
     int timeBetweenStones = 0;
@@ -82,11 +79,14 @@ public class World3 extends BaseScene {
 
     private Random randomGenerator;
 
-    private IEntity firstLayer, secondLayer;
+    private Scene gameOverScene;
+    private IEntity firstLayer, secondLayer, thirdLayer;
 
     private Sprite lumeSprite;
     private Sprite coinSprite;
-    private Sprite cannonsN, cannonsE, cannonsS, cannonsW;
+    private Sprite[] cannonN, cannonE, cannonS, cannonW;
+    private Sprite[] cannonNS, cannonES, cannonSS, cannonWS;
+    private Sprite[] cannonNU, cannonEU, cannonSU, cannonWU;
     private ArrayList<Sprite> crackyStones, crackyStonesToRemove, cannonBallsToRemove;
 
     private Sprite v1FirstStone, v2FirstStone, v3FirstStone;
@@ -102,7 +102,7 @@ public class World3 extends BaseScene {
     private static final int SWIPE_MIN_DISTANCE = 10;
 
     private Text gameOverText;
-    private Sprite replaySprite;
+    private Sprite replaySprite, finishSprite;
 
     public World3() { //default constructor
         this.level = 1;
@@ -137,9 +137,8 @@ public class World3 extends BaseScene {
         createPhysics();
         createBoard();
         createLume();
-        createCannons();
-//        createCoin();
         createHalves();
+        createCannons();
         createHUD();
 
         resetData();
@@ -153,12 +152,7 @@ public class World3 extends BaseScene {
                     int displayTime = (int) Math.round(time / 60);
                     timeText.setText(String.valueOf(displayTime));
                     if (time <= 0 && !gameOverDisplayed) {
-                        luserSprite = new Sprite(lumeSprite.getX()-lumeSprite.getWidth()*4/10,
-                                lumeSprite.getY() + lumeSprite.getHeight()*5/10,
-                                lumeSprite.getWidth(), lumeSprite.getWidth(),
-                                ResourcesManager.getInstance().finger_luser, vbom);
-                        secondLayer.attachChild(luserSprite);
-                        displayGameOverText();
+                        displayGameOverScene();
                     }
                     if (displayTime <= 5) {
                         timeText.setColor(Color.RED);
@@ -236,10 +230,10 @@ public class World3 extends BaseScene {
         // removing all game scene objects.
     }
 
-    private void displayGameOverText() {
+    private void displayGameOverScene() {
         gameOverDisplayed = true;
 
-        Scene gameOverScene = new CameraScene(camera);
+        gameOverScene = new CameraScene(camera);
         gameOverScene.setBackgroundEnabled(false);
 
         ResourcesManager.getInstance().backgroundMusic.stop();
@@ -249,30 +243,57 @@ public class World3 extends BaseScene {
 
         float textY = (yPosLume == 2) ? camera.getCenterY() + sideLength : camera.getCenterY();
         gameOverText = new Text(camera.getCenterX(), textY,
-                resourcesManager.smallFont, "L u s e r !", vbom) {
+                resourcesManager.smallFont, "L u s e r !", vbom);
+
+
+        luserSprite = new Sprite(lumeSprite.getX()-lumeSprite.getWidth()*4/10,
+                lumeSprite.getY() + lumeSprite.getHeight()*5/10,
+                lumeSprite.getWidth(), lumeSprite.getWidth(),
+                ResourcesManager.getInstance().finger_luser, vbom);
+        secondLayer.attachChild(luserSprite);
+        luserSprite.setVisible(false);
+
+        displayGameOverButtons();
+
+        gameOverText.setColor(Color.RED);
+        gameOverScene.registerTouchArea(gameOverText);
+        gameOverScene.attachChild(gameOverText);
+
+        RotationModifier rotMod = new RotationModifier(0.7f, 180, 720) {
             @Override
-            public boolean onAreaTouched(final TouchEvent pSceneTouchEvent, final float pTouchAreaLocalX,
-                                         final float pTouchAreaLocalY) {
-                if (pSceneTouchEvent.isActionDown()) {
-                    //clear child scenes - game will be resumed
-                    clearChildScene();
-                    setIgnoreUpdate(false);
-                    gameOverDisplayed = false;
-                    registerUpdateHandler(physicsWorld);
-                    if (cameFromLevelsScene) {
-                        SceneManager.getInstance().loadWorlds1to4Scene(engine);
-                    } else {
-                        SceneManager.getInstance().loadMenuScene(engine);
-                    }
-                    disposeHUD();
-                    return true;
-                } else {
-                    return false;
-                }
+            protected void onModifierFinished(IEntity item) {
+                //stop things
+                //unregisterUpdateHandler(physicsWorld);
+                setIgnoreUpdate(true);
+                luserSprite.setVisible(true);
+                //setChildScene(gameOverScene, false, true, true); //set gameOverScene as a child scene - so game will be paused
+                ResourcesManager.getInstance().activity.showLevelHint();
             }
         };
+        gameOverText.registerEntityModifier(new ScaleModifier(0.7f, 0.1f, 1.3f));
+        //gameOverText.registerEntityModifier(new RotationModifier(2, 180, 720));
+        gameOverText.registerEntityModifier(rotMod);
 
-        replaySprite = new Sprite(camera.getCenterX(), camera.getHeight()*2/9, sideLength, sideLength,
+        //stop things
+        unregisterUpdateHandler(physicsWorld);
+        setChildScene(gameOverScene, false, true, true);
+
+
+        engine.registerUpdateHandler(new TimerHandler(0.8f, new ITimerCallback() {
+            public void onTimePassed(final TimerHandler pTimerHandler) {
+                engine.unregisterUpdateHandler(pTimerHandler);
+                //show interstitial setAdVisibility
+                if (!cameFromLevelsScene) {
+                    ResourcesManager.getInstance().activity.showSingleInterstitial();
+                }
+            }
+        }));
+    }
+
+    private void displayGameOverButtons() {
+        //add replay Sprite
+        replaySprite = new Sprite(camera.getCenterX() + sideLength,
+                camera.getHeight()*2/9, sideLength, sideLength,
                 ResourcesManager.getInstance().replay_region, vbom) {
             @Override
             public boolean onAreaTouched(final TouchEvent pSceneTouchEvent, final float pTouchAreaLocalX,
@@ -295,36 +316,45 @@ public class World3 extends BaseScene {
                 }
             }
         };
-
-        gameOverText.setColor(Color.RED);
-        gameOverScene.registerTouchArea(gameOverText);
-        gameOverScene.attachChild(gameOverText);
-
         gameOverScene.registerTouchArea(replaySprite);
         gameOverScene.attachChild(replaySprite);
 
-        //stop things
-        unregisterUpdateHandler(physicsWorld);
-        this.setIgnoreUpdate(true);
-        this.setChildScene(gameOverScene, false, true, true); //set gameOverScene as a child scene - so game will be paused
-        ResourcesManager.getInstance().activity.showLevelHint();
-
-        engine.registerUpdateHandler(new TimerHandler(0.8f, new ITimerCallback() {
-            public void onTimePassed(final TimerHandler pTimerHandler) {
-                engine.unregisterUpdateHandler(pTimerHandler);
-                //show interstitial setAdVisibility
-                if (!cameFromLevelsScene) {
-                    ResourcesManager.getInstance().activity.showSingleInterstitial();
+        //add finish Sprite
+        finishSprite = new Sprite(camera.getCenterX() - sideLength,
+                camera.getHeight()*2/9, sideLength, sideLength,
+                ResourcesManager.getInstance().finish_region, vbom) {
+            @Override
+            public boolean onAreaTouched(final TouchEvent pSceneTouchEvent, final float pTouchAreaLocalX,
+                                         final float pTouchAreaLocalY) {
+                if (pSceneTouchEvent.isActionDown()) {
+                    //clear child scenes - game will be resumed
+                    clearChildScene();
+                    setIgnoreUpdate(false);
+                    gameOverDisplayed = false;
+                    registerUpdateHandler(physicsWorld);
+                    if (cameFromLevelsScene) {
+                        SceneManager.getInstance().loadWorlds1to4Scene(engine);
+                    } else {
+                        SceneManager.getInstance().loadMenuScene(engine);
+                    }
+                    disposeHUD();
+                    return true;
+                } else {
+                    return false;
                 }
             }
-        }));
+        };
+        gameOverScene.registerTouchArea(finishSprite);
+        gameOverScene.attachChild(finishSprite);
     }
 
     private void createLayers() {
         this.attachChild(new Entity()); // First Layer
         this.attachChild(new Entity()); // Second Layer
+        this.attachChild(new Entity()); // Third Layer
         firstLayer = this.getChildByIndex(FIRST_LAYER);
         secondLayer = this.getChildByIndex(SECOND_LAYER);
+        thirdLayer = this.getChildByIndex(THIRD_LAYER);
     }
 
     private void createHUD() {
@@ -536,14 +566,124 @@ public class World3 extends BaseScene {
     }
 
     private void createCannons() {
-        cannonsN = new Sprite(camera.getCenterX(), camera.getHeight() - sideLength / 2, sideLength * 3, sideLength, resourcesManager.cannons_n_region, vbom);
-        cannonsE = new Sprite(camera.getWidth() - sideLength / 2, camera.getCenterY(), sideLength, sideLength * 3, resourcesManager.cannons_e_region, vbom);
-        cannonsS = new Sprite(camera.getCenterX(), sideLength / 2, sideLength * 3, sideLength, resourcesManager.cannons_s_region, vbom);
-        cannonsW = new Sprite(sideLength / 2, camera.getCenterY(), sideLength, sideLength * 3, resourcesManager.cannons_w_region, vbom);
-        secondLayer.attachChild(cannonsN);
-        secondLayer.attachChild(cannonsE);
-        secondLayer.attachChild(cannonsS);
-        secondLayer.attachChild(cannonsW);
+        cannonN = new Sprite[3];
+        cannonE = new Sprite[3];
+        cannonS = new Sprite[3];
+        cannonW = new Sprite[3];
+        cannonNS = new Sprite[3];
+        cannonES = new Sprite[3];
+        cannonSS = new Sprite[3];
+        cannonWS = new Sprite[3];
+        cannonNU = new Sprite[3];
+        cannonEU = new Sprite[3];
+        cannonSU = new Sprite[3];
+        cannonWU = new Sprite[3];
+
+        for (int i = 0; i < cannonN.length; i++) {
+            cannonN[i] = new Sprite(camera.getCenterX()-sideLength+sideLength*i, camera.getHeight()-sideLength/2,
+                    sideLength, sideLength, resourcesManager.cannon_n_region, vbom);
+            cannonE[i] = new Sprite(camera.getWidth()-sideLength/2, camera.getCenterY()-sideLength+sideLength*i,
+                    sideLength, sideLength, resourcesManager.cannon_e_region, vbom);
+            cannonS[i] = new Sprite(camera.getCenterX()-sideLength+sideLength*i, sideLength/2,
+                    sideLength, sideLength, resourcesManager.cannon_s_region, vbom);
+            cannonW[i] = new Sprite(sideLength/2, camera.getCenterY()-sideLength+sideLength*i,
+                    sideLength, sideLength, resourcesManager.cannon_w_region, vbom);
+
+            cannonNS[i] = new Sprite(camera.getCenterX()-sideLength+sideLength*i, camera.getHeight()-sideLength*3/8,
+                    sideLength, sideLength*0.75f, resourcesManager.cannon_n_s_region, vbom);
+            cannonES[i] = new Sprite(camera.getWidth()-sideLength*3/8, camera.getCenterY()-sideLength+sideLength*i,
+                    sideLength*0.75f, sideLength, resourcesManager.cannon_e_s_region, vbom);
+            cannonSS[i] = new Sprite(camera.getCenterX()-sideLength+sideLength*i, sideLength*3/8,
+                    sideLength, sideLength*0.75f, resourcesManager.cannon_s_s_region, vbom);
+            cannonWS[i] = new Sprite(sideLength*3/8, camera.getCenterY()-sideLength+sideLength*i,
+                    sideLength*0.75f, sideLength, resourcesManager.cannon_w_s_region, vbom);
+
+            cannonNU[i] = new Sprite(camera.getCenterX()-sideLength+sideLength*i, camera.getHeight()-sideLength*0.222f,
+                    sideLength, sideLength*0.444f, resourcesManager.cannon_n_u_region, vbom);
+            cannonEU[i] = new Sprite(camera.getWidth()-sideLength*0.222f, camera.getCenterY()-sideLength+sideLength*i,
+                    sideLength*0.444f, sideLength, resourcesManager.cannon_e_u_region, vbom);
+            cannonSU[i] = new Sprite(camera.getCenterX()-sideLength+sideLength*i, sideLength*0.222f,
+                    sideLength, sideLength*0.444f, resourcesManager.cannon_s_u_region, vbom);
+            cannonWU[i] = new Sprite(sideLength*0.222f, camera.getCenterY()-sideLength+sideLength*i,
+                    sideLength*0.444f, sideLength, resourcesManager.cannon_w_u_region, vbom);
+
+            secondLayer.attachChild(cannonN[i]);
+            secondLayer.attachChild(cannonE[i]);
+            secondLayer.attachChild(cannonS[i]);
+            secondLayer.attachChild(cannonW[i]);
+            secondLayer.attachChild(cannonNS[i]);
+            secondLayer.attachChild(cannonES[i]);
+            secondLayer.attachChild(cannonSS[i]);
+            secondLayer.attachChild(cannonWS[i]);
+
+            thirdLayer.attachChild(cannonNU[i]);
+            thirdLayer.attachChild(cannonEU[i]);
+            thirdLayer.attachChild(cannonSU[i]);
+            thirdLayer.attachChild(cannonWU[i]);
+
+            //setVisibility of small ones to false
+            cannonNS[i].setVisible(false);
+            cannonES[i].setVisible(false);
+            cannonSS[i].setVisible(false);
+            cannonWS[i].setVisible(false);
+            cannonNU[i].setVisible(false);
+            cannonEU[i].setVisible(false);
+            cannonSU[i].setVisible(false);
+            cannonWU[i].setVisible(false);
+        }
+    }
+
+    private void animateCannon(int direction, int position) {
+        switch (direction){
+            case 1:
+                cannonN[position].setVisible(false);
+                cannonNS[position].setVisible(true);
+                cannonNU[position].setVisible(true);
+                break;
+            case 2:
+                cannonE[position].setVisible(false);
+                cannonES[position].setVisible(true);
+                cannonEU[position].setVisible(true);
+                break;
+            case 3:
+                cannonS[position].setVisible(false);
+                cannonSS[position].setVisible(true);
+                cannonSU[position].setVisible(true);
+                break;
+            case 4:
+                cannonW[position].setVisible(false);
+                cannonWS[position].setVisible(true);
+                cannonWU[position].setVisible(true);
+                break;
+        }
+        engine.registerUpdateHandler(new TimerHandler(0.8f, new ITimerCallback() {
+            public void onTimePassed(final TimerHandler pTimerHandler) {
+                engine.unregisterUpdateHandler(pTimerHandler);
+                switch (direction){
+                    case 1:
+                        cannonN[position].setVisible(true);
+                        cannonNS[position].setVisible(false);
+                        cannonNU[position].setVisible(false);
+                        break;
+                    case 2:
+                        cannonE[position].setVisible(true);
+                        cannonES[position].setVisible(false);
+                        cannonEU[position].setVisible(false);
+                        break;
+                    case 3:
+                        cannonS[position].setVisible(true);
+                        cannonSS[position].setVisible(false);
+                        cannonSU[position].setVisible(false);
+                        break;
+                    case 4:
+                        cannonW[position].setVisible(true);
+                        cannonWS[position].setVisible(false);
+                        cannonWU[position].setVisible(false);
+                        break;
+                }
+
+            }
+        }));
     }
 
     private void createCannonball(int direction) {
@@ -1043,12 +1183,7 @@ public class World3 extends BaseScene {
                 stoneCircle = new Circle(this.getX(), this.getY(), this.getWidth() / 2);
 
                 if (stoneCircle.collision(lumeCircle) && !gameOverDisplayed) {
-                    luserSprite = new Sprite(lumeSprite.getX()-lumeSprite.getWidth()*4/10,
-                            lumeSprite.getY() + lumeSprite.getHeight()*5/10,
-                            lumeSprite.getWidth(), lumeSprite.getWidth(),
-                            ResourcesManager.getInstance().finger_luser, vbom);
-                    secondLayer.attachChild(luserSprite);
-                    displayGameOverText();
+                    displayGameOverScene();
                     score = 0;
                 }
 //                if (this.getX() < -sideLength || this.getY() < -sideLength ||
@@ -1084,6 +1219,9 @@ public class World3 extends BaseScene {
             }
         };
         secondLayer.attachChild(stone);
+        //animate cannon
+        animateCannon(direction, position);
+
         final Body body = PhysicsFactory.createCircleBody(physicsWorld, stone, BodyType.KinematicBody, FIXTURE_DEF);
         if (thorny) {
         } else {
@@ -1215,12 +1353,7 @@ public class World3 extends BaseScene {
                 line = new Line(this.getX(), this.getY(), peakX, peakY);
 
                 if (line.collision(lumeCircle)) {
-                    luserSprite = new Sprite(lumeSprite.getX()-lumeSprite.getWidth()*4/10,
-                            lumeSprite.getY() + lumeSprite.getHeight()*5/10,
-                            lumeSprite.getWidth(), lumeSprite.getWidth(),
-                            ResourcesManager.getInstance().finger_luser, vbom);
-                    secondLayer.attachChild(luserSprite);
-                    displayGameOverText();
+                    displayGameOverScene();
                     score = 0;
                 }
 

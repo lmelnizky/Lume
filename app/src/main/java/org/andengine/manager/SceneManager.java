@@ -412,6 +412,7 @@ public class SceneManager {
                 setScene(menuScene);
                 menuScene.updateWorldText();
                 menuScene.updateCoinText();
+                menuScene.updateHSText();
             }
         }));
     }

@@ -9,14 +9,11 @@ import org.andengine.entity.primitive.Rectangle;
 import org.andengine.entity.scene.background.SpriteBackground;
 import org.andengine.entity.sprite.Sprite;
 import org.andengine.entity.text.AutoWrap;
-import org.andengine.entity.text.Text;
-import org.andengine.entity.text.TextOptions;
 import org.andengine.entity.text.TickerText;
 import org.andengine.extension.physics.box2d.PhysicsConnector;
 import org.andengine.extension.physics.box2d.PhysicsFactory;
 import org.andengine.input.touch.TouchEvent;
 import org.andengine.manager.ResourcesManager;
-import org.andengine.manager.SceneType;
 import org.andengine.object.Ball;
 import org.andengine.object.Circle;
 import org.andengine.opengl.texture.region.ITextureRegion;
@@ -255,12 +252,7 @@ public class Skill11 extends SkillScene {
                 stoneCircle = new Circle(this.getX(), this.getY(), this.getWidth() / 2);
 
                 if (stoneCircle.collision(lumeCircle) && !gameOverDisplayed) {
-                    luserSprite = new Sprite(lumeSprite.getX()-lumeSprite.getWidth()*4/10,
-                            lumeSprite.getY() + lumeSprite.getHeight()*5/10,
-                            lumeSprite.getWidth(), lumeSprite.getWidth(),
-                            ResourcesManager.getInstance().finger_luser, vbom);
-                    secondLayer.attachChild(luserSprite);
-                    displayGameOverText();
+                    displayGameOverScene();
                 }
 //                if (this.getX() < -sideLength || this.getY() < -sideLength ||
 //                        this.getX() > camera.getWidth() + sideLength || this.getY() > camera.getWidth() + sideLength) {
@@ -295,6 +287,10 @@ public class Skill11 extends SkillScene {
             }
         };
         secondLayer.attachChild(stone);
+
+        //animate cannon
+        animateCannon(direction, position);
+
         final Body body = PhysicsFactory.createCircleBody(physicsWorld, stone, BodyDef.BodyType.KinematicBody, FIXTURE_DEF);
         if (thorny) {
         } else {

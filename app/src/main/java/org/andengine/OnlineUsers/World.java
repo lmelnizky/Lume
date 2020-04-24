@@ -9,7 +9,8 @@ public enum World {
     WORLD5(5),
     WORLD6(6),
     WORLD7(7),
-    WORLD8(8);
+    WORLD8(8),
+    WORLD9(9);
 
     public final int fId;
 

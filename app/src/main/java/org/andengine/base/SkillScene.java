@@ -8,6 +8,7 @@ import org.andengine.engine.handler.timer.ITimerCallback;
 import org.andengine.engine.handler.timer.TimerHandler;
 import org.andengine.entity.Entity;
 import org.andengine.entity.IEntity;
+import org.andengine.entity.modifier.RotationModifier;
 import org.andengine.entity.modifier.ScaleModifier;
 import org.andengine.entity.primitive.Rectangle;
 import org.andengine.entity.scene.CameraScene;
@@ -37,6 +38,8 @@ public abstract class SkillScene extends BaseScene {
     //constants
     protected static final int FIRST_LAYER = 0; //is used for ground, player and coin
     protected static final int SECOND_LAYER = 1; //is used for  stones
+    protected static final int THIRD_LAYER = 2; //is used for cannons
+
     protected static final int SWIPE_MIN_DISTANCE = 20;
 
     //primitive data types
@@ -59,26 +62,23 @@ public abstract class SkillScene extends BaseScene {
     //andengine attributes
     protected ArrayList<Sprite> crackyStones, stones;
     protected ArrayList<Sprite> crackyStonesToRemove, stonesToRemove, cannonBallsToRemove;
-    protected IEntity firstLayer, secondLayer;
+    protected Scene gameOverScene;
+    protected IEntity firstLayer, secondLayer, thirdLayer;
     protected PhysicsWorld physicsWorld;
     protected Sprite lumeSprite, kimmelnitzSprite, kimmelnitzKOSprite, punchSprite, luserSprite, coinSprite;
-    protected Sprite cannonsN, cannonsE, cannonsS, cannonsW;
+    protected Sprite[] cannonN, cannonE, cannonS, cannonW;
+    protected Sprite[] cannonNS, cannonES, cannonSS, cannonWS;
+    protected Sprite[] cannonNU, cannonEU, cannonSU, cannonWU;
     protected HUD gameHUD;
     protected Text scoreText, levelText, timeText, kimmelnitzText;
     protected Text gameOverText;
+    protected Sprite replaySprite, finishSprite;
     protected Sprite shootSign, moveSign;
     protected Rectangle shootLeft, swipeRight;
 
     //constructor
     public SkillScene() {
         //manager attributes do all in basescene
-//        this.resourcesManager = ResourcesManager.getInstance();
-//        this.engine = resourcesManager.engine;
-//        this.activity = resourcesManager.activity;
-//        this.vbom = resourcesManager.vbom;
-//        this.camera = resourcesManager.camera;
-//
-//        createScene();
     }
 
 
@@ -119,6 +119,7 @@ public abstract class SkillScene extends BaseScene {
         createMusic();
         createPhysics();
         createBoard();
+        createHalves();
         createLume();
         createCannons();
         createBoard();
@@ -126,7 +127,6 @@ public abstract class SkillScene extends BaseScene {
         createHUD();
         resetData();
 
-        createHalves();
         createKimmelnitz();
     }
 
@@ -140,12 +140,7 @@ public abstract class SkillScene extends BaseScene {
                     int displayTime = (int) Math.round(time/60);
                     timeText.setText(String.valueOf(displayTime));
                     if (time <= 0 && !gameOverDisplayed) {
-                        luserSprite = new Sprite(lumeSprite.getX()-lumeSprite.getWidth()*4/10,
-                                lumeSprite.getY() + lumeSprite.getHeight()*5/10,
-                                lumeSprite.getWidth(), lumeSprite.getWidth(),
-                                ResourcesManager.getInstance().finger_luser, vbom);
-                        secondLayer.attachChild(luserSprite);
-                        displayGameOverText();
+                        displayGameOverScene();
                     }
                     if (displayTime <= 5) {
                         timeText.setColor(Color.RED);
@@ -158,11 +153,13 @@ public abstract class SkillScene extends BaseScene {
         });
     }
 
-    public void createLayers() {
+    protected void createLayers() {
         this.attachChild(new Entity()); // First Layer
         this.attachChild(new Entity()); // Second Layer
+        this.attachChild(new Entity()); // Third Layer
         firstLayer = this.getChildByIndex(FIRST_LAYER);
         secondLayer = this.getChildByIndex(SECOND_LAYER);
+        thirdLayer = this.getChildByIndex(THIRD_LAYER);
     }
 
     public void createMusic() {
@@ -259,14 +256,124 @@ public abstract class SkillScene extends BaseScene {
     }
 
     public void createCannons() {
-        cannonsN = new Sprite(camera.getCenterX(), camera.getHeight() - sideLength/2, sideLength*3, sideLength, resourcesManager.cannons_n_region, vbom);
-        cannonsE = new Sprite(camera.getWidth() - sideLength/2, camera.getCenterY(), sideLength, sideLength*3, resourcesManager.cannons_e_region, vbom);
-        cannonsS = new Sprite(camera.getCenterX(), sideLength/2, sideLength*3, sideLength, resourcesManager.cannons_s_region, vbom);
-        cannonsW = new Sprite(sideLength/2, camera.getCenterY(), sideLength, sideLength*3, resourcesManager.cannons_w_region, vbom);
-        secondLayer.attachChild(cannonsN);
-        secondLayer.attachChild(cannonsE);
-        secondLayer.attachChild(cannonsS);
-        secondLayer.attachChild(cannonsW);
+        cannonN = new Sprite[3];
+        cannonE = new Sprite[3];
+        cannonS = new Sprite[3];
+        cannonW = new Sprite[3];
+        cannonNS = new Sprite[3];
+        cannonES = new Sprite[3];
+        cannonSS = new Sprite[3];
+        cannonWS = new Sprite[3];
+        cannonNU = new Sprite[3];
+        cannonEU = new Sprite[3];
+        cannonSU = new Sprite[3];
+        cannonWU = new Sprite[3];
+
+        for (int i = 0; i < cannonN.length; i++) {
+            cannonN[i] = new Sprite(camera.getCenterX()-sideLength+sideLength*i, camera.getHeight()-sideLength/2,
+                    sideLength, sideLength, resourcesManager.cannon_n_region, vbom);
+            cannonE[i] = new Sprite(camera.getWidth()-sideLength/2, camera.getCenterY()-sideLength+sideLength*i,
+                    sideLength, sideLength, resourcesManager.cannon_e_region, vbom);
+            cannonS[i] = new Sprite(camera.getCenterX()-sideLength+sideLength*i, sideLength/2,
+                    sideLength, sideLength, resourcesManager.cannon_s_region, vbom);
+            cannonW[i] = new Sprite(sideLength/2, camera.getCenterY()-sideLength+sideLength*i,
+                    sideLength, sideLength, resourcesManager.cannon_w_region, vbom);
+
+            cannonNS[i] = new Sprite(camera.getCenterX()-sideLength+sideLength*i, camera.getHeight()-sideLength*3/8,
+                    sideLength, sideLength*0.75f, resourcesManager.cannon_n_s_region, vbom);
+            cannonES[i] = new Sprite(camera.getWidth()-sideLength*3/8, camera.getCenterY()-sideLength+sideLength*i,
+                    sideLength*0.75f, sideLength, resourcesManager.cannon_e_s_region, vbom);
+            cannonSS[i] = new Sprite(camera.getCenterX()-sideLength+sideLength*i, sideLength*3/8,
+                    sideLength, sideLength*0.75f, resourcesManager.cannon_s_s_region, vbom);
+            cannonWS[i] = new Sprite(sideLength*3/8, camera.getCenterY()-sideLength+sideLength*i,
+                    sideLength*0.75f, sideLength, resourcesManager.cannon_w_s_region, vbom);
+
+            cannonNU[i] = new Sprite(camera.getCenterX()-sideLength+sideLength*i, camera.getHeight()-sideLength*0.222f,
+                    sideLength, sideLength*0.444f, resourcesManager.cannon_n_u_region, vbom);
+            cannonEU[i] = new Sprite(camera.getWidth()-sideLength*0.222f, camera.getCenterY()-sideLength+sideLength*i,
+                    sideLength*0.444f, sideLength, resourcesManager.cannon_e_u_region, vbom);
+            cannonSU[i] = new Sprite(camera.getCenterX()-sideLength+sideLength*i, sideLength*0.222f,
+                    sideLength, sideLength*0.444f, resourcesManager.cannon_s_u_region, vbom);
+            cannonWU[i] = new Sprite(sideLength*0.222f, camera.getCenterY()-sideLength+sideLength*i,
+                    sideLength*0.444f, sideLength, resourcesManager.cannon_w_u_region, vbom);
+
+            secondLayer.attachChild(cannonN[i]);
+            secondLayer.attachChild(cannonE[i]);
+            secondLayer.attachChild(cannonS[i]);
+            secondLayer.attachChild(cannonW[i]);
+            secondLayer.attachChild(cannonNS[i]);
+            secondLayer.attachChild(cannonES[i]);
+            secondLayer.attachChild(cannonSS[i]);
+            secondLayer.attachChild(cannonWS[i]);
+
+            thirdLayer.attachChild(cannonNU[i]);
+            thirdLayer.attachChild(cannonEU[i]);
+            thirdLayer.attachChild(cannonSU[i]);
+            thirdLayer.attachChild(cannonWU[i]);
+
+            //setVisibility of small ones to false
+            cannonNS[i].setVisible(false);
+            cannonES[i].setVisible(false);
+            cannonSS[i].setVisible(false);
+            cannonWS[i].setVisible(false);
+            cannonNU[i].setVisible(false);
+            cannonEU[i].setVisible(false);
+            cannonSU[i].setVisible(false);
+            cannonWU[i].setVisible(false);
+        }
+    }
+
+    public void animateCannon(int direction, int position) {
+        switch (direction){
+            case 1:
+                cannonN[position].setVisible(false);
+                cannonNS[position].setVisible(true);
+                cannonNU[position].setVisible(true);
+                break;
+            case 2:
+                cannonE[position].setVisible(false);
+                cannonES[position].setVisible(true);
+                cannonEU[position].setVisible(true);
+                break;
+            case 3:
+                cannonS[position].setVisible(false);
+                cannonSS[position].setVisible(true);
+                cannonSU[position].setVisible(true);
+                break;
+            case 4:
+                cannonW[position].setVisible(false);
+                cannonWS[position].setVisible(true);
+                cannonWU[position].setVisible(true);
+                break;
+        }
+        engine.registerUpdateHandler(new TimerHandler(0.8f, new ITimerCallback() {
+            public void onTimePassed(final TimerHandler pTimerHandler) {
+                engine.unregisterUpdateHandler(pTimerHandler);
+                switch (direction){
+                    case 1:
+                        cannonN[position].setVisible(true);
+                        cannonNS[position].setVisible(false);
+                        cannonNU[position].setVisible(false);
+                        break;
+                    case 2:
+                        cannonE[position].setVisible(true);
+                        cannonES[position].setVisible(false);
+                        cannonEU[position].setVisible(false);
+                        break;
+                    case 3:
+                        cannonS[position].setVisible(true);
+                        cannonSS[position].setVisible(false);
+                        cannonSU[position].setVisible(false);
+                        break;
+                    case 4:
+                        cannonW[position].setVisible(true);
+                        cannonWS[position].setVisible(false);
+                        cannonWU[position].setVisible(false);
+                        break;
+                }
+
+            }
+        }));
     }
 
     public void coinCheck() {
@@ -370,15 +477,68 @@ public abstract class SkillScene extends BaseScene {
         coinSprite = null;
     }
 
-    public void displayGameOverText() {
+    protected void displayGameOverScene() {
         gameOverDisplayed = true;
 
-        Scene gameOverScene = new CameraScene(camera);
+        gameOverScene = new CameraScene(camera);
         gameOverScene.setBackgroundEnabled(false);
+
+        ResourcesManager.getInstance().backgroundMusic.stop();
+        ResourcesManager.getInstance().backgroundMusic.pause();
+        ResourcesManager.getInstance().luserSound.play();
 
         float textY = (yPosLume == 2) ? camera.getCenterY() + sideLength : camera.getCenterY();
         gameOverText = new Text(camera.getCenterX(), textY,
-                resourcesManager.smallFont, "L u s e r !", vbom) {
+                resourcesManager.smallFont, "L u s e r !", vbom);
+
+        luserSprite = new Sprite(lumeSprite.getX()-lumeSprite.getWidth()*4/10,
+                lumeSprite.getY() + lumeSprite.getHeight()*5/10,
+                lumeSprite.getWidth(), lumeSprite.getWidth(),
+                ResourcesManager.getInstance().finger_luser, vbom);
+        secondLayer.attachChild(luserSprite);
+        luserSprite.setVisible(false);
+
+        displayGameOverButtons();
+
+        gameOverText.setColor(Color.RED);
+        gameOverScene.registerTouchArea(gameOverText);
+        gameOverScene.attachChild(gameOverText);
+
+        RotationModifier rotMod = new RotationModifier(0.7f, 180, 720) {
+            @Override
+            protected void onModifierFinished(IEntity item) {
+                //stop things
+                //unregisterUpdateHandler(physicsWorld);
+                setIgnoreUpdate(true);
+                luserSprite.setVisible(true);
+                //setChildScene(gameOverScene, false, true, true); //set gameOverScene as a child scene - so game will be paused
+                ResourcesManager.getInstance().activity.showLevelHint();
+            }
+        };
+        gameOverText.registerEntityModifier(new ScaleModifier(0.7f, 0.1f, 1.3f));
+        //gameOverText.registerEntityModifier(new RotationModifier(2, 180, 720));
+        gameOverText.registerEntityModifier(rotMod);
+
+        //stop things
+        unregisterUpdateHandler(physicsWorld);
+        setChildScene(gameOverScene, false, true, true);
+
+
+        engine.registerUpdateHandler(new TimerHandler(0.8f, new ITimerCallback() {
+            public void onTimePassed(final TimerHandler pTimerHandler) {
+                engine.unregisterUpdateHandler(pTimerHandler);
+
+                //show interstitial setAdVisibility
+                ResourcesManager.getInstance().activity.showSingleInterstitial();
+            }
+        }));
+    }
+
+    protected void displayGameOverButtons() {
+        //add replay Sprite
+        replaySprite = new Sprite(camera.getCenterX() + sideLength,
+                camera.getHeight()*2/9, sideLength, sideLength,
+                ResourcesManager.getInstance().replay_region, vbom) {
             @Override
             public boolean onAreaTouched(final TouchEvent pSceneTouchEvent, final float pTouchAreaLocalX,
                                          final float pTouchAreaLocalY) {
@@ -388,7 +548,7 @@ public abstract class SkillScene extends BaseScene {
                     setIgnoreUpdate(false);
                     gameOverDisplayed = false;
                     registerUpdateHandler(physicsWorld);
-                    SceneManager.getInstance().loadMenuScene(engine);
+                    SceneManager.getInstance().loadSkillGameScene(engine);
                     disposeHUD();
                     return true;
                 } else {
@@ -396,27 +556,32 @@ public abstract class SkillScene extends BaseScene {
                 }
             }
         };
+        gameOverScene.registerTouchArea(replaySprite);
+        gameOverScene.attachChild(replaySprite);
 
-        gameOverText.setColor(Color.RED);
-        gameOverScene.registerTouchArea(gameOverText);
-        gameOverScene.attachChild(gameOverText);
-
-        //stop things
-        unregisterUpdateHandler(physicsWorld);
-        this.setIgnoreUpdate(true);
-        this.setChildScene(gameOverScene, false, true, true); //set gameOverScene as a child scene - so game will be paused
-
-        ResourcesManager.getInstance().backgroundMusic.stop();
-        ResourcesManager.getInstance().backgroundMusic.pause();
-        ResourcesManager.getInstance().luserSound.play();
-
-        engine.registerUpdateHandler(new TimerHandler(0.3f, new ITimerCallback() {
-            public void onTimePassed(final TimerHandler pTimerHandler) {
-                engine.unregisterUpdateHandler(pTimerHandler);
-                //show interstitial setAdVisibility
-                ResourcesManager.getInstance().activity.showSingleInterstitial();
+        //add finish Sprite
+        finishSprite = new Sprite(camera.getCenterX() - sideLength,
+                camera.getHeight()*2/9, sideLength, sideLength,
+                ResourcesManager.getInstance().finish_region, vbom) {
+            @Override
+            public boolean onAreaTouched(final TouchEvent pSceneTouchEvent, final float pTouchAreaLocalX,
+                                         final float pTouchAreaLocalY) {
+                if (pSceneTouchEvent.isActionDown()) {
+                    //clear child scenes - game will be resumed
+                    clearChildScene();
+                    setIgnoreUpdate(false);
+                    gameOverDisplayed = false;
+                    registerUpdateHandler(physicsWorld);
+                    SceneManager.getInstance().loadSkillMenuScene(engine);
+                    disposeHUD();
+                    return true;
+                } else {
+                    return false;
+                }
             }
-        }));
+        };
+        gameOverScene.registerTouchArea(finishSprite);
+        gameOverScene.attachChild(finishSprite);
     }
 
     //given methods
