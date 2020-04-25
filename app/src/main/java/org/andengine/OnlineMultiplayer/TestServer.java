@@ -2,6 +2,7 @@ package org.andengine.OnlineMultiplayer;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.net.Socket;
 import java.net.URISyntaxException;
 
 import io.socket.client.IO;
