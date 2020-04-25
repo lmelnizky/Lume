@@ -2,12 +2,12 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/app/andengineLibary/AndEngineHelperClasses/AndEngineHelperClasses.iml" filepath="$PROJECT_DIR$/app/andengineLibary/AndEngineHelperClasses/AndEngineHelperClasses.iml" />
-      <module fileurl="file://$PROJECT_DIR$/Lume.iml" filepath="$PROJECT_DIR$/Lume.iml" />
-      <module fileurl="file://$PROJECT_DIR$/app/andengineLibary/andengineLibary.iml" filepath="$PROJECT_DIR$/app/andengineLibary/andengineLibary.iml" />
-      <module fileurl="file://$PROJECT_DIR$/andenginephysicsbox2dextension/andenginephysicsbox2dextension.iml" filepath="$PROJECT_DIR$/andenginephysicsbox2dextension/andenginephysicsbox2dextension.iml" />
-      <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
-      <module fileurl="file://$PROJECT_DIR$/tappx-sdk-3.1.5/tappx-sdk-3.1.5.iml" filepath="$PROJECT_DIR$/tappx-sdk-3.1.5/tappx-sdk-3.1.5.iml" />
+      <module fileurl="file://$PROJECT_DIR$/app/andengineLibary/AndEngineHelperClasses/AndEngineHelperClasses.iml" filepath="$PROJECT_DIR$/app/andengineLibary/AndEngineHelperClasses/AndEngineHelperClasses.iml" group="Lume/app/andengineLibary/AndEngineHelperClasses" />
+      <module fileurl="file://$PROJECT_DIR$/Lume.iml" filepath="$PROJECT_DIR$/Lume.iml" group="Lume" />
+      <module fileurl="file://$PROJECT_DIR$/app/andengineLibary/andengineLibary.iml" filepath="$PROJECT_DIR$/app/andengineLibary/andengineLibary.iml" group="Lume/app/andengineLibary" />
+      <module fileurl="file://$PROJECT_DIR$/andenginephysicsbox2dextension/andenginephysicsbox2dextension.iml" filepath="$PROJECT_DIR$/andenginephysicsbox2dextension/andenginephysicsbox2dextension.iml" group="Lume/andenginephysicsbox2dextension" />
+      <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" group="Lume/app" />
+      <module fileurl="file://$PROJECT_DIR$/tappx-sdk-3.1.5/tappx-sdk-3.1.5.iml" filepath="$PROJECT_DIR$/tappx-sdk-3.1.5/tappx-sdk-3.1.5.iml" group="Lume/tappx-sdk-3.1.5" />
     </modules>
   </component>
 </project>
