@@ -8,7 +8,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
-import android.util.Log;
 import android.widget.Toast;
 
 import com.badlogic.gdx.math.Vector2;
@@ -455,7 +454,7 @@ public class MultiBTScene extends BaseScene {
         xPosGrume = 4;
         yPosGrume = 4;
         lumeSprite = new Sprite(camera.getCenterX() - sideLength*3/2, camera.getCenterY() - sideLength*3/2,
-                sideLength * 3 / 4, sideLength * 3 / 4, resourcesManager.lume_region, vbom);
+                sideLength * 3 / 4, sideLength * 3 / 4, resourcesManager.player_region, vbom);
         this.attachChild(lumeSprite);
         grumeSprite = new Sprite(camera.getCenterX() + sideLength*3/2, camera.getCenterY() + sideLength*3/2,
                 sideLength*3/4, sideLength*3/4, resourcesManager.grume_region, vbom);

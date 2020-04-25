@@ -63,6 +63,7 @@ public class GameActivity extends BaseGameActivity implements RewardedVideoAdLis
     private static final String NAME_ONLINE = "NAME_ONLINE"; //TODO String online name
     private static final String COINS = "COINS";
     private static final String HIGHSCORE = "HIGHSCORE";
+    private static final String PLAYER = "PLAYER";
 
     private BoundCamera camera;
     private EngineOptions engineOptions;
@@ -240,6 +241,15 @@ public class GameActivity extends BaseGameActivity implements RewardedVideoAdLis
 
     public void setUserName(String userName) {
         editor.putString(NAME_ONLINE, userName);
+        editor.commit();
+    }
+
+    public int getCurrentPlayer() {
+        return pref.getInt(PLAYER, 0);
+    }
+
+    public void setPlayer(int player) {
+        editor.putInt(PLAYER, player);
         editor.commit();
     }
 

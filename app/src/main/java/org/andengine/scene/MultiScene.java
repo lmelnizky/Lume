@@ -337,7 +337,7 @@ public class MultiScene extends BaseScene {
         xPosGrume = 4;
         yPosGrume = 4;
         lumeSprite = new Sprite(camera.getCenterX() - sideLength*3/2, camera.getCenterY() - sideLength*3/2,
-                sideLength * 3 / 4, sideLength * 3 / 4, resourcesManager.lume_region, vbom);
+                sideLength * 3 / 4, sideLength * 3 / 4, resourcesManager.player_region, vbom);
         secondLayer.attachChild(lumeSprite);
         lumeSprite.setRotation(90);
         grumeSprite = new Sprite(camera.getCenterX() + sideLength*3/2, camera.getCenterY() + sideLength*3/2,
@@ -1087,7 +1087,7 @@ public class MultiScene extends BaseScene {
         ResourcesManager.getInstance().luserSound.play();
 
         lumeSpriteGameOver = new Sprite(camera.getCenterX() - 4*sideLength, resourcesManager.screenHeight/2,
-                sideLength*3, sideLength*3, resourcesManager.lume_region, vbom);
+                sideLength*3, sideLength*3, resourcesManager.player_region, vbom);
         secondLayer.attachChild(lumeSpriteGameOver);
         grumeSpriteGameOver = new Sprite(camera.getCenterX() + 4*sideLength, resourcesManager.screenHeight/2,
                 sideLength*3, sideLength*3, resourcesManager.grume_region, vbom);
