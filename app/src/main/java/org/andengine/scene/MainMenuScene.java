@@ -4,7 +4,6 @@ import android.content.Intent;
 import android.net.Uri;
 import android.util.Log;
 
-import org.andengine.OnlineMultiplayer.TestServer;
 import org.andengine.OnlineUsers.User;
 import org.andengine.base.BaseScene;
 import org.andengine.entity.modifier.LoopEntityModifier;
@@ -23,6 +22,9 @@ import org.andengine.input.touch.TouchEvent;
 import org.andengine.manager.ResourcesManager;
 import org.andengine.manager.SceneManager;
 import org.andengine.manager.SceneType;
+import org.andengine.scene.OnlineScenes.ServerScene.Game.LumeGameActions;
+import org.andengine.scene.OnlineScenes.ServerScene.Server;
+import org.andengine.scene.OnlineScenes.ServerScene.Users.LumeUserActions;
 import org.andengine.scene.OnlineScenes.UploadUserScene;
 import org.andengine.util.adt.align.HorizontalAlign;
 
@@ -82,7 +84,7 @@ public class MainMenuScene extends BaseScene implements IOnMenuItemClickListener
     @Override
     public void createScene() {
         Log.w("MainMenuScene", "start connection with server");
-        new TestServer();
+        new Server(new LumeGameActions(), new LumeUserActions()); // only called for tests!!!
         Log.w("MainMenuScene", "done with connection");
         sideLength = resourcesManager.sideLength;
         createBackground();
