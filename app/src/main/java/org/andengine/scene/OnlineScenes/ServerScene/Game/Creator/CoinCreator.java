@@ -10,6 +10,7 @@ public class CoinCreator extends Creator {
 
     @Override
     public Sprite createSprite() {
+        //
         return null; //TODO Lukas Melnizky
     }
 

@@ -36,6 +36,11 @@ public class LumeGameActions implements GameActions {
     }
     @Override
     public void playerMoved(Vector2 newPosition, Player player) {
+        for (Player p : scene.getMultiplayer().getPlayers()) {
+            if (p.getId().equals(player.getId())) {
+                p.getSprite().setPosition(newPosition.x, newPosition.y);
+            }
+        }
         //method is called when a player moved.
     }
     @Override
