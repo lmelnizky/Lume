@@ -64,7 +64,7 @@ public class MainMenuScene extends BaseScene implements IOnMenuItemClickListener
     private final int MENU_SHOPPING = 8;
     private final int MENU_SKILL = 9;
     private final int MENU_INFO = 10;
-    private final int MENU_TEST_MULTI = 11;
+    private final int MENU_ONLINE_MULTI = 11;
 
     private Text worldText, coinText, hsText;
     private Sprite coinSprite;
@@ -261,8 +261,8 @@ public class MainMenuScene extends BaseScene implements IOnMenuItemClickListener
             case MENU_SKILL:
                 SceneManager.getInstance().loadSkillMenuScene(engine);
                 return true;
-            case MENU_TEST_MULTI:
-                //TODO test here
+            case MENU_ONLINE_MULTI:
+                SceneManager.getInstance().loadOnlineUsersScene(engine);
                 return true;
             default:
                 return false;
@@ -505,7 +505,7 @@ public class MainMenuScene extends BaseScene implements IOnMenuItemClickListener
 //        helpMultiMenuItem = new ScaleMenuItemDecorator(new SpriteMenuItem(MENU_HELP, 60, 60, resourcesManager.help_region, vbom), 1.2f, 1);
 //        knowMultiMenuItem = new ScaleMenuItemDecorator(new SpriteMenuItem(MENU_HELP, 60, 60, resourcesManager.know_region, vbom), 1.2f, 1);
         final IMenuItem multiMenuItem = new ScaleMenuItemDecorator(new SpriteMenuItem(MENU_MULTI, sideLength*f, sideLength*f, resourcesManager.play_multi_region, vbom), 1.2f, 1);
-        final IMenuItem testMultiItem = new ScaleMenuItemDecorator(new SpriteMenuItem(MENU_TEST_MULTI, sideLength*f, sideLength*f, resourcesManager.test_multi_region, vbom), 1.2f, 1);
+        final IMenuItem testMultiItem = new ScaleMenuItemDecorator(new SpriteMenuItem(MENU_ONLINE_MULTI, sideLength*f, sideLength*f, resourcesManager.test_multi_region, vbom), 1.2f, 1);
 
         menuChildScene.addMenuItem(highMenuItem);
         menuChildScene.addMenuItem(playMenuItem);

@@ -260,6 +260,13 @@ public class ResourcesManager {
         loadGameAudio();
     }
 
+    public void loadOnlineMultiResources() {
+        loadGameGraphics();
+        loadWorldGraphics(0);
+        loadMultiGraphics();
+        loadGameAudio();
+    }
+
     public void loadLevelResources(int worlds) {
         BitmapTextureAtlasTextureRegionFactory.setAssetBasePath("gfx/level/");
         chooseLevelTextureAtlas = new BuildableBitmapTextureAtlas(activity.getTextureManager(), 2048, 2048, TextureOptions.BILINEAR);
