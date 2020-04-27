@@ -34,4 +34,8 @@ public class LumeUserActions implements UserActions {
     public void disconnect() {
 
     }
+    @Override
+    public void answerRequest(boolean angenommen, String fromID) {
+
+    }
 }

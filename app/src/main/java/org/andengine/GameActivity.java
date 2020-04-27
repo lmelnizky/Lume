@@ -9,7 +9,9 @@ import android.os.Handler;
 import android.os.Looper;
 import android.util.DisplayMetrics;
 import android.view.KeyEvent;
+import android.view.SurfaceView;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
@@ -770,18 +772,32 @@ public class GameActivity extends BaseGameActivity implements RewardedVideoAdLis
             SceneManager.getInstance().createSplashScene(pOnCreateSceneCallback);
         } else {
         }
-
+        /*
+        if (SceneManager.getInstance().getCurrentScene() == null) {
+            SceneManager.getInstance().createSplashScene(pOnCreateSceneCallback);
+        } else {
+        }*/
     }
 
     @Override
     public void onPopulateScene(Scene pScene, OnPopulateSceneCallback pOnPopulateSceneCallback) throws IOException {
+        mEngine.registerUpdateHandler(new TimerHandler(2f, new ITimerCallback() {
+            public void onTimePassed(final TimerHandler pTimerHandler) {
+                mEngine.unregisterUpdateHandler(pTimerHandler);
+                SceneManager.getInstance().createMenuScene();
+            }
+        }));
+        pOnPopulateSceneCallback.onPopulateSceneFinished();    }
+        /*SurfaceView mBackgroundView = new PreviewView(this);
+        this.addContentView(mBackgroundView,
+                new ViewGroup.LayoutParams(ViewGroup.LayoutParams.FILL_PARENT, ViewGroup.LayoutParams.FILL_PARENT));
             mEngine.registerUpdateHandler(new TimerHandler(2f, new ITimerCallback() {
                 public void onTimePassed(final TimerHandler pTimerHandler) {
                     mEngine.unregisterUpdateHandler(pTimerHandler);
                     SceneManager.getInstance().createMenuScene();
                 }
             }));
-        pOnPopulateSceneCallback.onPopulateSceneFinished();    }
+        pOnPopulateSceneCallback.onPopulateSceneFinished();*/
 
     @Override
     public Engine onCreateEngine(EngineOptions pEngineOptions) {

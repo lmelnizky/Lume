@@ -1,6 +1,8 @@
 package org.andengine.scene.OnlineScenes.ServerScene;
 
-import org.andengine.scene.OnlineScenes.ServerScene.Game.Creator.Creator;
+import org.andengine.scene.OnlineScenes.ServerScene.Game.Creator.BallCreator;
+import org.andengine.scene.OnlineScenes.ServerScene.Game.Creator.CoinCreator;
+import org.andengine.scene.OnlineScenes.ServerScene.Game.Creator.MoveData;
 import org.andengine.scene.OnlineScenes.ServerScene.Game.GameActions;
 import org.andengine.scene.OnlineScenes.ServerScene.Users.UserActions;
 import org.json.JSONException;
@@ -17,25 +19,31 @@ public class Server {
     private final String onlineServerUrl = "https://lumegameserver.herokuapp.com/";
     private final String localServerUrl = "localhost:8080";
     public String id;
+    public String userName;
     //actions
     private UserActions userActions;
     private GameActions gameActions;
     //String list of events
     protected final String connect = Socket.EVENT_CONNECT;
     protected final String disconnect = Socket.EVENT_CONNECT;
-    protected final String localSocketID = "socketID";
-    protected final String playerMoved = "PlayerMoved";
-    protected final String loadBall = "AddBall";
-    protected final String loadCoin = "AddCoin";
+    protected final String getIdFromServer = "socketID";
     protected final String getAllUsers = "GetAllUsers";
     protected final String newUserConnected = "newPlayer";
     protected final String userDisconnected = "playerDisconnected";
     protected final String request = "request";
+    protected final String createPlayer = "createPlayer";
+    protected final String answerRequest = "answerRequest";
+    protected final String createGameRoom = "createGameRoom";
+
+    protected final String playerMoved = "PlayerMoved";
+    protected final String loadBall = "AddBall";
+    protected final String loadCoin = "AddCoin";
     //constructor
-    public Server(GameActions gameActions, UserActions userActions) {
+    public Server(GameActions gameActions, UserActions userActions, String username) {
         //initialize variables
         this.userActions = userActions;
         this.gameActions = gameActions;
+        this.userName = username;
         //create Server
         connectWithServer();
     }
@@ -51,42 +59,50 @@ public class Server {
         //connect to server
         socket.on(connect, args -> {
 
-        }).on(localSocketID, args -> {
-            //will called after connection and gives the socketID
-            JSONObject data = (JSONObject) args[0];
-            try {id = data.getString("id"); userActions.socketID(id);}
-            catch (JSONException e) {e.printStackTrace();}
+        }).on(getIdFromServer, args -> {
+            id = ServerDataFactory.getIdFromData(args);
+            socket.emit(createPlayer, ServerDataFactory.getCreatePlayerData(userName, id));
         }).on(disconnect, args -> {
             userActions.disconnect();
         }).on(getAllUsers, args ->{
-            userActions.allUsers(null); //TODO
+            userActions.allUsers(ServerDataFactory.getPLayersFromData(args));
         }).on(newUserConnected, args ->{
-            userActions.newUser(null);
+            userActions.newUser(ServerDataFactory.getPlayerFromData(args));
         }).on(request, args ->{
-            JSONObject object = (JSONObject) args[0];
-            try {
-                userActions.getRequest(object.getString("id"), object.getString("name"));
-            } catch (JSONException e) {e.printStackTrace();}
+            userActions.getRequest(ServerDataFactory.getRequestFromData(args)[0],ServerDataFactory.getRequestFromData(args)[1]);
+        }).on(answerRequest, args ->{
+            userActions.answerRequest((Boolean) ServerDataFactory.getAnswerFromRequestData()[0], (String) ServerDataFactory.getAnswerFromRequestData()[1]);
+        }).on(createGameRoom, args ->{
+            gameActions.startGame((String[])ServerDataFactory.getStartGameFromData(args)[0],(String) ServerDataFactory.getStartGameFromData(args)[1]);
         }).on(playerMoved, args ->{
             gameActions.playerMoved(null, null); //TODO
         }).on(loadBall, args ->{
             gameActions.loadBall(null);//TODO
         }).on(loadCoin, args ->{
             gameActions.loadCoin(null); //TODO
+        }).on(userDisconnected, args ->{
+            gameActions.loadCoin(null); //TODO
         });
     }
-    public void requestGame(String playerID){
+    public void sendRequest(String toPlayerID){
         if(!socket.connected()) throw new RuntimeException("method requestGame is called in buildTime.. it needs to be called event based! Or Client cannot connect to server");
-        JSONObject o = new JSONObject();
-        try {
-            o.put("sendToID", playerID);
-            o.put("fromID", id);
-        } catch (JSONException e) {e.printStackTrace();}
-        socket.emit(request, o);
+        socket.emit(request, ServerDataFactory.getRequestData(toPlayerID, id));
     }
-    public void emitBall(Creator creator){socket.emit(loadBall, creator.getJSON());}
-    public void emitCoin(Creator creator){socket.emit(loadCoin, creator.getJSON());}
-    public void emitMove(Creator creator){socket.emit(playerMoved, creator.getJSON());}
+    public void sendAnswer(boolean angenommen, String toID){
+        socket.emit(answerRequest, ServerDataFactory.getAnswerRequestData(angenommen, toID, id));
+    }
+    public void createGameRoom(String[] IDs, String room){ //TODO for generating a room on the server, you have to create your own link.. so you have to create your own random link
+        socket.emit(createGameRoom, ServerDataFactory.getCreateGameData(IDs, room));
+    }
+    //these are methods, which can called by the referee
+    public void emitBall(BallCreator creator){socket.emit(loadBall, creator.getJSON());}
+    public void emitCoin(CoinCreator creator){socket.emit(loadCoin, creator.getJSON());}
+    //this method is called when a player moved
+    public void emitMove(MoveData creator){socket.emit(playerMoved, creator.getJSON());}
+    //createPlayer and save the username on the server
+    public void createPlayer(String username){
+        try {socket.emit(createPlayer, new JSONObject("{\"name\":" + "\"" +  username + "\"" + "}"));}
+        catch (JSONException e) {e.printStackTrace();}}
     //getter
     public String getOnlineServerUrl() {return onlineServerUrl;}
     public UserActions getUserActions() {return userActions;}

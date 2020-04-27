@@ -10,7 +10,7 @@ import org.andengine.scene.OnlineScenes.ServerScene.Player;
 public class LumeGameActions implements GameActions {
     //variables
         //scene
-    private MultiplayerGameScene scene = MultiplayerGameScene.getInstance(); // to work with the scene in the methods to add sprites or stuff like that
+    //private MultiplayerGameScene scene = MultiplayerGameScene.getInstance(); // to work with the scene in the methods to add sprites or stuff like that
         //static
 
         //public
@@ -31,16 +31,16 @@ public class LumeGameActions implements GameActions {
 
         //overwritten methods from interface(s)
     @Override
-    public void startGame(Player opponent) {
+    public void startGame(String[] opponentsIDs, String refereeID) {
         //method is called when both player's connected to the server.
     }
     @Override
     public void playerMoved(Vector2 newPosition, Player player) {
-        for (Player p : scene.getMultiplayer().getPlayers()) {
+        /*for (Player p : scene.getMultiplayer().getPlayers()) {
             if (p.getId().equals(player.getId())) {
                 p.getSprite().setPosition(newPosition.x, newPosition.y);
             }
-        }
+        }*/
         //method is called when a player moved.
     }
     @Override
