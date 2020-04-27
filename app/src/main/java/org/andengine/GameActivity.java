@@ -765,7 +765,7 @@ public class GameActivity extends BaseGameActivity implements RewardedVideoAdLis
 
     @Override
     public void onPopulateScene(Scene pScene, OnPopulateSceneCallback pOnPopulateSceneCallback) throws IOException {
-        SurfaceView mBackgroundView = new PreviewView(this);
+        /*SurfaceView mBackgroundView = new PreviewView(this);
         this.addContentView(mBackgroundView,
                 new ViewGroup.LayoutParams(ViewGroup.LayoutParams.FILL_PARENT, ViewGroup.LayoutParams.FILL_PARENT));
             mEngine.registerUpdateHandler(new TimerHandler(2f, new ITimerCallback() {
@@ -774,7 +774,7 @@ public class GameActivity extends BaseGameActivity implements RewardedVideoAdLis
                     SceneManager.getInstance().createMenuScene();
                 }
             }));
-        pOnPopulateSceneCallback.onPopulateSceneFinished();    }
+        pOnPopulateSceneCallback.onPopulateSceneFinished();*/    }
 
     @Override
     public Engine onCreateEngine(EngineOptions pEngineOptions) {
