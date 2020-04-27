@@ -69,7 +69,7 @@ public class Server {
         }).on(newUserConnected, args ->{
             userActions.newUser(ServerDataFactory.getPlayerFromData(args));
         }).on(request, args ->{
-            userActions.getRequest(ServerDataFactory.getRequestFromData(args)[0],ServerDataFactory.getRequestFromData(args)[1]);
+            userActions.getRequest(ServerDataFactory.getRequestFromData(args));
         }).on(answerRequest, args ->{
             userActions.answerRequest((Boolean) ServerDataFactory.getAnswerFromRequestData()[0], (String) ServerDataFactory.getAnswerFromRequestData()[1]);
         }).on(createGameRoom, args ->{

@@ -3,6 +3,7 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/app/andengineLibary/AndEngineHelperClasses/AndEngineHelperClasses.iml" filepath="$PROJECT_DIR$/app/andengineLibary/AndEngineHelperClasses/AndEngineHelperClasses.iml" group="Lume/app/andengineLibary/AndEngineHelperClasses" />
+      <module fileurl="file://$PROJECT_DIR$/Android Studio Programme-Lume.iml" filepath="$PROJECT_DIR$/Android Studio Programme-Lume.iml" group="Lume" />
       <module fileurl="file://$PROJECT_DIR$/.idea/Lume.iml" filepath="$PROJECT_DIR$/.idea/Lume.iml" group="Lume" />
       <module fileurl="file://$PROJECT_DIR$/app/andengineLibary/andengineLibary.iml" filepath="$PROJECT_DIR$/app/andengineLibary/andengineLibary.iml" group="Lume/app/andengineLibary" />
       <module fileurl="file://$PROJECT_DIR$/andenginephysicsbox2dextension/andenginephysicsbox2dextension.iml" filepath="$PROJECT_DIR$/andenginephysicsbox2dextension/andenginephysicsbox2dextension.iml" group="Lume/andenginephysicsbox2dextension" />

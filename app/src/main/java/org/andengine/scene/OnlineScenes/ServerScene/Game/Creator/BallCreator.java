@@ -14,6 +14,7 @@ import org.andengine.object.Ball;
 import org.andengine.object.Circle;
 import org.andengine.opengl.texture.region.ITextureRegion;
 import org.andengine.scene.OnlineScenes.ServerScene.Game.MultiplayerGameScene;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
@@ -25,20 +26,16 @@ public class BallCreator extends Creator {
     //fields for JSON
     private boolean thorny;
     private float speed;
-    private int direction;
-    private int position;
-    private int xVel, yVel;
+    private short direction;
+    private short position;
+    private int xVel, yVel; // you never use these. you create block scoped floats in your method
     //base stuff
     private BoundCamera camera;
     private MultiplayerGameScene gameScene;
     private Ball ball;
     private Body body;
     //constructor
-    public BallCreator(String toPlayerID) {
-        super(toPlayerID);
-    }
-    public BallCreator(String toPlayerID, boolean thorny, int direction, int position) {
-        super(toPlayerID);
+    public BallCreator( boolean thorny, short direction, short position) {
         this.thorny = thorny;
         this.direction = direction;
         this.position = position;
@@ -112,8 +109,26 @@ public class BallCreator extends Creator {
     public int getxVel() {return this.xVel;}
     public int getyVel() {return this.yVel;}
     public float getSpeed() {return speed;}
+    /*
+    private boolean thorny;
+    private float speed;
+    private int direction;
+    private int position;
+    private int xVel, yVel;
+    */
     @Override
     public JSONObject getJSON() {
-        return null; //TODO Martin Melnizky
+        JSONObject returnValue = new JSONObject();
+        try {
+            returnValue.put("thorny", thorny);
+            //returnValue.put("speed",speed);
+            returnValue.put("direction",direction);
+            returnValue.put("position",position);
+        }catch(JSONException e){ e.printStackTrace();}
+        return returnValue; //TODO Martin Melnizky
+    }
+    public static BallCreator getCreatorFromJson(JSONObject o){
+        try{return new BallCreator( o.getBoolean("thorny"),(short) o.getInt("direction"),(short) o.getInt("position"));} catch(JSONException e){e.printStackTrace();}
+        return null;
     }
 }

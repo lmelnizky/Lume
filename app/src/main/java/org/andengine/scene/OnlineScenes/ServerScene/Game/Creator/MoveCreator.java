@@ -3,6 +3,7 @@ package org.andengine.scene.OnlineScenes.ServerScene.Game.Creator;
 import org.andengine.engine.camera.BoundCamera;
 import org.andengine.entity.sprite.Sprite;
 import org.andengine.manager.ResourcesManager;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 public class MoveCreator extends Creator {
@@ -10,18 +11,16 @@ public class MoveCreator extends Creator {
     private boolean isLume;
     private int xPosPlayer, yPosPlayer;
     private char direction;
+    private String movedPlayersID;
     //constants
     private final float sideLength =  ResourcesManager.getInstance().sideLength;
     //returnValue
     private Sprite playerSprite;
     //constructor
-    public MoveCreator(String toPlayerID) {
-        super(toPlayerID);
-    }
     //constructor
-    public MoveCreator(String toPlayerID, char directionToMove) {
-        super(toPlayerID);
+    public MoveCreator(char directionToMove, String movedPlayersID) {
         this.direction = directionToMove;
+        this.movedPlayersID = movedPlayersID;
     }
 
     //call setPlayer and Opponent positions before calling this
@@ -65,8 +64,18 @@ public class MoveCreator extends Creator {
     public int getyPosPlayer() {
         return this.yPosPlayer;
     }
+
     @Override
     public JSONObject getJSON() {
+        JSONObject returnValue = new JSONObject();
+        try {
+            returnValue.put("movedPlayer", movedPlayersID);
+            returnValue.put("direction", direction);
+        }catch(JSONException e){ e.printStackTrace();}
+        return returnValue; //TODO Martin Melnizky
+    }
+    public static MoveCreator getCreatorFromJson(JSONObject o){
+        try{return new MoveCreator(o.getString("direction").charAt(0), o.getString("movedPlayer"));} catch(JSONException e){e.printStackTrace();}
         return null;
     }
 }
