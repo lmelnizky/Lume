@@ -27,6 +27,7 @@ import org.andengine.scene.OnlineScenes.ServerScene.Player;
 import org.andengine.scene.OnlineScenes.ServerScene.Server;
 import org.andengine.util.adt.color.Color;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 
 //this is a singleton because only one instance should be initialized in runtime
@@ -55,7 +56,6 @@ public class MultiplayerGameScene extends BaseScene {
     //andengine variables
     private Scene gameOverScene;
     private IEntity firstLayer, secondLayer, thirdLayer;
-    private PhysicsWorld physicsWorld;
     private Sprite lumeSprite, grumeSprite;
     private HUD gameHUD;
     private Sprite lumeBomb, grumeBomb;
@@ -67,8 +67,14 @@ public class MultiplayerGameScene extends BaseScene {
     private Sprite luserSprite, finishSprite, replaySprite;
     private Text gameOverText;
 
+
     //objects
     private Multiplayer multiplayer;
+
+    //public attributes
+    public ArrayList<Sprite> crackyStones, crackyStonesToRemove, cannonBallsToRemove;
+    public ArrayList<Sprite> stones, stonesToRemove;
+    public PhysicsWorld physicsWorld;
 
     //createScene method
     @Override
