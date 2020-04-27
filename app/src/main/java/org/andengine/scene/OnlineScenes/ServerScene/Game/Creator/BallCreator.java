@@ -15,20 +15,21 @@ import org.andengine.opengl.texture.region.ITextureRegion;
 import org.json.JSONObject;
 
 public class BallCreator extends Creator {
+    //variables
+    //constants
     private static final float speed = 1f;
-
+    private final float sideLength = ResourcesManager.getInstance().sideLength;
+    //fields for JSON
     private boolean thorny;
-    private float sideLength;
     private int direction;
     private int position;
     private int xVel, yVel;
-
+    //base stuff
     private BoundCamera camera;
-
+    //constructor
     public BallCreator(String toPlayerID) {
         super(toPlayerID);
     }
-
     public BallCreator(String toPlayerID, boolean thorny, int direction, int position) {
         super(toPlayerID);
         this.thorny = thorny;
@@ -38,12 +39,12 @@ public class BallCreator extends Creator {
 
     @Override
     public Sprite createSprite() {
+        //ich versteh die methode nicht.. ist aber auch egal
         final FixtureDef FIXTURE_DEF = PhysicsFactory.createFixtureDef(0, 0.01f, 0.5f);
         float x = 0;
         float y = 0;
         float xVel = 0;
         float yVel = 0;
-        sideLength = ResourcesManager.getInstance().sideLength;
         camera = ResourcesManager.getInstance().camera;
 
         final Sprite stone;
@@ -98,14 +99,8 @@ public class BallCreator extends Creator {
     /*Getter methods of linear velocity
     is needed for body
      */
-    public int getxVel() {
-        return this.xVel;
-    }
-
-    public int getyVel() {
-        return this.yVel;
-    }
-
+    public int getxVel() {return this.xVel;}
+    public int getyVel() {return this.yVel;}
     @Override
     public JSONObject getJSON() {
         return null; //TODO Martin Melnizky

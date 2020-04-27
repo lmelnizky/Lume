@@ -105,6 +105,7 @@ public class MultiplayerGameScene extends BaseScene {
     public void createGame(){
         //TODO should called in LumeGameActions, if all players connect to the server(startGame())
         //TODO create Game
+        //TODO don't write code here, delete this method!
     }
     //constructor
     private MultiplayerGameScene(LinkedList<Player> players){multiplayer = new Multiplayer(players);}

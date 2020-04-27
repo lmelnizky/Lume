@@ -6,29 +6,28 @@ import org.andengine.manager.ResourcesManager;
 import org.json.JSONObject;
 
 public class MoveCreator extends Creator {
+    //variables for JSON
     private boolean isLume;
     private int xPosPlayer, yPosPlayer;
     private int xPosOpponent, yPosOpponent;
-    private float sideLength;
     private char direction;
-
+    //constants
+    private final float sideLength =  ResourcesManager.getInstance().sideLength;
+    //returnValue
     private Sprite playerSprite;
-
+    //constructor
     public MoveCreator(String toPlayerID) {
         super(toPlayerID);
     }
-
+    //constructor
     public MoveCreator(String toPlayerID, char direction) {
         super(toPlayerID);
         this.direction = direction;
-        sideLength = ResourcesManager.getInstance().sideLength;
     }
-
-
 
     //call setPlayer and Opponent positions before calling this
     //call setSprite before calling this
-    //call coinCheck() after this
+    //call coinCheck() after this TODO (that's the job of the referee class)
     @Override
     public Sprite createSprite() {
         switch (direction) {
@@ -69,27 +68,14 @@ public class MoveCreator extends Creator {
         this.setyPosPlayer(yPosPlayer);
         return playerSprite;
     }
-
+    //setter
     public void setPlayerSprite(Sprite playerSprite) {
         this.playerSprite = playerSprite;
     }
-
-    public void setxPosPlayer(int x) {
-        this.xPosPlayer = x;
-    }
-
-    public void setyPosPlayer(int y) {
-        this.yPosPlayer = y;
-    }
-
-    public void setxPosOpponent(int x) {
-        this.xPosOpponent = x;
-    }
-
-    public void setyPosOpponent(int y) {
-        this.yPosOpponent = y;
-    }
-
+    public void setxPosPlayer(int x) {this.xPosPlayer = x;}
+    public void setyPosPlayer(int y) {this.yPosPlayer = y;}
+    public void setxPosOpponent(int x) {this.xPosOpponent = x;}
+    public void setyPosOpponent(int y) {this.yPosOpponent = y;}
     @Override
     public JSONObject getJSON() {
         return null;
