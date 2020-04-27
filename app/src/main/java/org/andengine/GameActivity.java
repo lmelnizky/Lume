@@ -765,16 +765,26 @@ public class GameActivity extends BaseGameActivity implements RewardedVideoAdLis
 
     @Override
     public void onCreateScene(OnCreateSceneCallback pOnCreateSceneCallback) throws IOException {
+        if (SceneManager.getInstance().getCurrentScene() == null) {
+            SceneManager.getInstance().createSplashScene(pOnCreateSceneCallback);
+        } else {
+        }
         /*
         if (SceneManager.getInstance().getCurrentScene() == null) {
             SceneManager.getInstance().createSplashScene(pOnCreateSceneCallback);
         } else {
         }*/
-        pOnCreateSceneCallback.onCreateSceneFinished(new Scene());
     }
 
     @Override
     public void onPopulateScene(Scene pScene, OnPopulateSceneCallback pOnPopulateSceneCallback) throws IOException {
+        mEngine.registerUpdateHandler(new TimerHandler(2f, new ITimerCallback() {
+            public void onTimePassed(final TimerHandler pTimerHandler) {
+                mEngine.unregisterUpdateHandler(pTimerHandler);
+                SceneManager.getInstance().createMenuScene();
+            }
+        }));
+        pOnPopulateSceneCallback.onPopulateSceneFinished();    }
         /*SurfaceView mBackgroundView = new PreviewView(this);
         this.addContentView(mBackgroundView,
                 new ViewGroup.LayoutParams(ViewGroup.LayoutParams.FILL_PARENT, ViewGroup.LayoutParams.FILL_PARENT));
@@ -784,7 +794,7 @@ public class GameActivity extends BaseGameActivity implements RewardedVideoAdLis
                     SceneManager.getInstance().createMenuScene();
                 }
             }));
-        pOnPopulateSceneCallback.onPopulateSceneFinished();*/    }
+        pOnPopulateSceneCallback.onPopulateSceneFinished();*/
 
     @Override
     public Engine onCreateEngine(EngineOptions pEngineOptions) {
