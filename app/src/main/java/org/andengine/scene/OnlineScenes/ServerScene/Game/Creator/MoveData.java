@@ -1,11 +1,11 @@
 package org.andengine.scene.OnlineScenes.ServerScene.Game.Creator;
 
-import org.andengine.entity.sprite.Sprite;
-import org.json.JSONException;
-import org.json.JSONObject;
+        import org.andengine.entity.sprite.Sprite;
+        import org.json.JSONException;
+        import org.json.JSONObject;
 
-public class BallCreator extends Creator {
-    public BallCreator(String toPlayerID) {
+public class MoveData extends Creator {
+    public MoveData(String toPlayerID) {
         super(toPlayerID);
     }
 
@@ -25,9 +25,8 @@ public class BallCreator extends Creator {
         return returnValue; //TODO Martin Melnizky
     }
     public static Creator createCreator(JSONObject o){
-        BallCreator returnValue = null;
+        CoinCreator returnValue = null;
         //TODO Martin Melnizky
         return returnValue;
-
     }
 }

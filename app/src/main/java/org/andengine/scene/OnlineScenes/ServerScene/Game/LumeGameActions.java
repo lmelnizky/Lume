@@ -31,7 +31,7 @@ public class LumeGameActions implements GameActions {
 
         //overwritten methods from interface(s)
     @Override
-    public void startGame(Player opponent) {
+    public void startGame(String[] opponentsIDs, String refereeID) {
         //method is called when both player's connected to the server.
     }
     @Override

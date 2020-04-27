@@ -15,7 +15,7 @@ public class Multiplayer {
     //methods
     private void create(){
         players = players == null ? new LinkedList<>() : players;
-        server = server == null ? new Server(new LumeGameActions(), new LumeUserActions()): server;
+        server = server == null ? new Server(new LumeGameActions(), new LumeUserActions(), ""): server; //TODO username from shared prefs
         //TODO where should start your Player? where should start Player 2/3/4?
     }
     //getter

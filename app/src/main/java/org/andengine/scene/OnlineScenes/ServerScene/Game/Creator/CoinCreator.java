@@ -1,9 +1,11 @@
 package org.andengine.scene.OnlineScenes.ServerScene.Game.Creator;
 
 import org.andengine.entity.sprite.Sprite;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 public class CoinCreator extends Creator {
+
     public CoinCreator(String toPlayerID) {
         super(toPlayerID);
     }
@@ -15,6 +17,17 @@ public class CoinCreator extends Creator {
 
     @Override
     public JSONObject getJSON() {
-        return null; //TODO Martin Melnizky
+        JSONObject returnValue = new JSONObject();
+        try {
+            returnValue.put("sendToID", toPlayerID);
+            //put data into json
+        }
+        catch (JSONException e) {e.printStackTrace();}
+        return returnValue; //TODO Martin Melnizky
+    }
+    public static Creator createCreator(JSONObject o){
+        CoinCreator returnValue = null;
+        //TODO Martin Melnizky
+        return returnValue;
     }
 }

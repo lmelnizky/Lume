@@ -11,4 +11,5 @@ public interface UserActions {
     void userDisconnected(Player player);
     void getRequest(String id, String username);
     void disconnect();
+    void answerRequest(boolean angenommen, String fromID);
 }

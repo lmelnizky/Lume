@@ -85,7 +85,7 @@ public class MainMenuScene extends BaseScene implements IOnMenuItemClickListener
     @Override
     public void createScene() {
         Log.w("MainMenuScene", "start connection with server");
-        new Server(new LumeGameActions(), new LumeUserActions()); // only called for tests!!!
+        new Server(new LumeGameActions(), new LumeUserActions(), ""); // only called for tests!!! TODO get the username from shared prefs
         Log.w("MainMenuScene", "done with connection");
         sideLength = resourcesManager.sideLength;
         createBackground();
