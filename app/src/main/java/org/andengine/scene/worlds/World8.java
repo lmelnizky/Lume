@@ -399,7 +399,7 @@ public class World8 extends BaseScene {
     private void createLume() {
         xPosLume = 3;
         yPosLume = 3;
-        lumeSprite = new Sprite(camera.getCenterX() + sideLength, camera.getCenterY() + sideLength, sideLength * 3 / 4, sideLength * 3 / 4, resourcesManager.lume_region, vbom);
+        lumeSprite = new Sprite(camera.getCenterX() + sideLength, camera.getCenterY() + sideLength, sideLength * 3 / 4, sideLength * 3 / 4, resourcesManager.player_region, vbom);
         secondLayer.attachChild(lumeSprite);
     }
 

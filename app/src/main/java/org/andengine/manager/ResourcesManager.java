@@ -63,6 +63,7 @@ public class ResourcesManager {
     public ITextureRegion splash_region;
     public ITextureRegion menu_background_region;
     public ITextureRegion clouds_region;
+    public ITextureRegion cloud_dark_region;
     public ITextureRegion lume_text_region;
     public ITextureRegion zahnrad_red_region;
     public ITextureRegion zahnrad_blue_region;
@@ -89,6 +90,7 @@ public class ResourcesManager {
 
     // Texture
     public BuildableBitmapTextureAtlas gameTextureAtlas = null;
+    public BuildableBitmapTextureAtlas playerTextureAtlas = null;
     public BuildableBitmapTextureAtlas chooseLevelTextureAtlas = null;
     public BuildableBitmapTextureAtlas multiTextureAtlas = null;
     public BuildableBitmapTextureAtlas menuTextureAtlas = null;
@@ -115,6 +117,7 @@ public class ResourcesManager {
     public ITextureRegion board_region;
     public ITextureRegion coin_region;
     public ITextureRegion lume_region;
+    public ITextureRegion player_region;
     public ITextureRegion cannons_n_region;
     public ITextureRegion cannons_e_region;
     public ITextureRegion cannons_s_region;
@@ -181,6 +184,7 @@ public class ResourcesManager {
     public ITextureRegion background_world8_region;
     public ITextureRegion lamporghina_sign_region;
     public ITextureRegion lamporghina_region;
+    public ITextureRegion lamporghina_big_region;
     public ITextureRegion helmet_region;
 
     //ChooseLevel TextureRegions
@@ -217,6 +221,7 @@ public class ResourcesManager {
     //Shop Graphics
     public ITextureRegion background_shop_region;
     public ITextureRegion shop_overlay_region;
+    public ITextureRegion chosen_region;
     public ITextureRegion personal_region;
     public ITextureRegion lume_big_region;
     public ITextureRegion grume_big_region;
@@ -255,6 +260,13 @@ public class ResourcesManager {
         loadGameAudio();
     }
 
+    public void loadOnlineMultiResources() {
+        loadGameGraphics();
+        loadWorldGraphics(0);
+        loadMultiGraphics();
+        loadGameAudio();
+    }
+
     public void loadLevelResources(int worlds) {
         BitmapTextureAtlasTextureRegionFactory.setAssetBasePath("gfx/level/");
         chooseLevelTextureAtlas = new BuildableBitmapTextureAtlas(activity.getTextureManager(), 2048, 2048, TextureOptions.BILINEAR);
@@ -283,6 +295,7 @@ public class ResourcesManager {
             menuTextureAtlas = new BuildableBitmapTextureAtlas(activity.getTextureManager(), 4096, 4096, TextureOptions.BILINEAR);
             menu_background_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(menuTextureAtlas, activity, "menu_background.png");
             clouds_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(menuTextureAtlas, activity, "clouds.png");
+            cloud_dark_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(menuTextureAtlas, activity, "cloud_dark.png");
             lume_text_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(menuTextureAtlas, activity, "lume_text.png");
             zahnrad_blue_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(menuTextureAtlas, activity, "zahnrad_blue.png");
             zahnrad_red_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(menuTextureAtlas, activity, "zahnrad_red.png");
@@ -343,8 +356,9 @@ public class ResourcesManager {
             shopTextureAtlas = new BuildableBitmapTextureAtlas(activity.getTextureManager(), 1024, 1024, TextureOptions.BILINEAR);
             background_shop_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(shopTextureAtlas, activity, "background_shop.png");
             shop_overlay_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(shopTextureAtlas, activity, "shop_overlay.png");
+            chosen_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(shopTextureAtlas, activity, "chosen.png");
             lume_big_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(shopTextureAtlas, activity, "lume_big.png");
-            lamporghina_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(shopTextureAtlas, activity, "lamporghina.png");
+            lamporghina_big_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(shopTextureAtlas, activity, "lamporghina_big.png");
             grume_big_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(shopTextureAtlas, activity, "grume_big.png");
             personal_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(shopTextureAtlas, activity, "personal.png");
             coin_tiled_region = BitmapTextureAtlasTextureRegionFactory.createTiledFromAsset(shopTextureAtlas, activity, "coin_tiled.png", 3, 2);
@@ -458,7 +472,6 @@ public class ResourcesManager {
             cannonball_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gameTextureAtlas, activity, "cannonball.png");
             board_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gameTextureAtlas, activity, "board.png");
             coin_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gameTextureAtlas, activity, "coin.png");
-            lume_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gameTextureAtlas, activity, "lume.png");
             cannons_n_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gameTextureAtlas, activity, "cannons_n.png");
             cannons_e_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gameTextureAtlas, activity, "cannons_e.png");
             cannons_s_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gameTextureAtlas, activity, "cannons_s.png");
@@ -496,6 +509,58 @@ public class ResourcesManager {
             }
         } else {
             this.gameTextureAtlas.load();
+        }
+        loadPlayerGraphics();
+    }
+
+    private void loadPlayerGraphics() {
+        if (playerTextureAtlas == null) {
+            BitmapTextureAtlasTextureRegionFactory.setAssetBasePath("gfx/game/");
+            playerTextureAtlas = new BuildableBitmapTextureAtlas(activity.getTextureManager(), 1024, 1024, TextureOptions.BILINEAR);
+
+            lume_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(playerTextureAtlas, activity, "lume.png");
+            lamporghina_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(playerTextureAtlas, activity, "lamporghina.png");
+            grume_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(playerTextureAtlas, activity, "grume.png");
+            personal_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(playerTextureAtlas, activity, "personal.png");
+
+
+            switch (activity.getCurrentPlayer()) {
+                case 0: //lume
+                    player_region = lume_region;
+                    break;
+                case 1: //lamporghina
+                    player_region = lamporghina_region;
+                    break;
+                case 2://grume
+                    player_region = grume_region;
+                    break;
+                case 3: //personal
+                    player_region = personal_region;
+                    break;
+            }
+
+            try {
+                this.playerTextureAtlas.build(new BlackPawnTextureAtlasBuilder<IBitmapTextureAtlasSource, BitmapTextureAtlas>(0, 1, 0));
+                this.playerTextureAtlas.load();
+            } catch (final ITextureAtlasBuilder.TextureAtlasBuilderException e) {
+                Debug.e(e);
+            }
+        } else {
+            switch (activity.getCurrentPlayer()) {
+                case 0: //lume
+                    player_region = lume_region;
+                    break;
+                case 1: //lamporghina
+                    player_region = lamporghina_region;
+                    break;
+                case 2://grume
+                    player_region = grume_region;
+                    break;
+                case 3: //personal
+                    player_region = personal_region;
+                    break;
+            }
+            this.playerTextureAtlas.load();
         }
     }
 

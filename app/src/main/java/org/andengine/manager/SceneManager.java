@@ -8,6 +8,7 @@ import org.andengine.entity.scene.Scene;
 import org.andengine.scene.HelpScene;
 import org.andengine.scene.HighscoreScene;
 import org.andengine.scene.MultiScene;
+import org.andengine.scene.OnlineScenes.ServerScene.Users.MultiplayerUsersScene;
 import org.andengine.scene.ShopScene;
 import org.andengine.scene.SkillMenu;
 import org.andengine.scene.Worlds1to4Scene;
@@ -37,6 +38,7 @@ public class SceneManager {
     public MainMenuScene menuScene;
     public BaseScene gameScene;
     public BaseScene multiScene;
+    public BaseScene onlineUsersScene;
     public BaseScene highscoreScene;
     public BaseScene shopScene;
     public BaseScene skillGameScene;
@@ -377,6 +379,21 @@ public class SceneManager {
                 ResourcesManager.getInstance().loadSkillMenuResources();
                 skillMenuScene = new SkillMenu();
                 setScene(skillMenuScene);
+            }
+        }));
+    }
+
+    public void loadOnlineUsersScene(final Engine mEngine) {
+        loadingScene = new LoadingScene();
+        setScene(loadingScene);
+        ResourcesManager.getInstance().unloadMenuTextures();
+        mEngine.registerUpdateHandler(new TimerHandler(0.1f, new ITimerCallback() {
+            @Override
+            public void onTimePassed(TimerHandler pTimerHandler) {
+                mEngine.unregisterUpdateHandler(pTimerHandler);
+                ResourcesManager.getInstance().loadOnlineMultiResources();
+                onlineUsersScene = MultiplayerUsersScene.getInstance();
+                setScene(onlineUsersScene);
             }
         }));
     }
