@@ -15,6 +15,7 @@ import org.andengine.entity.scene.menu.MenuScene.IOnMenuItemClickListener;
 import org.andengine.entity.scene.menu.item.IMenuItem;
 import org.andengine.entity.scene.menu.item.SpriteMenuItem;
 import org.andengine.entity.scene.menu.item.decorator.ScaleMenuItemDecorator;
+import org.andengine.entity.sprite.AnimatedSprite;
 import org.andengine.entity.sprite.Sprite;
 import org.andengine.entity.text.Text;
 import org.andengine.entity.text.TextOptions;
@@ -67,7 +68,7 @@ public class MainMenuScene extends BaseScene implements IOnMenuItemClickListener
     private final int MENU_ONLINE_MULTI = 11;
 
     private Text worldText, coinText, hsText;
-    private Sprite coinSprite;
+    private AnimatedSprite finger;
 
     //CONSTRUCTOR
     public MainMenuScene() {
@@ -83,9 +84,9 @@ public class MainMenuScene extends BaseScene implements IOnMenuItemClickListener
 
     @Override
     public void createScene() {
-        Log.w("MainMenuScene", "start connection with server");
-        new Server(new LumeGameActions(), new LumeUserActions()); // only called for tests!!!
-        Log.w("MainMenuScene", "done with connection");
+//        Log.w("MainMenuScene", "start connection with server");
+//        new Server(new LumeGameActions(), new LumeUserActions()); // only called for tests!!!
+//        Log.w("MainMenuScene", "done with connection");
         sideLength = resourcesManager.sideLength;
         createBackground();
         createWorldText();
@@ -293,6 +294,11 @@ public class MainMenuScene extends BaseScene implements IOnMenuItemClickListener
                 resourcesManager.cloud_dark_region, vbom);
         this.attachChild(darkCloudSprite);
 
+        //attach finger
+        finger = new AnimatedSprite(sideLength*12.4f, sideLength*1.1f, sideLength, sideLength*1.25f,
+                resourcesManager.finger_tiled, vbom);
+        attachChild(finger);
+
         //attach zahnraeder
         Sprite[] redWheelsL = new Sprite[3];
         Sprite[] redWheelsR = new Sprite[3];
@@ -376,6 +382,7 @@ public class MainMenuScene extends BaseScene implements IOnMenuItemClickListener
                 if (pSceneTouchEvent.isActionDown()) {
                     rightRun = !rightRun;
                     if (rightRun) {
+                        finger.animate(200);
                         this.setVisible(true);
                         stopWheelR.setVisible(false);
                         for (int i = 0; i < blueWheelsR.length; i++) {
@@ -385,6 +392,7 @@ public class MainMenuScene extends BaseScene implements IOnMenuItemClickListener
                         blueWheelLume.registerEntityModifier(new LoopEntityModifier(new RotationModifier(4f, 0, 360)));
                         this.registerEntityModifier(new LoopEntityModifier(new RotationModifier(4f, 0, -360)));
                     } else {
+                        finger.stopAnimation();
                         this.setVisible(false);
                         stopWheelR.setVisible(true);
                         for (int i = 0; i < blueWheelsL.length; i++) {
@@ -412,12 +420,13 @@ public class MainMenuScene extends BaseScene implements IOnMenuItemClickListener
 
     private void createWorldText() {
         if (worldText == null) {
-            worldText = new Text(55, camera.getHeight()-resourcesManager.sideLength*0.7f,
-                    resourcesManager.smallFont, "WLUME0123456789", new TextOptions(HorizontalAlign.CENTER), vbom);
-            worldText.setText("W" + String.valueOf(activity.getCurrentWorld()));
+            worldText = new Text(20, camera.getHeight()-resourcesManager.sideLength*0.8f,
+                    resourcesManager.smallFont, "W: L0123456789", new TextOptions(HorizontalAlign.LEFT), vbom);
+            worldText.setText("W: " + String.valueOf(activity.getCurrentWorld()));
+            worldText.setPosition(20+worldText.getWidth()/2, worldText.getY());
             if (activity.getCurrentWorld() == 9) {
-                worldText.setText("LUME");
-                worldText.setPosition(camera.getHeight()/8, worldText.getY());
+                worldText.setText("L");
+                worldText.setPosition(20+worldText.getWidth()/2, worldText.getY());
             }
             int color = android.graphics.Color.parseColor("#808080");
             worldText.setColor(color);
@@ -429,13 +438,13 @@ public class MainMenuScene extends BaseScene implements IOnMenuItemClickListener
 
     private void createCoinText() {
         if (coinText == null) {
-            coinText = new Text(55, camera.getHeight()-resourcesManager.sideLength*1.3f,
-                    resourcesManager.smallFont, "C: 0123456789", new TextOptions(HorizontalAlign.CENTER), vbom);
+            coinText = new Text(20, camera.getHeight()-resourcesManager.sideLength*1.4f,
+                    resourcesManager.smallFont, "C: 0123456789", new TextOptions(HorizontalAlign.LEFT), vbom);
             coinText.setText("C: " + String.valueOf(activity.getCurrentBeersos()));
             int color = android.graphics.Color.parseColor("#666666");
             coinText.setColor(color);
             this.attachChild(coinText);
-            coinText.setPosition(55+coinText.getWidth()/2, coinText.getY());
+            coinText.setPosition(20+coinText.getWidth()/2, coinText.getY());
 //            coinSprite = new Sprite(coinText.getX()-coinText.getWidth()/2-camera.getHeight()/18, coinText.getY(),
 //                    camera.getHeight()/16, camera.getHeight()/16, resourcesManager.coin_region, vbom);
 //            this.attachChild(coinSprite);
@@ -446,13 +455,13 @@ public class MainMenuScene extends BaseScene implements IOnMenuItemClickListener
 
     private void createHSText() {
         if (hsText == null) {
-            hsText = new Text(sideLength*2, camera.getHeight()-resourcesManager.sideLength*0.7f,
-                    resourcesManager.smallFont, "HS: 0123456789", new TextOptions(HorizontalAlign.CENTER), vbom);
+            hsText = new Text(20+worldText.getWidth()+sideLength/2, camera.getHeight()-resourcesManager.sideLength*0.8f,
+                    resourcesManager.smallFont, "HS: 0123456789", new TextOptions(HorizontalAlign.LEFT), vbom);
             hsText.setText("HS: " + String.valueOf(activity.getCurrentBeersos()));
             int color = android.graphics.Color.parseColor("#4d4d4d");
             hsText.setColor(color);
             this.attachChild(hsText);
-            hsText.setPosition(sideLength*2 + hsText.getWidth()/2, hsText.getY());
+            hsText.setPosition(20+worldText.getWidth()+sideLength/2+hsText.getWidth()/2, hsText.getY());
         } else {
             this.updateHSText();
         }
@@ -468,10 +477,10 @@ public class MainMenuScene extends BaseScene implements IOnMenuItemClickListener
 
     public void updateWorldText() {
         if (worldText != null) {
-            worldText.setText("W" + String.valueOf(activity.getCurrentWorld()));
+            worldText.setText("W: " + String.valueOf(activity.getCurrentWorld()));
             if (activity.getCurrentWorld() == 9) {
-                worldText.setText("LUME");
-                worldText.setPosition(camera.getHeight()/8, worldText.getY());
+                worldText.setText("L");
+                worldText.setPosition(20+worldText.getWidth()/2, worldText.getY());
             }
         }
     }
@@ -484,7 +493,8 @@ public class MainMenuScene extends BaseScene implements IOnMenuItemClickListener
     }
 
     private void createMenuChildScene() {
-        float f = 1.5f;
+        float factorLeft = 1.5f;
+        float factorRight = 1.3f;
         loudVisible = activity.isLoudVisible();
         //helpVisible = !activity.isMultiTutorialSeen();
 
@@ -492,11 +502,11 @@ public class MainMenuScene extends BaseScene implements IOnMenuItemClickListener
         menuChildScene.setPosition(0, 0);
 
         //create buttons
-        final IMenuItem highMenuItem = new ScaleMenuItemDecorator(new SpriteMenuItem(MENU_HIGH, sideLength*f, sideLength*f, resourcesManager.play_coin_region, vbom), 1.2f, 1);
-        final IMenuItem playMenuItem = new ScaleMenuItemDecorator(new SpriteMenuItem(MENU_PLAY, sideLength*f, sideLength*f, resourcesManager.play_region, vbom), 1.2f, 1);
-        final IMenuItem levelsMenuItem = new ScaleMenuItemDecorator(new SpriteMenuItem(MENU_LEVELS, sideLength*f, sideLength*f, resourcesManager.world_region, vbom), 1.2f, 1);
-        final IMenuItem shoppingMenuItem = new ScaleMenuItemDecorator(new SpriteMenuItem(MENU_SHOPPING, sideLength*1.09f*f, sideLength*f, resourcesManager.shopping_region, vbom), 1.2f, 1);
-        final IMenuItem skillMenuItem = new ScaleMenuItemDecorator(new SpriteMenuItem(MENU_SKILL, sideLength*f, sideLength*f, resourcesManager.skill_gym_region, vbom), 1.2f, 1);
+        final IMenuItem highMenuItem = new ScaleMenuItemDecorator(new SpriteMenuItem(MENU_HIGH, sideLength*factorLeft, sideLength*factorLeft, resourcesManager.play_coin_region, vbom), 1.2f, 1);
+        final IMenuItem playMenuItem = new ScaleMenuItemDecorator(new SpriteMenuItem(MENU_PLAY, sideLength*factorLeft, sideLength*factorLeft, resourcesManager.play_region, vbom), 1.2f, 1);
+        final IMenuItem levelsMenuItem = new ScaleMenuItemDecorator(new SpriteMenuItem(MENU_LEVELS, sideLength*factorLeft, sideLength*factorLeft, resourcesManager.world_region, vbom), 1.2f, 1);
+        final IMenuItem shoppingMenuItem = new ScaleMenuItemDecorator(new SpriteMenuItem(MENU_SHOPPING, sideLength*1.09f*factorRight, sideLength*factorRight, resourcesManager.shopping_region, vbom), 1.2f, 1);
+        final IMenuItem skillMenuItem = new ScaleMenuItemDecorator(new SpriteMenuItem(MENU_SKILL, sideLength*factorLeft, sideLength*factorLeft, resourcesManager.skill_gym_region, vbom), 1.2f, 1);
 //        ballFallMenuItem = new ScaleMenuItemDecorator(new SpriteMenuItem(MENU_AD_PARTNER, 110, 110, resourcesManager.ball_fall, vbom), 1.2f, 1);
 //        militaryMenuItem = new ScaleMenuItemDecorator(new SpriteMenuItem(MENU_AD_PARTNER, 110, 110, resourcesManager.military, vbom), 1.2f, 1);
         loudMenuItem = new ScaleMenuItemDecorator(new SpriteMenuItem(MENU_SOUND, 65, 30, resourcesManager.loud_region, vbom), 1.2f, 1);
@@ -504,8 +514,8 @@ public class MainMenuScene extends BaseScene implements IOnMenuItemClickListener
         //multi
 //        helpMultiMenuItem = new ScaleMenuItemDecorator(new SpriteMenuItem(MENU_HELP, 60, 60, resourcesManager.help_region, vbom), 1.2f, 1);
 //        knowMultiMenuItem = new ScaleMenuItemDecorator(new SpriteMenuItem(MENU_HELP, 60, 60, resourcesManager.know_region, vbom), 1.2f, 1);
-        final IMenuItem multiMenuItem = new ScaleMenuItemDecorator(new SpriteMenuItem(MENU_MULTI, sideLength*f, sideLength*f, resourcesManager.play_multi_region, vbom), 1.2f, 1);
-        final IMenuItem testMultiItem = new ScaleMenuItemDecorator(new SpriteMenuItem(MENU_ONLINE_MULTI, sideLength*f, sideLength*f, resourcesManager.test_multi_region, vbom), 1.2f, 1);
+        final IMenuItem multiMenuItem = new ScaleMenuItemDecorator(new SpriteMenuItem(MENU_MULTI, sideLength*factorRight, sideLength*factorRight, resourcesManager.play_multi_region, vbom), 1.2f, 1);
+        final IMenuItem testMultiItem = new ScaleMenuItemDecorator(new SpriteMenuItem(MENU_ONLINE_MULTI, sideLength*factorRight, sideLength*factorRight, resourcesManager.test_multi_region, vbom), 1.2f, 1);
 
         menuChildScene.addMenuItem(highMenuItem);
         menuChildScene.addMenuItem(playMenuItem);

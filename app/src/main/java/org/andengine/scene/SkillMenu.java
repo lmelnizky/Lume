@@ -37,22 +37,24 @@ public class SkillMenu extends BaseScene {
         float firstRowY = sideLength*5.5f;
         float secondRowY = sideLength*2.5f;
         for (int i = 0; i < upperButtons.length; i++) {
-            upperButtons[i] = new Sprite(firstX + i*distance, firstRowY, sideLength*2, sideLength*2.5f,
+            int finalI = i;
+            upperButtons[i] = new Sprite(firstX + finalI *distance, firstRowY, sideLength*2, sideLength*2.5f,
                     resourcesManager.hantel_region, vbom) {
                 public boolean onAreaTouched(TouchEvent touchEvent, float x, float y) {
                     if (touchEvent.isActionDown()) {
-                        SceneManager.getInstance().loadSkillGameScene(engine);
+                        SceneManager.getInstance().loadSkillGameScene(engine, 1+ finalI);
                         return true;
                     } else {
                         return false;
                     }
                 }
             };
-            lowerButtons[i] = new Sprite(firstX + i*distance, secondRowY, sideLength*2, sideLength*2.5f,
+            int finalI1 = i;
+            lowerButtons[i] = new Sprite(firstX + finalI1 *distance, secondRowY, sideLength*2, sideLength*2.5f,
                     resourcesManager.hantel_region, vbom) {
                 public boolean onAreaTouched(TouchEvent touchEvent, float x, float y) {
                     if (touchEvent.isActionDown()) {
-                        SceneManager.getInstance().loadSkillGameScene(engine);
+                        SceneManager.getInstance().loadSkillGameScene(engine, 5+ finalI1);
                         return true;
                     } else {
                         return false;

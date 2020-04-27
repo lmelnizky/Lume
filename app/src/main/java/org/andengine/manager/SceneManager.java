@@ -17,6 +17,13 @@ import org.andengine.scene.MainMenuScene;
 import org.andengine.scene.SplashScene;
 import org.andengine.scene.Worlds5to8Scene;
 import org.andengine.scene.skillscenes.Skill11;
+import org.andengine.scene.skillscenes.Skill12;
+import org.andengine.scene.skillscenes.Skill13;
+import org.andengine.scene.skillscenes.Skill14;
+import org.andengine.scene.skillscenes.Skill21;
+import org.andengine.scene.skillscenes.Skill22;
+import org.andengine.scene.skillscenes.Skill23;
+import org.andengine.scene.skillscenes.Skill24;
 import org.andengine.scene.worlds.World0;
 import org.andengine.scene.worlds.World1;
 import org.andengine.scene.worlds.World2;
@@ -352,7 +359,7 @@ public class SceneManager {
         }));
     }
 
-    public void loadSkillGameScene(final Engine mEngine) {
+    public void loadSkillGameScene(final Engine mEngine, int level) {
         loadingScene = new LoadingScene();
         setScene(loadingScene);
         ResourcesManager.getInstance().unloadMenuTextures();
@@ -361,7 +368,32 @@ public class SceneManager {
             public void onTimePassed(TimerHandler pTimerHandler) {
                 mEngine.unregisterUpdateHandler(pTimerHandler);
                 ResourcesManager.getInstance().loadSkillResources();
-                skillGameScene = new Skill11();
+                switch (level) {
+                    case 1:
+                        skillGameScene = new Skill11();
+                        break;
+                    case 2:
+                        skillGameScene = new Skill12();
+                        break;
+                    case 3:
+                        skillGameScene = new Skill13();
+                        break;
+                    case 4:
+                        skillGameScene = new Skill14();
+                        break;
+                    case 5:
+                        skillGameScene = new Skill21();
+                        break;
+                    case 6:
+                        skillGameScene = new Skill22();
+                        break;
+                    case 7:
+                        skillGameScene = new Skill23();
+                        break;
+                    case 8:
+                        skillGameScene = new Skill24();
+                        break;
+                }
                 setScene(skillGameScene);
             }
         }));

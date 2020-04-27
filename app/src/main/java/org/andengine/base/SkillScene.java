@@ -22,6 +22,7 @@ import org.andengine.input.touch.TouchEvent;
 import org.andengine.manager.ResourcesManager;
 import org.andengine.manager.SceneManager;
 import org.andengine.manager.SceneType;
+import org.andengine.object.Ball;
 import org.andengine.util.adt.align.HorizontalAlign;
 import org.andengine.util.adt.color.Color;
 
@@ -44,10 +45,13 @@ public abstract class SkillScene extends BaseScene {
 
     //primitive data types
     protected boolean tutorialShowing = true;
-    protected boolean waitingForStonesToDisappear = false;
+    protected boolean worldFinished = false;
+    protected boolean waitingForStonesToDisappear;
     protected boolean firstStonesInLevel = true;
+    protected boolean variantUsed = false;
     protected boolean gameOverDisplayed = false;
     protected int level, xPosLume, yPosLume, xPosCoin, yPosCoin;
+    protected int variantStage, variant, stoneDirection, variantRow;
     protected int time = 30*60;
     protected int score = 0;
     protected float sideLength;
@@ -81,11 +85,17 @@ public abstract class SkillScene extends BaseScene {
         //manager attributes do all in basescene
     }
 
+    public SkillScene(int level) {
+        this.level = level;
+    }
+
 
 
     //inherited
     public void onBackKeyPressed() {
-        SceneManager.getInstance().loadMenuScene(engine);
+        ResourcesManager.getInstance().backgroundMusic.stop();
+        ResourcesManager.getInstance().backgroundMusic.pause();
+        SceneManager.getInstance().loadSkillMenuScene(engine);
         disposeHUD();
     }
 
@@ -101,7 +111,6 @@ public abstract class SkillScene extends BaseScene {
     }
 
     public void createScene() {
-        level = 0;
         sideLength = resourcesManager.screenHeight / 9;
         randomGenerator = new Random();
         crackyStones = new ArrayList<Sprite>();
@@ -134,7 +143,7 @@ public abstract class SkillScene extends BaseScene {
         this.registerUpdateHandler(new IUpdateHandler() {
             @Override
             public void onUpdate(float pSecondsElapsed) {
-                if (!waitingForStonesToDisappear) {
+                if (!waitingForStonesToDisappear && !worldFinished) {
                     createStones();
                     if (!tutorialShowing) time--;
                     int displayTime = (int) Math.round(time/60);
@@ -180,6 +189,9 @@ public abstract class SkillScene extends BaseScene {
             stoneTimes[i] = new Date().getTime();
         }
         firstStonesInLevel = true;
+        variantUsed = false;
+        variant = 0;
+        variantStage = 0;
     }
 
     public void createKimmelnitz() {
@@ -401,16 +413,31 @@ public abstract class SkillScene extends BaseScene {
             scoreText.setColor(android.graphics.Color.parseColor("#ffc300"));
         }
         if (score%10 == 0) {
-            ResourcesManager.getInstance().backgroundMusic.stop();
-            ResourcesManager.getInstance().backgroundMusic.pause();
-            ResourcesManager.getInstance().easySound.play();
-            engine.registerUpdateHandler(new TimerHandler(2f, new ITimerCallback() {
-                public void onTimePassed(final TimerHandler pTimerHandler) {
-                    engine.unregisterUpdateHandler(pTimerHandler);
-                    SceneManager.getInstance().loadMenuScene(engine);
-                }
-            }));
             removeCoin();
+            waitingForStonesToDisappear = true;
+            worldFinished = true;
+            this.registerUpdateHandler(new IUpdateHandler() {
+                @Override
+                public void onUpdate(float pSecondsElapsed) {
+                    if (allStonesGone() && waitingForStonesToDisappear) {
+                        waitingForStonesToDisappear = false;
+                        ResourcesManager.getInstance().backgroundMusic.stop();
+                        ResourcesManager.getInstance().backgroundMusic.pause();
+                        ResourcesManager.getInstance().easySound.play();
+                        engine.registerUpdateHandler(new TimerHandler(2f, new ITimerCallback() {
+                            public void onTimePassed(final TimerHandler pTimerHandler) {
+                                engine.unregisterUpdateHandler(pTimerHandler);
+                                SceneManager.getInstance().loadSkillMenuScene(engine);
+                                disposeHUD();
+                            }
+                        }));
+                    }
+                }
+
+                @Override
+                public void reset() {
+                }
+            });
         } else {
             createCoin();
         }
@@ -449,6 +476,10 @@ public abstract class SkillScene extends BaseScene {
         levelText.dispose();
         timeText.detachSelf();
         timeText.dispose();
+        shootSign.detachSelf();
+        shootSign.dispose();
+        moveSign.detachSelf();
+        moveSign.dispose();
 
         gameHUD.detachSelf();
         gameHUD.dispose();
@@ -534,6 +565,30 @@ public abstract class SkillScene extends BaseScene {
         }));
     }
 
+    protected boolean allStonesGone() {
+        boolean allStonesGone = false;
+        int stonesOverHalf = 0;
+        for (Sprite stone : stones) {
+            Ball ball = (Ball) stone.getUserData();
+            switch (ball.getDirection()) {
+                case 1:
+                    if (stone.getY() < camera.getCenterY()-2*sideLength) stonesOverHalf++;
+                    break;
+                case 2:
+                    if (stone.getX() < camera.getCenterX()-2*sideLength) stonesOverHalf++;
+                    break;
+                case 3:
+                    if (stone.getY() > camera.getCenterY()+2*sideLength) stonesOverHalf++;
+                    break;
+                case 4:
+                    if (stone.getX() > camera.getCenterX()+2*sideLength) stonesOverHalf++;
+                    break;
+            }
+        }
+        if (stonesOverHalf == stones.size()) allStonesGone = true;
+        return allStonesGone;
+    }
+
     protected void displayGameOverButtons() {
         //add replay Sprite
         replaySprite = new Sprite(camera.getCenterX() + sideLength,
@@ -548,7 +603,7 @@ public abstract class SkillScene extends BaseScene {
                     setIgnoreUpdate(false);
                     gameOverDisplayed = false;
                     registerUpdateHandler(physicsWorld);
-                    SceneManager.getInstance().loadSkillGameScene(engine);
+                    SceneManager.getInstance().loadSkillGameScene(engine, level);
                     disposeHUD();
                     return true;
                 } else {

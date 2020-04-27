@@ -82,6 +82,7 @@ public class ResourcesManager {
     public ITextureRegion play_coin_region;
     public ITextureRegion shopping_region;
     public ITextureRegion skill_gym_region;
+    public TiledTextureRegion finger_tiled;
 
     //Help Region
     public ITextureRegion help_background_region;
@@ -318,6 +319,7 @@ public class ResourcesManager {
             upload_background_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(menuTextureAtlas, activity, "upload_background.png");
             confirm_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(menuTextureAtlas, activity, "confirm.png");
             inputtext_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(menuTextureAtlas, activity, "inputtext.png");
+            finger_tiled = BitmapTextureAtlasTextureRegionFactory.createTiledFromAsset(menuTextureAtlas, activity, "finger_tiled.png", 5, 3);
 
 
             try {

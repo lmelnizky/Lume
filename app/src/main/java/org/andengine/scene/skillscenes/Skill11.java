@@ -23,6 +23,9 @@ import org.andengine.util.adt.color.Color;
 import java.util.Date;
 
 public class Skill11 extends SkillScene {
+    public Skill11() {
+        super(1);
+    }
 
     @Override
     public void createBackground() {
@@ -347,7 +350,7 @@ public class Skill11 extends SkillScene {
         if (kimmelnitzText == null) {
             //sideLength*6.6f
             kimmelnitzText = new TickerText(sideLength*6.6f, camera.getHeight() / 6, resourcesManager.smallFont, tvText0,
-                    new TickerText.TickerTextOptions(AutoWrap.WORDS, sideLength*13.2f, HorizontalAlign.CENTER,20), resourcesManager.vbom);
+                    new TickerText.TickerTextOptions(AutoWrap.WORDS, sideLength*13.2f, HorizontalAlign.CENTER,30), resourcesManager.vbom);
             secondLayer.attachChild(kimmelnitzText);
             kimmelnitzText.setAlpha(0.7f);
             activity.createTypingText(tvText0, kimmelnitzText, false);

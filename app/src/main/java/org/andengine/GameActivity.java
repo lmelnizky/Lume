@@ -184,11 +184,14 @@ public class GameActivity extends BaseGameActivity implements RewardedVideoAdLis
         });
     }
 
-    public void checkHighscore(int score) {
+    public boolean checkHighscore(int score) {
         int currentHighscore = pref.getInt(HIGHSCORE, 0);
         if (score > currentHighscore) {
             editor.putInt(HIGHSCORE, score);
             editor.commit();
+            return true;
+        } else {
+            return false;
         }
     }
 

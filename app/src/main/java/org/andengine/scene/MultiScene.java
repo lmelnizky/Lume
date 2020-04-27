@@ -136,6 +136,7 @@ public class MultiScene extends BaseScene {
 
 
         createBackground();
+        //createCannons
         createLayers();
         createPhysics();
         createHalves();
@@ -318,7 +319,7 @@ public class MultiScene extends BaseScene {
 
     private void createBackground() {
         SpriteBackground spriteBackground = new SpriteBackground(new Sprite(camera.getCenterX(), camera.getCenterY(),
-                camera.getWidth(), camera.getHeight(), resourcesManager.background_multi_region, vbom));
+                camera.getWidth(), camera.getHeight(), resourcesManager.background_world1_region, vbom));
         this.setBackground(spriteBackground);
     }
 

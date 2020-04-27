@@ -255,7 +255,7 @@ public class HighscoreScene extends BaseScene {
 
         float textY = (yPosLume == 2) ? camera.getCenterY() + sideLength : camera.getCenterY();
         gameOverText = new Text(camera.getCenterX(), textY,
-                resourcesManager.smallFont, "L u s e r !", vbom);
+                resourcesManager.smallFont, "New HighscoreL u s e r !", vbom);
 
         coinsText = new Text(camera.getCenterX(), camera.getHeight()*7.5f/9,
                 resourcesManager.smallFont, "coins: 0123456789", vbom);
@@ -273,6 +273,7 @@ public class HighscoreScene extends BaseScene {
         displayGameOverButtons();
 
         gameOverText.setColor(Color.RED);
+        gameOverText.setText("L u s e r!");
         gameOverScene.registerTouchArea(gameOverText);
         gameOverScene.attachChild(gameOverText);
 
@@ -282,7 +283,7 @@ public class HighscoreScene extends BaseScene {
         gameOverScene.attachChild(coinsText);
 
         highscoreText.setColor(1f, 0.956f, 0f, 1f);
-        activity.checkHighscore(score);
+        if (activity.checkHighscore(score)) gameOverText.setText("New Highscore!");
         highscoreText.setText("highscore: " + activity.getCurrentHighscore());
         gameOverScene.attachChild(highscoreText);
 
@@ -479,7 +480,9 @@ public class HighscoreScene extends BaseScene {
 
     private void removeLamporghina() {
         if (lamporghinaSprite != null) {
-            lamporghinaSprite.setVisible(false);
+            lamporghinaSprite.detachSelf();
+            lamporghinaSprite.dispose();
+            lamporghinaSprite = null;
             xPosGrume = 0;
             yPosGrume = 0;
         }
