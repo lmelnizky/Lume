@@ -2,7 +2,7 @@ package org.andengine.scene.OnlineScenes.ServerScene;
 
 import org.andengine.scene.OnlineScenes.ServerScene.Game.Creator.BallCreator;
 import org.andengine.scene.OnlineScenes.ServerScene.Game.Creator.CoinCreator;
-import org.andengine.scene.OnlineScenes.ServerScene.Game.Creator.MoveData;
+import org.andengine.scene.OnlineScenes.ServerScene.Game.Creator.MoveCreator;
 import org.andengine.scene.OnlineScenes.ServerScene.Game.GameActions;
 import org.andengine.scene.OnlineScenes.ServerScene.Users.UserActions;
 import org.json.JSONException;
@@ -98,7 +98,7 @@ public class Server {
     public void emitBall(BallCreator creator){socket.emit(loadBall, creator.getJSON());}
     public void emitCoin(CoinCreator creator){socket.emit(loadCoin, creator.getJSON());}
     //this method is called when a player moved
-    public void emitMove(MoveData creator){socket.emit(playerMoved, creator.getJSON());}
+    public void emitMove(MoveCreator creator){socket.emit(playerMoved, creator.getJSON());}
     //createPlayer and save the username on the server
     public void createPlayer(String username){
         try {socket.emit(createPlayer, new JSONObject("{\"name\":" + "\"" +  username + "\"" + "}"));}

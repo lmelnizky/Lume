@@ -23,7 +23,8 @@ public class CoinCreator extends Creator {
     private BoundCamera camera;
     private Sprite coinSprite;
     //constructor
-    public CoinCreator(int xPosCoin, int yPosCoin) {
+    public CoinCreator(String room, int xPosCoin, int yPosCoin) {
+        super(room);
         this.xPosCoin = xPosCoin;
         this.yPosCoin = yPosCoin;
     }
@@ -44,13 +45,14 @@ public class CoinCreator extends Creator {
     public JSONObject getJSON() {
         JSONObject returnValue = new JSONObject();
         try {
+            returnValue.put("room", room);
             returnValue.put("px", xPosCoin);
             returnValue.put("py", yPosCoin);
         }catch(JSONException e){ e.printStackTrace();}
         return returnValue; //TODO Martin Melnizky
     }
     public static CoinCreator getCreatorFromJson(JSONObject o){
-        try{return new CoinCreator( o.getInt("px"), o.getInt("py"));} catch(JSONException e){e.printStackTrace();}
+        try{return new CoinCreator( o.getString("room"), o.getInt("px"), o.getInt("py"));} catch(JSONException e){e.printStackTrace();}
         return null;
     }
 }

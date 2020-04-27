@@ -18,7 +18,8 @@ public class MoveCreator extends Creator {
     private Sprite playerSprite;
     //constructor
     //constructor
-    public MoveCreator(char directionToMove, String movedPlayersID) {
+    public MoveCreator(String room, char directionToMove, String movedPlayersID) {
+        super(room);
         this.direction = directionToMove;
         this.movedPlayersID = movedPlayersID;
     }
@@ -69,13 +70,14 @@ public class MoveCreator extends Creator {
     public JSONObject getJSON() {
         JSONObject returnValue = new JSONObject();
         try {
+            returnValue.put("room", room);
             returnValue.put("movedPlayer", movedPlayersID);
             returnValue.put("direction", direction);
         }catch(JSONException e){ e.printStackTrace();}
         return returnValue; //TODO Martin Melnizky
     }
     public static MoveCreator getCreatorFromJson(JSONObject o){
-        try{return new MoveCreator(o.getString("direction").charAt(0), o.getString("movedPlayer"));} catch(JSONException e){e.printStackTrace();}
+        try{return new MoveCreator(o.getString("room"), o.getString("direction").charAt(0), o.getString("movedPlayer"));} catch(JSONException e){e.printStackTrace();}
         return null;
     }
 }

@@ -35,7 +35,8 @@ public class BallCreator extends Creator {
     private Ball ball;
     private Body body;
     //constructor
-    public BallCreator( boolean thorny, short direction, short position) {
+    public BallCreator(String room, boolean thorny, short direction, short position) {
+        super(room);
         this.thorny = thorny;
         this.direction = direction;
         this.position = position;
@@ -120,6 +121,7 @@ public class BallCreator extends Creator {
     public JSONObject getJSON() {
         JSONObject returnValue = new JSONObject();
         try {
+            returnValue.put("room", room);
             returnValue.put("thorny", thorny);
             //returnValue.put("speed",speed);
             returnValue.put("direction",direction);
@@ -128,7 +130,7 @@ public class BallCreator extends Creator {
         return returnValue; //TODO Martin Melnizky
     }
     public static BallCreator getCreatorFromJson(JSONObject o){
-        try{return new BallCreator( o.getBoolean("thorny"),(short) o.getInt("direction"),(short) o.getInt("position"));} catch(JSONException e){e.printStackTrace();}
+        try{return new BallCreator(o.getString("room"),  o.getBoolean("thorny"),(short) o.getInt("direction"),(short) o.getInt("position"));} catch(JSONException e){e.printStackTrace();}
         return null;
     }
 }
