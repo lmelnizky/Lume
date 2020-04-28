@@ -347,7 +347,7 @@ public class Skill12 extends SkillScene {
 
     @Override
     public void showText() {
-        String tvText0 = "Find out the pattern! Be clever and always be one step ahead!";
+        String tvText0 = "Find out the pattern! Be clever and always Be one step ahead!";
         if (kimmelnitzText == null) {
             //sideLength*6.6f
             kimmelnitzText = new TickerText(sideLength*6.6f, camera.getHeight() / 6, resourcesManager.smallFont, tvText0,

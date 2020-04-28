@@ -3,6 +3,8 @@ package org.andengine.scene.OnlineScenes.ServerScene.Game.Creator;
 import org.andengine.engine.camera.BoundCamera;
 import org.andengine.entity.sprite.Sprite;
 import org.andengine.manager.ResourcesManager;
+import org.andengine.scene.OnlineScenes.ServerScene.Game.MultiplayerGameScene;
+import org.andengine.scene.OnlineScenes.ServerScene.Player;
 import org.json.JSONObject;
 
 public class MoveCreator extends Creator {
@@ -29,30 +31,37 @@ public class MoveCreator extends Creator {
     //call coinCheck() after this TODO (that's the job of the referee class)
     @Override
     public Sprite createSprite() {
-        switch (direction) {
-            case 'R':
-                xPosPlayer++;
-                playerSprite.setPosition(playerSprite.getX() + sideLength, playerSprite.getY());
-                break;
-            case 'L':
+        for (Player player : MultiplayerGameScene.getInstance().getMultiplayer().getPlayers()) {
+            if (player.getId().equals(toPlayerID)) {
+                playerSprite = player.getSprite();
+                xPosPlayer = (int) player.getCurrentPosition().x;
+                yPosPlayer = (int) player.getCurrentPosition().y;
 
-                xPosPlayer--;
-                playerSprite.setPosition(playerSprite.getX() - sideLength, playerSprite.getY());
-
-                break;
-            case 'D':
-                yPosPlayer--;
-                playerSprite.setPosition(playerSprite.getX(), playerSprite.getY() - sideLength);
-                break;
-            case 'U':
-                yPosPlayer++;
-                playerSprite.setPosition(playerSprite.getX(), playerSprite.getY() + sideLength);
-                break;
+                switch (direction) {
+                    case 'R':
+                        xPosPlayer++;
+                        playerSprite.setPosition(playerSprite.getX() + sideLength, playerSprite.getY());
+                        break;
+                    case 'L':
+                        xPosPlayer--;
+                        playerSprite.setPosition(playerSprite.getX() - sideLength, playerSprite.getY());
+                        break;
+                    case 'D':
+                        yPosPlayer--;
+                        playerSprite.setPosition(playerSprite.getX(), playerSprite.getY() - sideLength);
+                        break;
+                    case 'U':
+                        yPosPlayer++;
+                        playerSprite.setPosition(playerSprite.getX(), playerSprite.getY() + sideLength);
+                        break;
+                }
+                this.setxPosPlayer(xPosPlayer);
+                this.setyPosPlayer(yPosPlayer);
+            }
         }
-        this.setxPosPlayer(xPosPlayer);
-        this.setyPosPlayer(yPosPlayer);
         return playerSprite;
     }
+
     //setter
     public void setPlayerSprite(Sprite playerSprite) {
         this.playerSprite = playerSprite;

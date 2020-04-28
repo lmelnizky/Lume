@@ -155,8 +155,8 @@ public class HighscoreScene extends BaseScene {
         createMusic();
         createPhysics();
         createBoard();
-        createLume();
         createHalves();
+        createLume();
         createCannons();
         createHUD();
 

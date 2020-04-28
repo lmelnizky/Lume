@@ -87,6 +87,7 @@ public abstract class SkillScene extends BaseScene {
 
     public SkillScene(int level) {
         this.level = level;
+        createHUD();
     }
 
 
@@ -132,7 +133,6 @@ public abstract class SkillScene extends BaseScene {
         createLume();
         createCannons();
         createBoard();
-
         createHUD();
         resetData();
 

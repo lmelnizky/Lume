@@ -64,6 +64,7 @@ public class MultiScene extends BaseScene {
     private static final int HALVES_LAYER = 0;
     private static final int FIRST_LAYER = 1; //is used for ground, player and coin
     private static final int SECOND_LAYER = 2; //is used for  stones
+    private static final int THIRD_LAYER = 3; //is used for  stones
 
     private int touchCount = 0;
 
@@ -76,7 +77,6 @@ public class MultiScene extends BaseScene {
     private int coinsTotal = 0;
 
     private int sideLength;
-    private int xPositions, yPositions;
     private int xPosLume, yPosLume;
     private int xPosGrume, yPosGrume;
     private int xPosCoin, yPosCoin;
@@ -89,7 +89,7 @@ public class MultiScene extends BaseScene {
 
     private Random randomGenerator;
 
-    private IEntity halvesLayer, firstLayer, secondLayer;
+    private IEntity halvesLayer, firstLayer, secondLayer, thirdLayer;
 
     private Sprite kimmelnitzSprite = null;
     private Sprite kimmelnitzKOSprite = null;
@@ -107,6 +107,9 @@ public class MultiScene extends BaseScene {
     private Sprite lumeBomb, grumeBomb;
     private Sprite lumeHeart1, lumeHeart2, lumeHeart3, lumeHeart4;
     private Sprite grumeHeart1, grumeHeart2, grumeHeart3, grumeHeart4;
+    private Sprite[] cannonN, cannonE, cannonS, cannonW;
+    private Sprite[] cannonNS, cannonES, cannonSS, cannonWS;
+    private Sprite[] cannonNU, cannonEU, cannonSU, cannonWU;
     private ArrayList<Sprite> crackyStones, crackyStonesToRemove, cannonBallsToRemove;
     private ArrayList<Sprite> stones, stonesToRemove;
 
@@ -123,8 +126,6 @@ public class MultiScene extends BaseScene {
     @Override
     public void createScene() {
         sideLength = (int) resourcesManager.screenHeight / 9;
-        xPositions = 4;
-        yPositions = 4;
         randomGenerator = new Random();
         crackyStones = new ArrayList<Sprite>();
         crackyStonesToRemove = new ArrayList<Sprite>();
@@ -136,11 +137,11 @@ public class MultiScene extends BaseScene {
 
 
         createBackground();
-        //createCannons
         createLayers();
         createPhysics();
         createHalves();
         createBoard();
+        createCannons();
         createPlayer();
         createHUD();
         if (activity.isMultiTutorialSeen()) {
@@ -319,7 +320,7 @@ public class MultiScene extends BaseScene {
 
     private void createBackground() {
         SpriteBackground spriteBackground = new SpriteBackground(new Sprite(camera.getCenterX(), camera.getCenterY(),
-                camera.getWidth(), camera.getHeight(), resourcesManager.background_world1_region, vbom));
+                camera.getWidth(), camera.getHeight(), resourcesManager.background_world0_region, vbom));
         this.setBackground(spriteBackground);
     }
 
@@ -328,20 +329,21 @@ public class MultiScene extends BaseScene {
     }
 
     private void createBoard() {
-        Sprite boardSprite = new Sprite(camera.getCenterX(), camera.getCenterY(), sideLength * 4, sideLength * 4, resourcesManager.board_region4, vbom);
+        Sprite boardSprite = new Sprite(camera.getCenterX(), camera.getCenterY(), sideLength*3, sideLength*3,
+                resourcesManager.board_region, vbom);
         firstLayer.attachChild(boardSprite);
     }
 
     private void createPlayer() {
         xPosLume = 1;
         yPosLume = 1;
-        xPosGrume = 4;
-        yPosGrume = 4;
-        lumeSprite = new Sprite(camera.getCenterX() - sideLength*3/2, camera.getCenterY() - sideLength*3/2,
+        xPosGrume = 3;
+        yPosGrume = 3;
+        lumeSprite = new Sprite(camera.getCenterX() - sideLength, camera.getCenterY() - sideLength,
                 sideLength * 3 / 4, sideLength * 3 / 4, resourcesManager.player_region, vbom);
         secondLayer.attachChild(lumeSprite);
         lumeSprite.setRotation(90);
-        grumeSprite = new Sprite(camera.getCenterX() + sideLength*3/2, camera.getCenterY() + sideLength*3/2,
+        grumeSprite = new Sprite(camera.getCenterX() + sideLength, camera.getCenterY() + sideLength,
                 sideLength*3/4, sideLength*3/4, resourcesManager.grume_region, vbom);
         secondLayer.attachChild(grumeSprite);
         grumeSprite.setRotation(270);
@@ -349,16 +351,16 @@ public class MultiScene extends BaseScene {
 
     private void createCoin() {
         do {
-            xPosCoin = randomGenerator.nextInt(4) + 1;
-            yPosCoin = randomGenerator.nextInt(4) + 1;
+            xPosCoin = randomGenerator.nextInt(3) + 1;
+            yPosCoin = randomGenerator.nextInt(3) + 1;
         } while ((xPosCoin == xPosLume && yPosCoin == yPosLume) || (xPosCoin == xPosGrume && yPosCoin == yPosGrume));
         if (coinSprite == null) {
-            coinSprite = new Sprite(camera.getCenterX() - sideLength*3/2 + ((xPosCoin - 1) * sideLength), camera.getCenterY() - sideLength*3/2 + ((yPosCoin - 1) * sideLength),
+            coinSprite = new Sprite(camera.getCenterX() - sideLength + ((xPosCoin - 1) * sideLength), camera.getCenterY() - sideLength + ((yPosCoin - 1) * sideLength),
                     sideLength * 7 / 8, sideLength * 7 / 8, resourcesManager.coin_region, vbom);
             firstLayer.attachChild(coinSprite);
         } else {
             coinSprite.registerEntityModifier(new ScaleModifier(0.2f,0.7f,1f));
-            coinSprite.setPosition(camera.getCenterX() - sideLength*3/2 + ((xPosCoin - 1) * sideLength), camera.getCenterY() - sideLength*3/2 + ((yPosCoin - 1) * sideLength));
+            coinSprite.setPosition(camera.getCenterX() - sideLength + ((xPosCoin - 1) * sideLength), camera.getCenterY() - sideLength + ((yPosCoin - 1) * sideLength));
         }
         coinsTotal++;
     }
@@ -591,7 +593,7 @@ public class MultiScene extends BaseScene {
                 }
             });
         }
-        bombSprite = new Sprite(camera.getCenterX() - sideLength*3/2 + ((xPos - 1) * sideLength), camera.getCenterY() - sideLength*3/2 + ((yPos - 1) * sideLength),
+        bombSprite = new Sprite(camera.getCenterX() - sideLength + ((xPos - 1) * sideLength), camera.getCenterY() - sideLength + ((yPos - 1) * sideLength),
                 sideLength * 3/4, sideLength * 3/4, resourcesManager.bomb_normal_region, vbom);
         this.attachChild(bombSprite);
         registerUpdateHandler(new TimerHandler(0.5f, false, new ITimerCallback() {
@@ -608,7 +610,7 @@ public class MultiScene extends BaseScene {
     }
 
     private void createRedBomb(final int xPos, final int yPos) {
-        redBombSprite = new Sprite(camera.getCenterX() - sideLength*3/2 + ((xPos - 1) * sideLength), camera.getCenterY() - sideLength*3/2 + ((yPos - 1) * sideLength),
+        redBombSprite = new Sprite(camera.getCenterX() - sideLength + ((xPos - 1) * sideLength), camera.getCenterY() - sideLength + ((yPos - 1) * sideLength),
                 sideLength * 3/4, sideLength * 3/4, resourcesManager.bomb_red_region, vbom);
         this.attachChild(redBombSprite);
         registerUpdateHandler(new TimerHandler(0.5f, false, new ITimerCallback() {
@@ -623,10 +625,10 @@ public class MultiScene extends BaseScene {
     }
 
     private void explode(int xPos, int yPos) {
-        fireBeamHorizontal = new Sprite(camera.getCenterX(), camera.getCenterY() - sideLength*3/2 + (yPos-1)*sideLength,
-                sideLength*4, sideLength*3/4, resourcesManager.firebeam_horizontal, vbom);
-        fireBeamVertical = new Sprite(camera.getCenterX() - sideLength*3/2 + (xPos-1)*sideLength, camera.getCenterY(),
-                sideLength*3/4, sideLength*4, resourcesManager.firebeam_vertical, vbom);
+        fireBeamHorizontal = new Sprite(camera.getCenterX(), camera.getCenterY() - sideLength + (yPos-1)*sideLength,
+                sideLength*3, sideLength*3/4, resourcesManager.firebeam_horizontal, vbom);
+        fireBeamVertical = new Sprite(camera.getCenterX() - sideLength + (xPos-1)*sideLength, camera.getCenterY(),
+                sideLength*3/4, sideLength*3, resourcesManager.firebeam_vertical, vbom);
         this.attachChild(fireBeamHorizontal);
         this.attachChild(fireBeamVertical);
         killCheck();
@@ -749,9 +751,11 @@ public class MultiScene extends BaseScene {
         this.attachChild(new Entity()); //Halves Layer
         this.attachChild(new Entity()); // First Layer
         this.attachChild(new Entity()); // Second Layer
+        this.attachChild(new Entity()); // Thrid Layer
         halvesLayer = this.getChildByIndex(HALVES_LAYER);
         firstLayer = this.getChildByIndex(FIRST_LAYER);
         secondLayer = this.getChildByIndex(SECOND_LAYER);
+        thirdLayer = this.getChildByIndex(THIRD_LAYER);
     }
 
     private void createHUD() {
@@ -859,7 +863,7 @@ public class MultiScene extends BaseScene {
     public void moveLume(char direction) {
         switch (direction) {
             case 'R':
-                if (xPosLume < 4) {
+                if (xPosLume < 3) {
                     if (xPosLume+1 != xPosGrume || yPosLume != yPosGrume) {
                         xPosLume++;
                         lumeSprite.setPosition(lumeSprite.getX() + sideLength, lumeSprite.getY());
@@ -883,7 +887,7 @@ public class MultiScene extends BaseScene {
                 }
                 break;
             case 'U':
-                if (yPosLume < 4) {
+                if (yPosLume < 3) {
                     if (xPosLume != xPosGrume || yPosLume+1 != yPosGrume) {
                         yPosLume++;
                         lumeSprite.setPosition(lumeSprite.getX(), lumeSprite.getY() + sideLength);
@@ -898,7 +902,7 @@ public class MultiScene extends BaseScene {
     public void moveGrume(char direction) {
         switch (direction) {
             case 'R':
-                if (xPosGrume < 4) {
+                if (xPosGrume < 3) {
                     if (xPosLume != xPosGrume+1 || yPosLume != yPosGrume) {
                         xPosGrume++;
                         grumeSprite.setPosition(grumeSprite.getX() + sideLength, grumeSprite.getY());
@@ -922,7 +926,7 @@ public class MultiScene extends BaseScene {
                 }
                 break;
             case 'U':
-                if (yPosGrume < 4) {
+                if (yPosGrume < 3) {
                     if (xPosLume != xPosGrume || yPosLume != yPosGrume+1) {
                         yPosGrume++;
                         grumeSprite.setPosition(grumeSprite.getX(), grumeSprite.getY() + sideLength);
@@ -962,9 +966,9 @@ public class MultiScene extends BaseScene {
         float randomThornyNumber = randomGenerator.nextFloat();
         double probabilityStone = 0.6;
         int direction = randomGenerator.nextInt(4) + 1;
-        int randomRow = randomGenerator.nextInt(4) + 1; //values 0 to 2
+        int randomRow = randomGenerator.nextInt(3) + 1; //values 0 to 2
         long[] age = new long[4]; //is used to prevent screen from showing too many stones
-        long interval = (long) 5500;
+        long interval = (long) 6000;
         if (firstStonesInLevel) interval = 1500;
         age[direction - 1] = (new Date()).getTime() - stoneTimes[direction - 1];
         if (age[direction - 1] >= interval) {
@@ -973,9 +977,9 @@ public class MultiScene extends BaseScene {
             if (randomThornyNumber < 0.15f) thorny = false;
             this.showStonesToScreen(direction, randomRow, thorny);
             if (randomNumber < probabilityStone && coinsTotal > 10) {
-                int secondStone = (randomRow%4) + 1;
+                int secondStone = (randomRow%3) + 1;
                 if (coinsTotal > 30) this.showStonesToScreen(direction, secondStone, thorny);
-                if (randomNumber < 0.2 || coinsTotal > 30) secondStone = (secondStone%4) + 1;
+                if (randomNumber < 0.2 || coinsTotal > 30) secondStone = (secondStone%3) + 1;
                 this.showStonesToScreen(direction, secondStone, thorny);
             }
             stoneTimes[direction - 1] = new Date().getTime();
@@ -996,23 +1000,23 @@ public class MultiScene extends BaseScene {
 
         switch (direction) {
             case 1:
-                x = camera.getCenterX()-sideLength*3/2 + ((randomRow-1)*sideLength);
-                y = camera.getHeight() + sideLength*2;
+                x = camera.getCenterX()-sideLength + ((randomRow-1)*sideLength);
+                y = camera.getHeight() + sideLength/2;
                 yVel = -speed;
                 break;
             case 2:
-                x = camera.getWidth() + sideLength*2;
-                y = camera.getCenterY()-sideLength*3/2 + ((randomRow-1)*sideLength);
+                x = camera.getWidth() + sideLength/2;
+                y = camera.getCenterY()-sideLength + ((randomRow-1)*sideLength);
                 xVel = -speed;
                 break;
             case 3:
-                x = camera.getCenterX()-sideLength*3/2 + ((randomRow-1)*sideLength);
-                y = -sideLength*2;
+                x = camera.getCenterX()-sideLength + ((randomRow-1)*sideLength);
+                y = -sideLength/2;
                 yVel = speed;
                 break;
             case 4:
-                x = -sideLength*2;
-                y = camera.getCenterY()-sideLength*3/2 + ((randomRow-1)*sideLength);
+                x = -sideLength/2;
+                y = camera.getCenterY()-sideLength + ((randomRow-1)*sideLength);
                 xVel = speed;
                 break;
         }
@@ -1046,7 +1050,11 @@ public class MultiScene extends BaseScene {
                 }
             }
         };
-        this.attachChild(stone);
+        secondLayer.attachChild(stone);
+
+        //animate cannon
+        animateCannon(direction, randomRow-1);
+
         final Body body = PhysicsFactory.createCircleBody(physicsWorld, stone, BodyDef.BodyType.KinematicBody, FIXTURE_DEF);
         if (thorny) {
 //            ball = new Ball(stone, "thorny");
@@ -1058,6 +1066,127 @@ public class MultiScene extends BaseScene {
         }
         body.setLinearVelocity(xVel, yVel);
         physicsWorld.registerPhysicsConnector(new PhysicsConnector(stone, body, true, false));
+    }
+
+    private void createCannons() {
+        cannonN = new Sprite[3];
+        cannonE = new Sprite[3];
+        cannonS = new Sprite[3];
+        cannonW = new Sprite[3];
+        cannonNS = new Sprite[3];
+        cannonES = new Sprite[3];
+        cannonSS = new Sprite[3];
+        cannonWS = new Sprite[3];
+        cannonNU = new Sprite[3];
+        cannonEU = new Sprite[3];
+        cannonSU = new Sprite[3];
+        cannonWU = new Sprite[3];
+
+        for (int i = 0; i < cannonN.length; i++) {
+            cannonN[i] = new Sprite(camera.getCenterX()-sideLength+sideLength*i, camera.getHeight()-sideLength/2,
+                    sideLength, sideLength, resourcesManager.cannon_n_region, vbom);
+            cannonE[i] = new Sprite(camera.getWidth()-sideLength/2, camera.getCenterY()-sideLength+sideLength*i,
+                    sideLength, sideLength, resourcesManager.cannon_e_region, vbom);
+            cannonS[i] = new Sprite(camera.getCenterX()-sideLength+sideLength*i, sideLength/2,
+                    sideLength, sideLength, resourcesManager.cannon_s_region, vbom);
+            cannonW[i] = new Sprite(sideLength/2, camera.getCenterY()-sideLength+sideLength*i,
+                    sideLength, sideLength, resourcesManager.cannon_w_region, vbom);
+
+            cannonNS[i] = new Sprite(camera.getCenterX()-sideLength+sideLength*i, camera.getHeight()-sideLength*3/8,
+                    sideLength, sideLength*0.75f, resourcesManager.cannon_n_s_region, vbom);
+            cannonES[i] = new Sprite(camera.getWidth()-sideLength*3/8, camera.getCenterY()-sideLength+sideLength*i,
+                    sideLength*0.75f, sideLength, resourcesManager.cannon_e_s_region, vbom);
+            cannonSS[i] = new Sprite(camera.getCenterX()-sideLength+sideLength*i, sideLength*3/8,
+                    sideLength, sideLength*0.75f, resourcesManager.cannon_s_s_region, vbom);
+            cannonWS[i] = new Sprite(sideLength*3/8, camera.getCenterY()-sideLength+sideLength*i,
+                    sideLength*0.75f, sideLength, resourcesManager.cannon_w_s_region, vbom);
+
+            cannonNU[i] = new Sprite(camera.getCenterX()-sideLength+sideLength*i, camera.getHeight()-sideLength*0.222f,
+                    sideLength, sideLength*0.444f, resourcesManager.cannon_n_u_region, vbom);
+            cannonEU[i] = new Sprite(camera.getWidth()-sideLength*0.222f, camera.getCenterY()-sideLength+sideLength*i,
+                    sideLength*0.444f, sideLength, resourcesManager.cannon_e_u_region, vbom);
+            cannonSU[i] = new Sprite(camera.getCenterX()-sideLength+sideLength*i, sideLength*0.222f,
+                    sideLength, sideLength*0.444f, resourcesManager.cannon_s_u_region, vbom);
+            cannonWU[i] = new Sprite(sideLength*0.222f, camera.getCenterY()-sideLength+sideLength*i,
+                    sideLength*0.444f, sideLength, resourcesManager.cannon_w_u_region, vbom);
+
+            secondLayer.attachChild(cannonN[i]);
+            secondLayer.attachChild(cannonE[i]);
+            secondLayer.attachChild(cannonS[i]);
+            secondLayer.attachChild(cannonW[i]);
+            secondLayer.attachChild(cannonNS[i]);
+            secondLayer.attachChild(cannonES[i]);
+            secondLayer.attachChild(cannonSS[i]);
+            secondLayer.attachChild(cannonWS[i]);
+
+            thirdLayer.attachChild(cannonNU[i]);
+            thirdLayer.attachChild(cannonEU[i]);
+            thirdLayer.attachChild(cannonSU[i]);
+            thirdLayer.attachChild(cannonWU[i]);
+
+            //setVisibility of small ones to false
+            cannonNS[i].setVisible(false);
+            cannonES[i].setVisible(false);
+            cannonSS[i].setVisible(false);
+            cannonWS[i].setVisible(false);
+            cannonNU[i].setVisible(false);
+            cannonEU[i].setVisible(false);
+            cannonSU[i].setVisible(false);
+            cannonWU[i].setVisible(false);
+        }
+    }
+
+    private void animateCannon(int direction, int position) {
+        switch (direction){
+            case 1:
+                cannonN[position].setVisible(false);
+                cannonNS[position].setVisible(true);
+                cannonNU[position].setVisible(true);
+                break;
+            case 2:
+                cannonE[position].setVisible(false);
+                cannonES[position].setVisible(true);
+                cannonEU[position].setVisible(true);
+                break;
+            case 3:
+                cannonS[position].setVisible(false);
+                cannonSS[position].setVisible(true);
+                cannonSU[position].setVisible(true);
+                break;
+            case 4:
+                cannonW[position].setVisible(false);
+                cannonWS[position].setVisible(true);
+                cannonWU[position].setVisible(true);
+                break;
+        }
+        engine.registerUpdateHandler(new TimerHandler(0.8f, new ITimerCallback() {
+            public void onTimePassed(final TimerHandler pTimerHandler) {
+                engine.unregisterUpdateHandler(pTimerHandler);
+                switch (direction){
+                    case 1:
+                        cannonN[position].setVisible(true);
+                        cannonNS[position].setVisible(false);
+                        cannonNU[position].setVisible(false);
+                        break;
+                    case 2:
+                        cannonE[position].setVisible(true);
+                        cannonES[position].setVisible(false);
+                        cannonEU[position].setVisible(false);
+                        break;
+                    case 3:
+                        cannonS[position].setVisible(true);
+                        cannonSS[position].setVisible(false);
+                        cannonSU[position].setVisible(false);
+                        break;
+                    case 4:
+                        cannonW[position].setVisible(true);
+                        cannonWS[position].setVisible(false);
+                        cannonWU[position].setVisible(false);
+                        break;
+                }
+
+            }
+        }));
     }
 
     private void removeItems() {
