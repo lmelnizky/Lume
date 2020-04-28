@@ -1,5 +1,6 @@
 package org.andengine.scene.OnlineScenes.ServerScene;
 
+import org.andengine.entity.scene.Scene;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;

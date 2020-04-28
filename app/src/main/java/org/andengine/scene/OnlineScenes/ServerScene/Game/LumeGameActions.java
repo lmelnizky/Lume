@@ -3,6 +3,9 @@ package org.andengine.scene.OnlineScenes.ServerScene.Game;
 import com.badlogic.gdx.math.Vector2;
 
 import org.andengine.object.Ball;
+import org.andengine.scene.OnlineScenes.ServerScene.Game.Creator.BallCreator;
+import org.andengine.scene.OnlineScenes.ServerScene.Game.Creator.CoinCreator;
+import org.andengine.scene.OnlineScenes.ServerScene.Game.Creator.MoveCreator;
 import org.andengine.scene.OnlineScenes.ServerScene.Player;
 
 //TODO write methods for server-events!
@@ -31,11 +34,11 @@ public class LumeGameActions implements GameActions {
 
         //overwritten methods from interface(s)
     @Override
-    public void startGame(String[] opponentsIDs, String refereeID) {
+    public void createdGame(String[] opponentsIDs, String refereeID) {
         //method is called when both player's connected to the server.
     }
     @Override
-    public void playerMoved(Vector2 newPosition, Player player) {
+    public void playerMoved(MoveCreator creator) {
         /*for (Player p : scene.getMultiplayer().getPlayers()) {
             if (p.getId().equals(player.getId())) {
                 p.getSprite().setPosition(newPosition.x, newPosition.y);
@@ -44,11 +47,11 @@ public class LumeGameActions implements GameActions {
         //method is called when a player moved.
     }
     @Override
-    public void loadBall(Ball ball) {
+    public void loadBall(BallCreator creator) {
         //method is called when the referee uploaded a new Ball
     }
     @Override
-    public void loadCoin(Object coin) {
+    public void loadCoin(CoinCreator creator) {
         //is called when the referee uploaded a new Coin
     }
     @Override
@@ -59,6 +62,11 @@ public class LumeGameActions implements GameActions {
     @Override
     public void youDisconnected() {
         //user lost connection
+    }
+
+    @Override
+    public void startGame() {
+
     }
     //inner classes
         //public classes

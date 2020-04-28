@@ -34,6 +34,7 @@ public class Server {
     protected final String createPlayer = "createPlayer";
     protected final String answerRequest = "answerRequest";
     protected final String createGameRoom = "createGameRoom";
+    protected final String joinRoom = "joinRoom";
 
     protected final String playerMoved = "PlayerMoved";
     protected final String loadBall = "AddBall";
@@ -73,15 +74,18 @@ public class Server {
         }).on(answerRequest, args ->{
             userActions.answerRequest((Boolean) ServerDataFactory.getAnswerFromRequestData()[0], (String) ServerDataFactory.getAnswerFromRequestData()[1]);
         }).on(createGameRoom, args ->{
-            gameActions.startGame((String[])ServerDataFactory.getStartGameFromData(args)[0],(String) ServerDataFactory.getStartGameFromData(args)[1]);
+            gameActions.createdGame((String[])ServerDataFactory.getStartGameFromData(args)[0],(String) ServerDataFactory.getStartGameFromData(args)[1]);
+        }).on(joinRoom, args ->{
+            socket.emit(joinRoom, args[0]);
+            gameActions.startGame();
         }).on(playerMoved, args ->{
-            gameActions.playerMoved(null, null); //TODO
+            gameActions.playerMoved(MoveCreator.getCreatorFromJson((JSONObject) args[0]));
         }).on(loadBall, args ->{
-            gameActions.loadBall(null);//TODO
+            gameActions.loadBall(BallCreator.getCreatorFromJson((JSONObject) args[0]));
         }).on(loadCoin, args ->{
-            gameActions.loadCoin(null); //TODO
+            gameActions.loadCoin(CoinCreator.getCreatorFromJson((JSONObject) args[0]));
         }).on(userDisconnected, args ->{
-            gameActions.loadCoin(null); //TODO
+            gameActions.opponentDisconnected();//TODO
         });
     }
     public void sendRequest(String toPlayerID){
@@ -102,7 +106,8 @@ public class Server {
     //createPlayer and save the username on the server
     public void createPlayer(String username){
         try {socket.emit(createPlayer, new JSONObject("{\"name\":" + "\"" +  username + "\"" + "}"));}
-        catch (JSONException e) {e.printStackTrace();}}
+        catch (JSONException e) {e.printStackTrace();}
+    }
     //getter
     public String getOnlineServerUrl() {return onlineServerUrl;}
     public UserActions getUserActions() {return userActions;}
