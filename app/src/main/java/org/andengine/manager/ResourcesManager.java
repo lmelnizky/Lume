@@ -140,9 +140,9 @@ public class ResourcesManager {
 
     //Signs Texture Regions
     public ITextureRegion shoot_normal_region;
-    public ITextureRegion shoot_diagonal_region;
+    public ITextureRegion shoot_diagonal_sign_region;
     public ITextureRegion move_normal_region;
-    public ITextureRegion move_diagonal_region;
+    public ITextureRegion move_diagonal_sign_region;
     public ITextureRegion cracky_mirror_sign_region;
     public ITextureRegion snail_sign_region;
     public ITextureRegion no_snail_sign_region;
@@ -186,7 +186,7 @@ public class ResourcesManager {
     public ITextureRegion lamporghina_sign_region;
     public ITextureRegion lamporghina_region;
     public ITextureRegion lamporghina_big_region;
-    public ITextureRegion helmet_region;
+    public ITextureRegion helmet_sign_region;
 
     //ChooseLevel TextureRegions
     public ITextureRegion chooseLevel_region;
@@ -410,6 +410,12 @@ public class ResourcesManager {
             background_world0_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(skillGameAtlas, activity, "background_world1.png");
             kimmelnitz_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(skillGameAtlas, activity, "kimmelnitz.png");
             kimmelnitz_ko_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(skillGameAtlas, activity, "kimmelnitz_ko.png");
+            cracky_mirror_sign_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(skillGameAtlas, activity, "cracky_mirror_sign.png");
+            move_diagonal_sign_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(skillGameAtlas, activity, "move_diagonal_sign.png");
+            shoot_diagonal_sign_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(skillGameAtlas, activity, "shoot_diagonal_sign.png");
+            lamporghina_sign_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(skillGameAtlas, activity, "lamporghina_sign.png");
+            lamporghina_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(skillGameAtlas, activity, "lamporghina.png");
+            helmet_sign_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(skillGameAtlas, activity, "helmet_sign.png");
             punch_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(skillGameAtlas, activity, "punch.png");
             try {
                 this.skillGameAtlas.build(new BlackPawnTextureAtlasBuilder<IBitmapTextureAtlasSource, BitmapTextureAtlas>(0, 1, 0));
@@ -499,9 +505,9 @@ public class ResourcesManager {
 
             //signs
             shoot_normal_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gameTextureAtlas, activity, "shoot_normal_sign.png");
-            shoot_diagonal_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gameTextureAtlas, activity, "shoot_diagonal_sign.png");
+            shoot_diagonal_sign_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gameTextureAtlas, activity, "shoot_diagonal_sign.png");
             move_normal_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gameTextureAtlas, activity, "move_normal_sign.png");
-            move_diagonal_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gameTextureAtlas, activity, "move_diagonal_sign.png");
+            move_diagonal_sign_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gameTextureAtlas, activity, "move_diagonal_sign.png");
 
             try {
                 this.gameTextureAtlas.build(new BlackPawnTextureAtlasBuilder<IBitmapTextureAtlasSource, BitmapTextureAtlas>(0, 1, 0));
@@ -705,7 +711,7 @@ public class ResourcesManager {
                     background_world8_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(world8TextureAtlas, activity, "background_world8.png");
                     lamporghina_sign_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(world8TextureAtlas, activity, "lamporghina_sign.png");
                     lamporghina_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(world8TextureAtlas, activity, "lamporghina.png");
-                    helmet_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(world8TextureAtlas, activity, "helmet_sign.png");
+                    helmet_sign_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(world8TextureAtlas, activity, "helmet_sign.png");
                     try {
                         this.world8TextureAtlas.build(new BlackPawnTextureAtlasBuilder<IBitmapTextureAtlasSource, BitmapTextureAtlas>(0, 1, 0));
                         this.world8TextureAtlas.load();
@@ -732,7 +738,7 @@ public class ResourcesManager {
             cracky_mirror = BitmapTextureAtlasTextureRegionFactory.createFromAsset(highScoreAtlas, activity, "cracky_mirror.png");
             lamporghina_sign_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(highScoreAtlas, activity, "lamporghina_sign.png");
             lamporghina_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(highScoreAtlas, activity, "lamporghina.png");
-            helmet_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(highScoreAtlas, activity, "helmet_sign.png");
+            helmet_sign_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(highScoreAtlas, activity, "helmet_sign.png");
             try {
                 this.highScoreAtlas.build(new BlackPawnTextureAtlasBuilder<IBitmapTextureAtlasSource, BitmapTextureAtlas>(0, 1, 0));
                 this.highScoreAtlas.load();
@@ -815,6 +821,8 @@ public class ResourcesManager {
                     activity.getApplicationContext(), "gfx/sound/belch_2.wav");
             belchSound3 = SoundFactory.createSoundFromAsset(engine.getSoundManager(),
                     activity.getApplicationContext(), "gfx/sound/belch_3.wav");
+
+            backgroundMusic.setLooping(true);
             belchSound1.setVolume(0.4f);
             belchSound2.setVolume(0.4f);
             belchSound3.setVolume(0.4f);

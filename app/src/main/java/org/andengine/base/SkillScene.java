@@ -501,11 +501,13 @@ public abstract class SkillScene extends BaseScene {
     }
 
     public void removeCoin() {
-        xPosCoin = 0;
-        yPosCoin = 0;
-        coinSprite.detachSelf();
-        coinSprite.dispose();
-        coinSprite = null;
+        if (coinSprite != null) {
+            xPosCoin = 0;
+            yPosCoin = 0;
+            coinSprite.detachSelf();
+            coinSprite.dispose();
+            coinSprite = null;
+        }
     }
 
     protected void displayGameOverScene() {

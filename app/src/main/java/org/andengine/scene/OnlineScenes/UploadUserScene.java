@@ -9,6 +9,7 @@ import org.andengine.OnlineUsers.User;
 import org.andengine.OnlineUsers.UsernameLoaderManager;
 import org.andengine.OnlineUsers.World;
 import org.andengine.base.BaseScene;
+import org.andengine.entity.scene.Scene;
 import org.andengine.entity.scene.background.Background;
 import org.andengine.entity.scene.background.SpriteBackground;
 import org.andengine.entity.sprite.ButtonSprite;
@@ -17,6 +18,7 @@ import org.andengine.entity.text.Text;
 import org.andengine.manager.ResourcesManager;
 import org.andengine.manager.SceneType;
 import org.andengine.opengl.texture.region.TiledTextureRegion;
+import org.andengine.scene.MainMenuScene;
 import org.andengine.util.adt.color.Color;
 
 import java.util.LinkedList;
@@ -32,6 +34,7 @@ public class UploadUserScene extends BaseScene implements ButtonSprite.OnClickLi
     private Text usernameText;
     private String username;
     private UsernameLoaderManager uLM;
+    private MainMenuScene parentScene;
 
     //private Methods
     private void setUpEntities(){
@@ -102,7 +105,7 @@ public class UploadUserScene extends BaseScene implements ButtonSprite.OnClickLi
 
     @Override
     public void onBackKeyPressed() {
-        this.back(); //TODO cannot go back to parent scene
+        this.disposeScene();
     }
 
     @Override
@@ -112,7 +115,8 @@ public class UploadUserScene extends BaseScene implements ButtonSprite.OnClickLi
 
     @Override
     public void disposeScene() {
-
+        this.detachSelf();
+        this.dispose();
     }
     //override Methods from Interface(s)
     @Override
@@ -124,6 +128,11 @@ public class UploadUserScene extends BaseScene implements ButtonSprite.OnClickLi
                     World.getWorld(activity.getCurrentWorld()), username));
             activity.setNameOnline(true);
             activity.setUserName(username);
+            parentScene.createMenuScene();
         }
+    }
+
+    public void registerParentScene(MainMenuScene scene) {
+        this.parentScene = scene;
     }
 }

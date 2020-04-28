@@ -88,6 +88,18 @@ public class MainMenuScene extends BaseScene implements IOnMenuItemClickListener
 //        new Server(new LumeGameActions(), new LumeUserActions()); // only called for tests!!!
 //        Log.w("MainMenuScene", "done with connection");
         sideLength = resourcesManager.sideLength;
+
+        if (!activity.isNameOnline()) {
+            UploadUserScene uus = new UploadUserScene();
+            uus.registerParentScene(this);
+            this.setChildScene(uus);
+        } else {
+            User.setUserData(activity.getCurrentWorld(), activity.getCurrentHighscore()); //TODO update User data
+            createMenuScene();
+        }
+    }
+
+    public void createMenuScene() {
         createBackground();
         createWorldText();
         createCoinText();
@@ -95,11 +107,6 @@ public class MainMenuScene extends BaseScene implements IOnMenuItemClickListener
         createMenuChildScene();
         showRandomAd();
         activity.showSlowMoHintMenu();
-        if (!activity.isNameOnline()) {
-            this.setChildScene(new UploadUserScene());
-        } else {
-            User.setUserData(activity.getCurrentWorld(), (activity.getCurrentWorld()-1)*40); //TODO update User data
-        }
     }
 
     @Override
@@ -418,6 +425,10 @@ public class MainMenuScene extends BaseScene implements IOnMenuItemClickListener
         runWheelR.setVisible(false);
     }
 
+    public void clearChildScene() {
+        this.clearChildScene();
+    }
+
     private void createWorldText() {
         if (worldText == null) {
             worldText = new Text(20, camera.getHeight()-resourcesManager.sideLength*0.8f,
@@ -486,10 +497,10 @@ public class MainMenuScene extends BaseScene implements IOnMenuItemClickListener
     }
 
     public void updateCoinText() {
-        coinText.setText("C: " + String.valueOf(activity.getCurrentBeersos()));
+        if (coinText != null) coinText.setText("C: " + String.valueOf(activity.getCurrentBeersos()));
     }
     public void updateHSText() {
-        hsText.setText("HS: " + String.valueOf(activity.getCurrentHighscore()));
+        if (hsText != null) hsText.setText("HS: " + String.valueOf(activity.getCurrentHighscore()));
     }
 
     private void createMenuChildScene() {

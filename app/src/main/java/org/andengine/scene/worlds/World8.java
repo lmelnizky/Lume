@@ -368,7 +368,7 @@ public class World8 extends BaseScene {
         gameHUD.attachChild(timeText);
 
         shootSign = new Sprite(camera.getCenterX() - 3*sideLength, camera.getHeight()-35, sideLength*7/8, sideLength*7/8, resourcesManager.lamporghina_sign_region, vbom);
-        moveSign = new Sprite(camera.getCenterX() + 3*sideLength, camera.getHeight()-35, sideLength*7/8, sideLength*7/8, resourcesManager.helmet_region, vbom);
+        moveSign = new Sprite(camera.getCenterX() + 3*sideLength, camera.getHeight()-35, sideLength*7/8, sideLength*7/8, resourcesManager.helmet_sign_region, vbom);
         snailSign = new Sprite(camera.getCenterX() + 4*sideLength, camera.getHeight()-35, sideLength*7/8, sideLength*7/8, resourcesManager.snail_sign_region, vbom);
         noSnailSign = new Sprite(camera.getCenterX() + 4*sideLength, camera.getHeight()-35, sideLength*7/8, sideLength*7/8, resourcesManager.no_snail_sign_region, vbom);
         gameHUD.attachChild(shootSign);
@@ -925,7 +925,8 @@ public class World8 extends BaseScene {
     }
 
     private void coinCheck() {
-        if (xPosLume == xPosCoin && yPosLume == yPosCoin) {
+        if ((xPosLume == xPosCoin && yPosLume == yPosCoin) ||
+                (xPosGrume == xPosCoin && yPosGrume == yPosCoin)) {
             int randomBelch = randomGenerator.nextInt(3) + 1;
             switch (randomBelch) {
                 case 1:

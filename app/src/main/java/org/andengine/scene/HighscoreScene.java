@@ -397,13 +397,13 @@ public class HighscoreScene extends BaseScene {
 
         //left signs
         shootNormalSign = new Sprite(camera.getCenterX() - 3*sideLength, camera.getHeight()-35, sideLength*7/8, sideLength*7/8, resourcesManager.shoot_normal_region, vbom);
-        shootDiagonalSign = new Sprite(camera.getCenterX() - 3*sideLength, camera.getHeight()-35, sideLength*7/8, sideLength*7/8, resourcesManager.shoot_diagonal_region, vbom);
+        shootDiagonalSign = new Sprite(camera.getCenterX() - 3*sideLength, camera.getHeight()-35, sideLength*7/8, sideLength*7/8, resourcesManager.shoot_diagonal_sign_region, vbom);
         mirrorSign = new Sprite(camera.getCenterX() - 3*sideLength, camera.getHeight()-35, sideLength*7/8, sideLength*6/8, resourcesManager.cracky_mirror_sign_region, vbom);
         lamporghinaSign = new Sprite(camera.getCenterX() - 3*sideLength, camera.getHeight()-35, sideLength*7/8, sideLength*7/8, resourcesManager.lamporghina_sign_region, vbom);
         //right signs
         moveNormalSign = new Sprite(camera.getCenterX() + 3*sideLength, camera.getHeight()-35, sideLength*7/8, sideLength*7/8, resourcesManager.move_normal_region, vbom);
-        moveDiagonalSign = new Sprite(camera.getCenterX() + 3*sideLength, camera.getHeight()-35, sideLength*7/8, sideLength*7/8, resourcesManager.move_diagonal_region, vbom);
-        helmetSign = new Sprite(camera.getCenterX() + 3*sideLength, camera.getHeight()-35, sideLength*7/8, sideLength*7/8, resourcesManager.helmet_region, vbom);
+        moveDiagonalSign = new Sprite(camera.getCenterX() + 3*sideLength, camera.getHeight()-35, sideLength*7/8, sideLength*7/8, resourcesManager.move_diagonal_sign_region, vbom);
+        helmetSign = new Sprite(camera.getCenterX() + 3*sideLength, camera.getHeight()-35, sideLength*7/8, sideLength*7/8, resourcesManager.helmet_sign_region, vbom);
 
         gameHUD.attachChild(shootNormalSign);
         gameHUD.attachChild(shootDiagonalSign);
@@ -504,11 +504,13 @@ public class HighscoreScene extends BaseScene {
     }
 
     private void removeCoin() {
-        xPosCoin = 0;
-        yPosCoin = 0;
-        coinSprite.detachSelf();
-        coinSprite.dispose();
-        coinSprite = null;
+        if (coinSprite != null) {
+            xPosCoin = 0;
+            yPosCoin = 0;
+            coinSprite.detachSelf();
+            coinSprite.dispose();
+            coinSprite = null;
+        }
     }
 
     private void createHalves() {
@@ -1180,9 +1182,9 @@ public class HighscoreScene extends BaseScene {
     }
 
     private void coinCheck() {
-        if (xPosLume == xPosCoin && yPosLume == yPosCoin) {
+        if ((xPosLume == xPosCoin && yPosLume == yPosCoin) ||
+                (xPosGrume == xPosCoin && yPosGrume == yPosCoin)) {
             addToScore(1);
-//            createCoin();
         }
     }
 
