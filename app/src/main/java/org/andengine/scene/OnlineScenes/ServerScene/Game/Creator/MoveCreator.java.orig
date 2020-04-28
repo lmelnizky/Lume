@@ -3,8 +3,13 @@ package org.andengine.scene.OnlineScenes.ServerScene.Game.Creator;
 import org.andengine.engine.camera.BoundCamera;
 import org.andengine.entity.sprite.Sprite;
 import org.andengine.manager.ResourcesManager;
+<<<<<<< HEAD
 import org.andengine.scene.OnlineScenes.ServerScene.Game.MultiplayerGameScene;
 import org.andengine.scene.OnlineScenes.ServerScene.Player;
+||||||| merged common ancestors
+=======
+import org.json.JSONException;
+>>>>>>> f19866e387e5df8bb2e3649b9ad326fb8e0efa98
 import org.json.JSONObject;
 
 public class MoveCreator extends Creator {
@@ -18,9 +23,6 @@ public class MoveCreator extends Creator {
     //returnValue
     private Sprite playerSprite;
     //constructor
-    public MoveCreator(String toPlayerID) {
-        super(toPlayerID);
-    }
     //constructor
     public MoveCreator(String room, char directionToMove, String movedPlayersID) {
         super(room);

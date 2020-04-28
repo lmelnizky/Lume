@@ -27,7 +27,7 @@ public class LumeUserActions implements UserActions {
         onlinePLayers.remove(player);
     }
     @Override
-    public void getRequest(String id, String userName) {
+    public void getRequest(String id) {
         scene.addRequestPopUp();
     }
     @Override

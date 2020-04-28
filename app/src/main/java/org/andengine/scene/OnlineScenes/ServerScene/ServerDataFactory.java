@@ -22,20 +22,16 @@ public class ServerDataFactory {
         JSONArray array = (JSONArray) args[0];
         LinkedList<Player> returnValue = new LinkedList();
         for(int i = 0; i < array.length(); i++){
-            try {
-                returnValue.add(new Player(array.getJSONObject(i).getString("id"), array.getJSONObject(i).getString("name")));
-            } catch (JSONException e) {e.printStackTrace();}
+            try {returnValue.add(new Player(array.getJSONObject(i).getString("id"), array.getJSONObject(i).getString("name")));}
+            catch (JSONException e) {e.printStackTrace();}
         }
         return returnValue;
     }
     public static Player getPlayerFromData(Object ... args){
         JSONObject o = (JSONObject) args[0];
         Player returnValue = null;
-        try {
-            returnValue = new Player(o.getString("id"), o.getString("name"));
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
+        try { returnValue = new Player(o.getString("id"), o.getString("name")); }
+        catch (JSONException e) {e.printStackTrace();}
         return returnValue;
     }
     public static JSONObject getRequestData(String toID, String fromID){
@@ -46,23 +42,18 @@ public class ServerDataFactory {
         } catch (JSONException e) {e.printStackTrace();}
         return o;
     }
-    public static String[] getRequestFromData(Object ... args){
-        String[] returnValue = new String[2];
+    public static String getRequestFromData(Object ... args){
+        String returnValue = "";
         JSONObject o = (JSONObject) args[0];
-        try {
-            returnValue[0] = o.getString("id");
-            returnValue[1] = o.getString("name");
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
+        try {returnValue = o.getString("fromID");}
+        catch (JSONException e) {e.printStackTrace();}
         return returnValue;
     }
     public static String getIdFromData(Object ... args){
         String returnValue = "";
         JSONObject o = (JSONObject) args[0];
-        try {
-            returnValue = o.getString("id");
-        } catch (JSONException e) {e.printStackTrace();}
+        try {returnValue = o.getString("id"); }
+        catch (JSONException e) {e.printStackTrace();}
         return returnValue;
     }
     public static Object[] getAnswerFromRequestData(Object ... args){

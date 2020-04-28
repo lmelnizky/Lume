@@ -8,6 +8,7 @@ import org.andengine.entity.sprite.Sprite;
 import org.andengine.manager.ResourcesManager;
 import org.andengine.opengl.vbo.VertexBufferObject;
 import org.andengine.opengl.vbo.VertexBufferObjectManager;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.Random;
@@ -22,11 +23,8 @@ public class CoinCreator extends Creator {
     private BoundCamera camera;
     private Sprite coinSprite;
     //constructor
-    public CoinCreator(String toPlayerID) {
-        super(toPlayerID);
-    }
-    public CoinCreator(String toPlayerID, int xPosCoin, int yPosCoin) {
-        super(toPlayerID);
+    public CoinCreator(String room, int xPosCoin, int yPosCoin) {
+        super(room);
         this.xPosCoin = xPosCoin;
         this.yPosCoin = yPosCoin;
     }
@@ -45,6 +43,16 @@ public class CoinCreator extends Creator {
 
     @Override
     public JSONObject getJSON() {
-        return null; //TODO Martin Melnizky
+        JSONObject returnValue = new JSONObject();
+        try {
+            returnValue.put("room", room);
+            returnValue.put("px", xPosCoin);
+            returnValue.put("py", yPosCoin);
+        }catch(JSONException e){ e.printStackTrace();}
+        return returnValue; //TODO Martin Melnizky
+    }
+    public static CoinCreator getCreatorFromJson(JSONObject o){
+        try{return new CoinCreator( o.getString("room"), o.getInt("px"), o.getInt("py"));} catch(JSONException e){e.printStackTrace();}
+        return null;
     }
 }
