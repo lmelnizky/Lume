@@ -124,8 +124,10 @@ public class UploadUserScene extends BaseScene implements ButtonSprite.OnClickLi
         if(pButtonSprite == confirmButton){
             Log.i("CONFIRMED", "CONFIRMED");
             username = userNameInputText.getText();
-            User.createUser(new GameState((activity.getCurrentWorld()-1)*40,
+
+            User newUser = User.createUser(new GameState((activity.getCurrentWorld()-1)*40,
                     World.getWorld(activity.getCurrentWorld()), username));
+            activity.setUserID(newUser.getiD());
             activity.setNameOnline(true);
             activity.setUserName(username);
             parentScene.createMenuScene();
