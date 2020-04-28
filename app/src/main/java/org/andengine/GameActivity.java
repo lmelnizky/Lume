@@ -63,6 +63,7 @@ public class GameActivity extends BaseGameActivity implements RewardedVideoAdLis
     private static final String FIRSTSLOWMOMENU = "FIRSTSLOWMOMENU";
     private static final String IS_NAME_ONLINE = "IS_NAME_ONLINE"; //boolean
     private static final String NAME_ONLINE = "NAME_ONLINE"; //TODO String online name
+    private static final String ID_ONLINE = "ID_ONLINE"; //TODO String online name
     private static final String COINS = "COINS";
     private static final String HIGHSCORE = "HIGHSCORE";
     private static final String PLAYER = "PLAYER";
@@ -246,6 +247,15 @@ public class GameActivity extends BaseGameActivity implements RewardedVideoAdLis
 
     public void setUserName(String userName) {
         editor.putString(NAME_ONLINE, userName);
+        editor.commit();
+    }
+
+    public int getUserID() {
+        return pref.getInt(ID_ONLINE, 0);
+    }
+
+    public void setUserID(int userID) {
+        editor.putInt(ID_ONLINE, userID);
         editor.commit();
     }
 
