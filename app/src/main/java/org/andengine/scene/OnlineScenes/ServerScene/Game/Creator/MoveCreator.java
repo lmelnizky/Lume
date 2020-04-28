@@ -5,6 +5,7 @@ import org.andengine.entity.sprite.Sprite;
 import org.andengine.manager.ResourcesManager;
 import org.andengine.scene.OnlineScenes.ServerScene.Game.MultiplayerGameScene;
 import org.andengine.scene.OnlineScenes.ServerScene.Player;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 public class MoveCreator extends Creator {
@@ -34,7 +35,7 @@ public class MoveCreator extends Creator {
     @Override
     public Sprite createSprite() {
         for (Player player : MultiplayerGameScene.getInstance().getMultiplayer().getPlayers()) {
-            if (player.getId().equals(toPlayerID)) {
+            if (player.getId().equals(room)) {
                 playerSprite = player.getSprite();
                 xPosPlayer = (int) player.getCurrentPosition().x;
                 yPosPlayer = (int) player.getCurrentPosition().y;
