@@ -20,6 +20,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.ValueEventListener;
 
 import org.andengine.GameActivity;
+import org.andengine.manager.ResourcesManager;
 
 import java.util.LinkedList;
 import java.util.Random;
@@ -160,6 +161,9 @@ public class User {
     public static void setUserData(int world, int coins) { //name cannot be changed
         World newWorld = World.getWorld(world);
         int newCoin = coins;
+
+        DataBaseManager.getInstance().getUserPath().child("" + ResourcesManager.getInstance().activity.getUserID()).child("world").setValue(newWorld.ordinal());
+        DataBaseManager.getInstance().getUserPath().child("" + ResourcesManager.getInstance().activity.getUserID()).child("coin").setValue(newCoin);
     }
 
     private static int createNewId() {
