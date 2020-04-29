@@ -132,7 +132,7 @@ public class MultiplayerGameScene extends BaseScene {
 
     private void createBackground() {
         SpriteBackground spriteBackground = new SpriteBackground(new Sprite(camera.getCenterX(), camera.getCenterY(),
-                camera.getWidth(), camera.getHeight(), resourcesManager.background_world1_region, vbom));
+                camera.getWidth(), camera.getHeight(), resourcesManager.background_world0_region, vbom));
         this.setBackground(spriteBackground);
     }
 

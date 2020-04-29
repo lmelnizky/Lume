@@ -15,7 +15,7 @@ import org.andengine.util.adt.color.Color;
 public class ShopScene extends BaseScene {
 
     private float sideLength;
-    private float firstXPosition = camera.getCenterX()/5;
+    private float firstXPosition;
     private int columns = 5;
     private Sprite lumeSprite, lamporghinaSprite, grumeSprite, personalSprite, overlaySprite, moreCoinsSprite, chosen;
     private AnimatedSprite[] lowerCoins, upperCoins;
@@ -26,6 +26,7 @@ public class ShopScene extends BaseScene {
     @Override
     public void createScene() {
         sideLength = (float) resourcesManager.sideLength;
+        firstXPosition = camera.getCenterX()/5;
 
         SpriteBackground shopBackground = new SpriteBackground(new Sprite(camera.getCenterX(), camera.getCenterY(),
                 camera.getWidth(), camera.getHeight(), resourcesManager.background_shop_region,vbom));
