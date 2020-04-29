@@ -51,7 +51,7 @@ public class Server {
     //methods
     private void connectWithServer() {
         try {
-            socket = IO.socket(localServerUrl);
+            socket = IO.socket(onlineServerUrl);
             setUpEvents();
             socket.connect();
         } catch (URISyntaxException e) {e.printStackTrace();/*cannot connect to server!?*/}
@@ -62,6 +62,7 @@ public class Server {
 
         }).on(getIdFromServer, args -> {
             id = ServerDataFactory.getIdFromData(args);
+            userActions.socketID(id);
             socket.emit(createPlayer, ServerDataFactory.getCreatePlayerData(userName, id));
         }).on(disconnect, args -> {
             userActions.disconnect();
@@ -86,6 +87,7 @@ public class Server {
             gameActions.loadCoin(CoinCreator.getCreatorFromJson((JSONObject) args[0]));
         }).on(userDisconnected, args ->{
             gameActions.opponentDisconnected();//TODO
+            userActions.userDisconnected(ServerDataFactory.getIdFromData(args));
         });
     }
     public void sendRequest(String toPlayerID){
