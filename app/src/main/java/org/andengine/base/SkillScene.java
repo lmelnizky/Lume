@@ -393,7 +393,7 @@ public abstract class SkillScene extends BaseScene {
 
     public void coinCheck() {
         if ((xPosLume == xPosCoin && yPosLume == yPosCoin) ||
-                (level == 6 && xPosGrume == xPosCoin && yPosGrume == yPosCoin)) {
+                (level == 0 && xPosGrume == xPosCoin && yPosGrume == yPosCoin)) {
             int randomBelch = randomGenerator.nextInt(3) + 1;
             switch (randomBelch) {
                 case 1:
