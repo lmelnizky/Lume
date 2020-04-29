@@ -73,7 +73,7 @@ public class Server {
         }).on(request, args ->{
             userActions.getRequest(ServerDataFactory.getRequestFromData(args));
         }).on(answerRequest, args ->{
-            userActions.answerRequest((Boolean) ServerDataFactory.getAnswerFromRequestData()[0], (String) ServerDataFactory.getAnswerFromRequestData()[1]);
+            userActions.getAnswerRequest((Boolean) ServerDataFactory.getAnswerFromRequestData(args)[0], (String) ServerDataFactory.getAnswerFromRequestData(args)[1]);
         }).on(createGameRoom, args ->{
             gameActions.createdGame((String[])ServerDataFactory.getStartGameFromData(args)[0],(String) ServerDataFactory.getStartGameFromData(args)[1]);
         }).on(joinRoom, args ->{
