@@ -8,6 +8,10 @@ import org.andengine.entity.scene.Scene;
 import org.andengine.scene.HelpScene;
 import org.andengine.scene.HighscoreScene;
 import org.andengine.scene.MultiScene;
+import org.andengine.scene.OnlineScenes.ServerScene.Game.MultiplayerGameScene;
+import org.andengine.scene.OnlineScenes.ServerScene.Multiplayer;
+import org.andengine.scene.OnlineScenes.ServerScene.Player;
+import org.andengine.scene.OnlineScenes.ServerScene.Server;
 import org.andengine.scene.OnlineScenes.ServerScene.Users.MultiplayerUsersScene;
 import org.andengine.scene.ShopScene;
 import org.andengine.scene.SkillMenu;
@@ -35,6 +39,8 @@ import org.andengine.scene.worlds.World7;
 import org.andengine.scene.worlds.World8;
 import org.andengine.ui.IGameInterface;
 
+import java.util.LinkedList;
+
 /**
  * Created by Lukas on 15.05.2017.
  */
@@ -46,6 +52,7 @@ public class SceneManager {
     public BaseScene gameScene;
     public BaseScene multiScene;
     public BaseScene onlineUsersScene;
+    public BaseScene onlineGameScene;
     public BaseScene highscoreScene;
     public BaseScene shopScene;
     public BaseScene skillGameScene;
@@ -128,6 +135,7 @@ public class SceneManager {
     public void createMenuScene() {
         if (currentScene != null && currentScene == menuScene) { //menuscene can also be tbe current scene
             ResourcesManager.getInstance().unloadCurrentScene(currentScene);
+            currentScene.disposeScene();
         }
         ResourcesManager.getInstance().loadMenuResources();
         loadingScene = new LoadingScene();
@@ -142,8 +150,8 @@ public class SceneManager {
     }
 
     public void loadWorld0Scene(final Engine mEngine, final int level) {
-                    ResourcesManager.getInstance().unloadCurrentScene(currentScene);
-    setScene(loadingScene);
+        ResourcesManager.getInstance().unloadCurrentScene(currentScene);
+        setScene(loadingScene);
         ResourcesManager.getInstance().loadGameResources(0);
         mEngine.registerUpdateHandler(new TimerHandler(1.5f, new ITimerCallback() {
         public void onTimePassed(final TimerHandler pTimerHandler) {
@@ -330,6 +338,7 @@ public class SceneManager {
     }
 
     public void loadHighscoreScene(final Engine mEngine) {
+        ResourcesManager.getInstance().unloadCurrentScene(currentScene);
         loadingScene = new LoadingScene();
         setScene(loadingScene);
         ResourcesManager.getInstance().unloadMenuTextures();
@@ -345,6 +354,7 @@ public class SceneManager {
     }
 
     public void loadShopScene(final Engine mEngine) {
+        ResourcesManager.getInstance().unloadCurrentScene(currentScene);
         loadingScene = new LoadingScene();
         setScene(loadingScene);
         ResourcesManager.getInstance().unloadMenuTextures();
@@ -360,6 +370,7 @@ public class SceneManager {
     }
 
     public void loadSkillGameScene(final Engine mEngine, int level) {
+        ResourcesManager.getInstance().unloadCurrentScene(currentScene);
         loadingScene = new LoadingScene();
         setScene(loadingScene);
         ResourcesManager.getInstance().unloadMenuTextures();
@@ -400,6 +411,7 @@ public class SceneManager {
     }
 
     public void loadSkillMenuScene(final Engine mEngine) {
+        ResourcesManager.getInstance().unloadCurrentScene(currentScene);
         BaseScene currentScene = getCurrentScene();
         loadingScene = new LoadingScene();
         setScene(loadingScene);
@@ -416,6 +428,7 @@ public class SceneManager {
     }
 
     public void loadOnlineUsersScene(final Engine mEngine) {
+        ResourcesManager.getInstance().unloadCurrentScene(currentScene);
         loadingScene = new LoadingScene();
         setScene(loadingScene);
         ResourcesManager.getInstance().unloadMenuTextures();
@@ -423,14 +436,30 @@ public class SceneManager {
             @Override
             public void onTimePassed(TimerHandler pTimerHandler) {
                 mEngine.unregisterUpdateHandler(pTimerHandler);
-                ResourcesManager.getInstance().loadOnlineMultiResources();
                 onlineUsersScene = MultiplayerUsersScene.getInstance();
                 setScene(onlineUsersScene);
             }
         }));
     }
 
+    public void loadMultiOnlineGameScene(final Engine mEngine, LinkedList<Player> players, Server server) {
+        ResourcesManager.getInstance().unloadCurrentScene(currentScene);
+        loadingScene = new LoadingScene();
+        setScene(loadingScene);
+        mEngine.registerUpdateHandler(new TimerHandler(0.1f, new ITimerCallback() {
+            @Override
+            public void onTimePassed(TimerHandler pTimerHandler) {
+                mEngine.unregisterUpdateHandler(pTimerHandler);
+                ResourcesManager.getInstance().loadOnlineMultiResources();
+                MultiplayerGameScene.createInstance(players, server);
+                onlineGameScene = MultiplayerGameScene.getInstance();
+                setScene(onlineGameScene);
+            }
+        }));
+    }
+
     public void loadMultiScene(final Engine mEngine) {
+        ResourcesManager.getInstance().unloadCurrentScene(currentScene);
         loadingScene = new LoadingScene();
         setScene(loadingScene);
         ResourcesManager.getInstance().unloadMenuTextures();

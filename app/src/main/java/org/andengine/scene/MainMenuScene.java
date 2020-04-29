@@ -94,7 +94,7 @@ public class MainMenuScene extends BaseScene implements IOnMenuItemClickListener
             uus.registerParentScene(this);
             this.setChildScene(uus);
         } else {
-            User.setUserData(activity.getCurrentWorld(), activity.getCurrentHighscore()); //TODO update User data
+            User.setUserData(activity.getCurrentWorld(), activity.getCurrentHighscore());
             createMenuScene();
         }
     }

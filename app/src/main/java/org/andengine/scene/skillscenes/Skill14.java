@@ -441,40 +441,40 @@ public class Skill14 extends SkillScene {
         float ratio = resourcesManager.screenRatio;
         float rowFactor = 1.3f;
 
-        addBall(true, 2, 0, 0*rowFactor, 0.6f*ratio);
-        addBall(true, 2, 1, 0*rowFactor, 0.6f*ratio);
+        addBall(true, 2, 0, 0*rowFactor, 0.5f*ratio);
+        addBall(true, 2, 1, 0*rowFactor, 0.5f*ratio);
 
-        addBall(true, 2, 2, 1*rowFactor, 0.6f*ratio);
+        addBall(true, 2, 2, 1*rowFactor, 0.5f*ratio);
 
-        addBall(true, 2, 0, 2*rowFactor, 0.6f*ratio);
+        addBall(true, 2, 0, 2*rowFactor, 0.5f*ratio);
 
 
-        addBall(true, 2, 1, 3*rowFactor, 0.6f*ratio);
+        addBall(true, 2, 1, 3*rowFactor, 0.5f*ratio);
 
-        addBall(true, 2, 1, 4*rowFactor, 0.6f*ratio);
-        addBall(true, 2, 2, 4*rowFactor, 0.6f*ratio);
+        addBall(true, 2, 1, 4*rowFactor, 0.5f*ratio);
+        addBall(true, 2, 2, 4*rowFactor, 0.5f*ratio);
 
-        addBall(true, 2, 0, 5*rowFactor, 0.6f*ratio);
+        addBall(true, 2, 0, 5*rowFactor, 0.5f*ratio);
 
-        addBall(true, 2, 0, 7*rowFactor, 0.6f*ratio);
-        addBall(true, 2, 1, 7*rowFactor, 0.6f*ratio);
+        addBall(true, 2, 0, 7*rowFactor, 0.5f*ratio);
+        addBall(true, 2, 1, 7*rowFactor, 0.5f*ratio);
 
-        addBall(true, 2, 1, 9*rowFactor, 0.6f*ratio);
-        addBall(true, 2, 2, 9*rowFactor, 0.6f*ratio);
+        addBall(true, 2, 1, 9*rowFactor, 0.5f*ratio);
+        addBall(true, 2, 2, 9*rowFactor, 0.5f*ratio);
 
-        addBall(true, 2, 0, 11*rowFactor, 0.6f*ratio);
-        addBall(true, 2, 2, 11*rowFactor, 0.6f*ratio);
+        addBall(true, 2, 0, 11*rowFactor, 0.5f*ratio);
+        addBall(true, 2, 2, 11*rowFactor, 0.5f*ratio);
 
-        addBall(true, 2, 1, 12*rowFactor, 0.6f*ratio);
+        addBall(true, 2, 1, 12*rowFactor, 0.5f*ratio);
 
-        addBall(true, 2, 0, 13*rowFactor, 0.6f*ratio);
-        addBall(true, 2, 1, 13*rowFactor, 0.6f*ratio);
+        addBall(true, 2, 0, 13*rowFactor, 0.5f*ratio);
+        addBall(true, 2, 1, 13*rowFactor, 0.5f*ratio);
 
-        addBall(true, 2, 2, 14*rowFactor, 0.6f*ratio);
+        addBall(true, 2, 2, 14*rowFactor, 0.5f*ratio);
 
-        addBall(true, 2, 1, 15*rowFactor, 0.6f*ratio);
+        addBall(true, 2, 1, 15*rowFactor, 0.5f*ratio);
 
-        addBall(true, 2, 0, 16*rowFactor, 0.6f*ratio);
+        addBall(true, 2, 0, 16*rowFactor, 0.5f*ratio);
     }
 
 }
