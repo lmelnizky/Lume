@@ -15,10 +15,12 @@ import org.andengine.util.adt.color.Color;
 public class ShopScene extends BaseScene {
 
     private float sideLength;
-    private Sprite lumeSprite, lamporghinaSprite, grumeSprite, personalSprite, overlaySprite, chosen;
+    private float firstXPosition = camera.getCenterX()/5;
+    private int columns = 5;
+    private Sprite lumeSprite, lamporghinaSprite, grumeSprite, personalSprite, overlaySprite, moreCoinsSprite, chosen;
     private AnimatedSprite[] lowerCoins, upperCoins;
     private Text title;
-    private Text lumeText, lamporghinaText, grumeText, personalText;
+    private Text lumeText, lamporghinaText, grumeText, personalText, moreCoinsText;
     private Text lumePrice, lamporghinaPrice, grumePrice, personalPrice;
 
     @Override
@@ -59,26 +61,29 @@ public class ShopScene extends BaseScene {
         attachChild(title);
 
         //attachTexts
-        lumeText = new Text(camera.getCenterX()/4, (float)(camera.getHeight()-2.5*resourcesManager.sideLength),
+        lumeText = new Text(firstXPosition, (float)(camera.getHeight()-2.5*resourcesManager.sideLength),
                 resourcesManager.standardFont, "Lume", vbom);
         attachChild(lumeText);
-        lamporghinaText = new Text(camera.getCenterX()/4 + camera.getWidth()/4, (float)(camera.getHeight()-2.5*resourcesManager.sideLength),
+        lamporghinaText = new Text(firstXPosition + camera.getWidth()/columns, (float)(camera.getHeight()-2.5*resourcesManager.sideLength),
                 resourcesManager.standardFont, "Lamporghina", vbom);
         attachChild(lamporghinaText);
-        grumeText = new Text(camera.getCenterX()/4 + camera.getWidth()/2, (float)(camera.getHeight()-2.5*resourcesManager.sideLength),
+        grumeText = new Text(camera.getCenterX(), (float)(camera.getHeight()-2.5*resourcesManager.sideLength),
                 resourcesManager.standardFont, "Grume", vbom);
         attachChild(grumeText);
-        personalText = new Text(camera.getWidth()-camera.getCenterX()/4, (float)(camera.getHeight()-2.5*resourcesManager.sideLength),
+        personalText = new Text(firstXPosition+3*camera.getWidth()/columns, (float)(camera.getHeight()-2.5*resourcesManager.sideLength),
                 resourcesManager.standardFont, "Available soon", vbom);
         attachChild(personalText);
+        moreCoinsText = new Text(firstXPosition+4*camera.getWidth()/columns, (float)(camera.getHeight()-2.5*resourcesManager.sideLength),
+                resourcesManager.standardFont, "Get more coins!", vbom);
+        attachChild(moreCoinsText);
         lumeText.setColor(Color.WHITE_ARGB_PACKED_INT);
         lamporghinaText.setColor(Color.WHITE_ARGB_PACKED_INT);
         grumeText.setColor(Color.WHITE_ARGB_PACKED_INT);
         personalText.setColor(Color.WHITE_ARGB_PACKED_INT);
 
         //attachSprites
-        lumeSprite = new Sprite(camera.getCenterX()/4, (float)resourcesManager.sideLength*4,
-                sideLength*3.5f, sideLength*3.5f, resourcesManager.lume_big_region, vbom) {
+        lumeSprite = new Sprite(firstXPosition, (float)resourcesManager.sideLength*4,
+                sideLength*2.8f, sideLength*2.8f, resourcesManager.lume_big_region, vbom) {
             @Override
             public boolean onAreaTouched(final TouchEvent pSceneTouchEvent, final float pTouchAreaLocalX,
                                          final float pTouchAreaLocalY) {
@@ -92,8 +97,8 @@ public class ShopScene extends BaseScene {
             }
         };
         attachChild(lumeSprite);
-        lamporghinaSprite = new Sprite(camera.getCenterX()/4 + camera.getWidth()/4, (float)resourcesManager.sideLength*4,
-                sideLength*3.5f, sideLength*3.5f, resourcesManager.lamporghina_big_region, vbom) {
+        lamporghinaSprite = new Sprite(firstXPosition + camera.getWidth()/columns, (float)resourcesManager.sideLength*4,
+                sideLength*2.8f, sideLength*2.8f, resourcesManager.lamporghina_big_region, vbom) {
             @Override
             public boolean onAreaTouched(final TouchEvent pSceneTouchEvent, final float pTouchAreaLocalX,
                                          final float pTouchAreaLocalY) {
@@ -107,8 +112,8 @@ public class ShopScene extends BaseScene {
             }
         };
         attachChild(lamporghinaSprite);
-        grumeSprite = new Sprite(camera.getCenterX()/4 + camera.getWidth()/2, (float)resourcesManager.sideLength*4,
-                sideLength*3.5f, sideLength*3.5f, resourcesManager.grume_big_region, vbom) {
+        grumeSprite = new Sprite(camera.getCenterX(), (float)resourcesManager.sideLength*4,
+                sideLength*2.8f, sideLength*2.8f, resourcesManager.grume_big_region, vbom) {
             @Override
             public boolean onAreaTouched(final TouchEvent pSceneTouchEvent, final float pTouchAreaLocalX,
                                          final float pTouchAreaLocalY) {
@@ -122,8 +127,8 @@ public class ShopScene extends BaseScene {
             }
         };
         attachChild(grumeSprite);
-        personalSprite = new Sprite(camera.getWidth()-camera.getCenterX()/4, (float)resourcesManager.sideLength*4,
-                sideLength*3.5f, sideLength*3.5f, resourcesManager.personal_region, vbom) {
+        personalSprite = new Sprite(firstXPosition+3*camera.getWidth()/5, (float)resourcesManager.sideLength*4,
+                sideLength*2.8f, sideLength*2.8f, resourcesManager.personal_region, vbom) {
             @Override
             public boolean onAreaTouched(final TouchEvent pSceneTouchEvent, final float pTouchAreaLocalX,
                                          final float pTouchAreaLocalY) {
@@ -137,33 +142,48 @@ public class ShopScene extends BaseScene {
             }
         };
         attachChild(personalSprite);
+        moreCoinsSprite = new Sprite(firstXPosition+3*camera.getWidth()/5, (float)resourcesManager.sideLength*4,
+                sideLength*2.8f, sideLength*2.8f, resourcesManager.more_coins_region, vbom) {
+            @Override
+            public boolean onAreaTouched(final TouchEvent pSceneTouchEvent, final float pTouchAreaLocalX,
+                                         final float pTouchAreaLocalY) {
+                if (pSceneTouchEvent.isActionDown()) {
+                    activity.showRewarded(0,0); //todo reward system
+                    return true;
+                } else {
+                    return false;
+                }
+            }
+        };
+        attachChild(moreCoinsSprite);
         registerTouchArea(lumeSprite);
         registerTouchArea(lamporghinaSprite);
         registerTouchArea(grumeSprite);
         registerTouchArea(personalSprite);
+        registerTouchArea(moreCoinsSprite);
 
         //attach price
-        lumePrice = new Text(camera.getCenterX()/4, (float)(float)(1.5*resourcesManager.sideLength),
+        lumePrice = new Text(camera.getCenterX()/columns, (float)(float)(1.5*resourcesManager.sideLength),
                 resourcesManager.smallFont, "0", vbom);
         attachChild(lumePrice);
-        lamporghinaPrice = new Text(camera.getCenterX()/4 + camera.getWidth()/4, (float)(1.5*resourcesManager.sideLength),
+        lamporghinaPrice = new Text(camera.getCenterX()/columns + camera.getWidth()/columns, (float)(1.5*resourcesManager.sideLength),
                 resourcesManager.smallFont, "100", vbom);
         attachChild(lamporghinaPrice);
-        grumePrice = new Text(camera.getCenterX()/4 + camera.getWidth()/2, (float)(1.5*resourcesManager.sideLength),
+        grumePrice = new Text(camera.getCenterX(), (float)(1.5*resourcesManager.sideLength),
                 resourcesManager.smallFont, "1000", vbom);
         attachChild(grumePrice);
-        personalPrice = new Text(camera.getWidth()-camera.getCenterX()/4, (float)(1.5*resourcesManager.sideLength),
+        personalPrice = new Text(camera.getCenterX()+camera.getWidth()/columns, (float)(1.5*resourcesManager.sideLength),
                 resourcesManager.smallFont, "?", vbom);
         attachChild(personalPrice);
 
         //add chosen rect
-        chosen = new Sprite(lumeSprite.getX()+sideLength*4*activity.getCurrentPlayer(), lumeSprite.getY(),
-                sideLength*4, sideLength*6, resourcesManager.chosen_region, vbom);
+        chosen = new Sprite(lumeSprite.getX()+sideLength*5/16*activity.getCurrentPlayer(), lumeSprite.getY(),
+                sideLength*5/16, sideLength*6, resourcesManager.chosen_region, vbom);
         attachChild(chosen);
     }
 
     private void updateChosenRect() {
-        chosen.setPosition(lumeSprite.getX()+sideLength*4*activity.getCurrentPlayer(), lumeSprite.getY());
+        chosen.setPosition(lumeSprite.getX()+sideLength*5/16*activity.getCurrentPlayer(), lumeSprite.getY());
     }
 
     @Override

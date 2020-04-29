@@ -224,6 +224,7 @@ public class ResourcesManager {
     public ITextureRegion shop_overlay_region;
     public ITextureRegion chosen_region;
     public ITextureRegion personal_region;
+    public ITextureRegion more_coins_region;
     public ITextureRegion lume_big_region;
     public ITextureRegion grume_big_region;
     public TiledTextureRegion coin_tiled_region;
@@ -363,6 +364,7 @@ public class ResourcesManager {
             lamporghina_big_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(shopTextureAtlas, activity, "lamporghina_big.png");
             grume_big_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(shopTextureAtlas, activity, "grume_big.png");
             personal_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(shopTextureAtlas, activity, "personal.png");
+            more_coins_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(shopTextureAtlas, activity, "more_coins.png");
             coin_tiled_region = BitmapTextureAtlasTextureRegionFactory.createTiledFromAsset(shopTextureAtlas, activity, "coin_tiled.png", 3, 2);
             try {
                 this.shopTextureAtlas.build(new BlackPawnTextureAtlasBuilder<IBitmapTextureAtlasSource, BitmapTextureAtlas>(0, 1, 0));
@@ -411,6 +413,7 @@ public class ResourcesManager {
             kimmelnitz_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(skillGameAtlas, activity, "kimmelnitz.png");
             kimmelnitz_ko_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(skillGameAtlas, activity, "kimmelnitz_ko.png");
             cracky_mirror_sign_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(skillGameAtlas, activity, "cracky_mirror_sign.png");
+            cracky_mirror = BitmapTextureAtlasTextureRegionFactory.createFromAsset(skillGameAtlas, activity, "cracky_mirror.png");
             move_diagonal_sign_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(skillGameAtlas, activity, "move_diagonal_sign.png");
             shoot_diagonal_sign_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(skillGameAtlas, activity, "shoot_diagonal_sign.png");
             lamporghina_sign_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(skillGameAtlas, activity, "lamporghina_sign.png");

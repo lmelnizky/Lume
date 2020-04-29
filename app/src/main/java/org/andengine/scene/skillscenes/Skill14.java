@@ -456,25 +456,25 @@ public class Skill14 extends SkillScene {
 
         addBall(true, 2, 0, 5*rowFactor, 0.6f*ratio);
 
-        addBall(true, 2, 0, 6*rowFactor, 0.6f*ratio);
-        addBall(true, 2, 1, 6*rowFactor, 0.6f*ratio);
+        addBall(true, 2, 0, 7*rowFactor, 0.6f*ratio);
+        addBall(true, 2, 1, 7*rowFactor, 0.6f*ratio);
 
-        addBall(true, 2, 1, 8*rowFactor, 0.6f*ratio);
-        addBall(true, 2, 2, 8*rowFactor, 0.6f*ratio);
+        addBall(true, 2, 1, 9*rowFactor, 0.6f*ratio);
+        addBall(true, 2, 2, 9*rowFactor, 0.6f*ratio);
 
-        addBall(true, 2, 0, 10*rowFactor, 0.6f*ratio);
-        addBall(true, 2, 2, 10*rowFactor, 0.6f*ratio);
+        addBall(true, 2, 0, 11*rowFactor, 0.6f*ratio);
+        addBall(true, 2, 2, 11*rowFactor, 0.6f*ratio);
 
-        addBall(true, 2, 1, 11*rowFactor, 0.6f*ratio);
-
-        addBall(true, 2, 0, 12*rowFactor, 0.6f*ratio);
         addBall(true, 2, 1, 12*rowFactor, 0.6f*ratio);
 
-        addBall(true, 2, 2, 13*rowFactor, 0.6f*ratio);
+        addBall(true, 2, 0, 13*rowFactor, 0.6f*ratio);
+        addBall(true, 2, 1, 13*rowFactor, 0.6f*ratio);
 
-        addBall(true, 2, 1, 14*rowFactor, 0.6f*ratio);
+        addBall(true, 2, 2, 14*rowFactor, 0.6f*ratio);
 
-        addBall(true, 2, 0, 15*rowFactor, 0.6f*ratio);
+        addBall(true, 2, 1, 15*rowFactor, 0.6f*ratio);
+
+        addBall(true, 2, 0, 16*rowFactor, 0.6f*ratio);
     }
 
 }

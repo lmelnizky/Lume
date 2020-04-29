@@ -26,6 +26,7 @@ import org.andengine.object.Ball;
 import org.andengine.util.adt.align.HorizontalAlign;
 import org.andengine.util.adt.color.Color;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Random;
@@ -50,7 +51,7 @@ public abstract class SkillScene extends BaseScene {
     protected boolean firstStonesInLevel = true;
     protected boolean variantUsed = false;
     protected boolean gameOverDisplayed = false;
-    protected int level, xPosLume, yPosLume, xPosCoin, yPosCoin;
+    protected int level, xPosLume, yPosLume, xPosCoin, yPosCoin, xPosGrume, yPosGrume;
     protected int variantStage, variant, stoneDirection, variantRow;
     protected int time = 30*60;
     protected int score = 0;
@@ -65,11 +66,11 @@ public abstract class SkillScene extends BaseScene {
 
     //andengine attributes
     protected ArrayList<Sprite> crackyStones, stones;
-    protected ArrayList<Sprite> crackyStonesToRemove, stonesToRemove, cannonBallsToRemove;
+    protected ArrayList<Sprite> mirrorStones, mirrorStonesToRemove, crackyStonesToRemove, stonesToRemove, cannonBallsToRemove;
     protected Scene gameOverScene;
     protected IEntity firstLayer, secondLayer, thirdLayer;
     protected PhysicsWorld physicsWorld;
-    protected Sprite lumeSprite, kimmelnitzSprite, kimmelnitzKOSprite, punchSprite, luserSprite, coinSprite;
+    protected Sprite lumeSprite, lamporghinaSprite, kimmelnitzSprite, kimmelnitzKOSprite, punchSprite, luserSprite, coinSprite;
     protected Sprite[] cannonN, cannonE, cannonS, cannonW;
     protected Sprite[] cannonNS, cannonES, cannonSS, cannonWS;
     protected Sprite[] cannonNU, cannonEU, cannonSU, cannonWU;
@@ -116,6 +117,8 @@ public abstract class SkillScene extends BaseScene {
         randomGenerator = new Random();
         crackyStones = new ArrayList<Sprite>();
         crackyStonesToRemove = new ArrayList<Sprite>();
+        mirrorStones = new ArrayList<Sprite>();
+        mirrorStonesToRemove = new ArrayList<Sprite>();
         cannonBallsToRemove = new ArrayList<Sprite>();
         stones = new ArrayList<Sprite>();
         stonesToRemove = new ArrayList<Sprite>();
@@ -389,7 +392,8 @@ public abstract class SkillScene extends BaseScene {
     }
 
     public void coinCheck() {
-        if (xPosLume == xPosCoin && yPosLume == yPosCoin) {
+        if ((xPosLume == xPosCoin && yPosLume == yPosCoin) ||
+                (level == 6 && xPosGrume == xPosCoin && yPosGrume == yPosCoin)) {
             int randomBelch = randomGenerator.nextInt(3) + 1;
             switch (randomBelch) {
                 case 1:
@@ -412,7 +416,7 @@ public abstract class SkillScene extends BaseScene {
         if (score%10 == 9) {
             scoreText.setColor(android.graphics.Color.parseColor("#ffc300"));
         }
-        if (score%10 == 0) {
+        if (score%10 == 0 || score > 9) {
             removeCoin();
             waitingForStonesToDisappear = true;
             worldFinished = true;
