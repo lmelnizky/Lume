@@ -66,7 +66,7 @@ public class MultiplayerUsersScene extends BaseScene implements ButtonSprite.OnC
     }
     public void updateScene(){
         Log.i("MultiPlayerUserScene", "updateScene");
-        for(Player p: players) entities.add(new PlayersField(p));
+        for(Player p: players) playerEntities.add(new PlayersField(p));
     }
     //constructor
     private MultiplayerUsersScene(){}
