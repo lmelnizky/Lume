@@ -122,9 +122,7 @@ public class MultiplayerGameScene extends BaseScene {
 
     }
     @Override
-    public SceneType getSceneType() {
-        return null;
-    }
+    public SceneType getSceneType() {return SceneType.SCENE_ONLINEMULTI;}
     @Override
     public void disposeScene() {
         //don't call the static destroy method, it will be recursive :)

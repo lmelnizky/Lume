@@ -77,9 +77,7 @@ public class MultiplayerUsersScene extends BaseScene implements ButtonSprite.OnC
     }
 
     @Override
-    public SceneType getSceneType() {
-        return null;
-    }
+    public SceneType getSceneType() {return SceneType.SCENE_ONLINEUSERS;}
 
     @Override
     public void disposeScene() {
