@@ -7,6 +7,7 @@ import com.badlogic.gdx.math.Vector2;
 import org.andengine.object.Ball;
 import org.andengine.scene.OnlineScenes.ServerScene.Game.Creator.BallCreator;
 import org.andengine.scene.OnlineScenes.ServerScene.Game.Creator.CoinCreator;
+import org.andengine.scene.OnlineScenes.ServerScene.Game.Creator.Creator;
 import org.andengine.scene.OnlineScenes.ServerScene.Game.Creator.MoveCreator;
 import org.andengine.scene.OnlineScenes.ServerScene.Player;
 
@@ -60,6 +61,17 @@ public class LumeGameActions implements GameActions {
         Log.i("LumaGameActions", "loadCoin");
         //is called when the referee uploaded a new Coin
     }
+
+    @Override
+    public void loadCanon(Creator creator) {
+
+    }
+
+    @Override
+    public void lostLife(String playerID) {
+
+    }
+
     @Override
     public void opponentDisconnected() {
         Log.i("LumaGameActions", "opponent Disconnected from the service");

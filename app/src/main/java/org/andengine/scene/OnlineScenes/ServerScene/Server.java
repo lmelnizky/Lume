@@ -1,6 +1,7 @@
 package org.andengine.scene.OnlineScenes.ServerScene;
 
 import org.andengine.scene.OnlineScenes.ServerScene.Game.Creator.BallCreator;
+import org.andengine.scene.OnlineScenes.ServerScene.Game.Creator.CannonCreator;
 import org.andengine.scene.OnlineScenes.ServerScene.Game.Creator.CoinCreator;
 import org.andengine.scene.OnlineScenes.ServerScene.Game.Creator.Creator;
 import org.andengine.scene.OnlineScenes.ServerScene.Game.Creator.MoveCreator;
@@ -40,6 +41,8 @@ public class Server {
     protected final String playerMoved = "PlayerMoved";
     protected final String loadBall = "AddBall";
     protected final String loadCoin = "AddCoin";
+    protected final String loadCannon = "AddCannon";
+    protected final String loseLife = "loseLife";
     //constructor
     public Server(GameActions gameActions, UserActions userActions, String username) {
         //initialize variables
@@ -106,6 +109,11 @@ public class Server {
         if(creator instanceof CoinCreator)  socket.emit(loadCoin, creator.getJSON());
         if(creator instanceof MoveCreator)  socket.emit(playerMoved, creator.getJSON());
         if(creator instanceof BallCreator)  socket.emit(loadBall, creator.getJSON());
+        if(creator instanceof CannonCreator)socket.emit(loadCannon,creator.getJSON());
+    }
+    public void loseLifeEmit(String ID){
+        try {socket.emit(loseLife, new JSONObject("{\"ID\":" + "\"" +  ID + "\"" + "}"));}
+        catch (JSONException e){e.printStackTrace();}
     }
     //createPlayer and save the username on the server
     public void createPlayer(String username){

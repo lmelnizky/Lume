@@ -55,18 +55,19 @@ public class MultiplayerGameScene extends BaseScene {
     private int xPosBomb, yPosBomb;
 
     //andengine variables
-    private Scene gameOverScene;
-    private IEntity firstLayer, secondLayer, thirdLayer;
-    private Sprite lumeSprite, grumeSprite;
-    private HUD gameHUD;
-    private Sprite lumeBomb, grumeBomb;
-    private Sprite lumeHeart1, lumeHeart2, lumeHeart3;
-    private Sprite grumeHeart1, grumeHeart2, grumeHeart3;
-    private Sprite[] cannonN, cannonE, cannonS, cannonW;
-    private Sprite[] cannonNS, cannonES, cannonSS, cannonWS;
-    private Sprite[] cannonNU, cannonEU, cannonSU, cannonWU;
-    private Sprite luserSprite, finishSprite, replaySprite;
-    private Text gameOverText;
+    public Scene gameOverScene;
+    public IEntity firstLayer, secondLayer, thirdLayer;
+    public Sprite lumeSprite, grumeSprite;
+    public HUD gameHUD;
+    public Sprite lumeBomb, grumeBomb;
+    public Sprite lumeHeart1, lumeHeart2, lumeHeart3;
+    public Sprite grumeHeart1, grumeHeart2, grumeHeart3;
+    public Sprite coinSprite;
+    public Sprite[] cannonN, cannonE, cannonS, cannonW;
+    public Sprite[] cannonNS, cannonES, cannonSS, cannonWS;
+    public Sprite[] cannonNU, cannonEU, cannonSU, cannonWU;
+    public Sprite luserSprite, finishSprite, replaySprite;
+    public Text gameOverText;
 
 
     //objects

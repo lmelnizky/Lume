@@ -8,6 +8,8 @@ import org.andengine.entity.sprite.Sprite;
 import org.andengine.manager.ResourcesManager;
 import org.andengine.opengl.vbo.VertexBufferObject;
 import org.andengine.opengl.vbo.VertexBufferObjectManager;
+import org.andengine.scene.OnlineScenes.ServerScene.Game.MultiplayerGameScene;
+import org.andengine.scene.OnlineScenes.ServerScene.Multiplayer;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -21,7 +23,7 @@ public class CoinCreator extends Creator {
     private final float sideLength =  ResourcesManager.getInstance().sideLength;
     //base stuff
     private BoundCamera camera;
-    private Sprite coinSprite;
+    private Sprite coinSprite = MultiplayerGameScene.getInstance().coinSprite;
     //constructor
     public CoinCreator(String room, int xPosCoin, int yPosCoin) {
         super(room);
@@ -35,9 +37,16 @@ public class CoinCreator extends Creator {
         camera = ResourcesManager.getInstance().camera;
         VertexBufferObjectManager vbom = ResourcesManager.getInstance().vbom;
 
+        if (coinSprite == null) {
             coinSprite = new Sprite(camera.getCenterX() - sideLength + ((xPosCoin - 1) * sideLength),
                     camera.getCenterY() - sideLength + ((yPosCoin - 1) * sideLength),
                     sideLength * 7 / 8, sideLength * 7 / 8, ResourcesManager.getInstance().coin_region, vbom);
+        } else {
+            coinSprite.registerEntityModifier(new ScaleModifier(0.2f,0.7f,1f));
+            coinSprite.setPosition(camera.getCenterX() - sideLength + ((xPosCoin - 1) * sideLength), camera.getCenterY() - sideLength + ((yPosCoin - 1) * sideLength));
+        }
+
+
         return coinSprite; //TODO Lukas Melnizky
     }
 

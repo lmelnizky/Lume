@@ -73,6 +73,7 @@ public class UploadUserScene extends BaseScene implements ButtonSprite.OnClickLi
             @Override
             public void startLoadingNames() {
                 confirmButton.setEnabled(false);
+                confirmButton.setVisible(false);
             }
 
             @Override
