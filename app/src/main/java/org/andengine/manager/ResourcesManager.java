@@ -4,6 +4,7 @@ import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
 import android.graphics.Color;
 import android.graphics.Typeface;
+import android.util.Log;
 
 import org.andengine.GameActivity;
 import org.andengine.audio.music.Music;
@@ -742,9 +743,11 @@ public class ResourcesManager {
             lamporghina_sign_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(highScoreAtlas, activity, "lamporghina_sign.png");
             lamporghina_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(highScoreAtlas, activity, "lamporghina.png");
             helmet_sign_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(highScoreAtlas, activity, "helmet_sign.png");
+
             try {
                 this.highScoreAtlas.build(new BlackPawnTextureAtlasBuilder<IBitmapTextureAtlasSource, BitmapTextureAtlas>(0, 1, 0));
                 this.highScoreAtlas.load();
+                highScoreAtlas = null;
             } catch (final ITextureAtlasBuilder.TextureAtlasBuilderException e) {
                 Debug.e(e);
             }
