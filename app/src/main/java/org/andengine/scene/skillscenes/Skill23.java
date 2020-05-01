@@ -95,18 +95,18 @@ public class Skill23 extends SkillScene {
                         if (Math.abs(deltaX) > Math.abs(deltaY)) { //horizontal
                             if (deltaX > 0) { //left to right
                                 movePlayer('R');
-                                showStonesToScreen(4, false);
+                                showStonesToScreen(4, true);
                             } else { //right to left
                                 movePlayer('L');
-                                showStonesToScreen(2, false);
+                                showStonesToScreen(2, true);
                             }
                         } else { //vertical
                             if (deltaY > 0) { //up to down
                                 movePlayer('U');
-                                showStonesToScreen(1, false);
+                                showStonesToScreen(3, false);
                             } else { //down to up
                                 movePlayer('D');
-                                showStonesToScreen(3, false);
+                                showStonesToScreen(1, false);
                             }
                         }
                     }
@@ -350,7 +350,7 @@ public class Skill23 extends SkillScene {
 
     @Override
     public void showText() {
-        String tvText0 = "Try to shoot very fast, little piss-tolero! Select the ten coins!";
+        String tvText0 = "Never stay at one place for too long time! Stones will shoot you!";
         if (kimmelnitzText == null) {
             //sideLength*6.6f
             kimmelnitzText = new TickerText(sideLength*6.6f, camera.getHeight() / 6, resourcesManager.smallFont, tvText0,
@@ -379,7 +379,9 @@ public class Skill23 extends SkillScene {
         float ratio = resourcesManager.screenRatio;
         float factor = (directionVariant%2 == 0) ? ratio : 1f;
 
-        addBall(true, directionVariant, xPosLume-1, 2.0f*factor);
+        int pos = (thornyFirst) ? yPosLume : xPosLume;
+
+        addBall(true, directionVariant, pos-1, 2.0f*factor);
     }
 
 }

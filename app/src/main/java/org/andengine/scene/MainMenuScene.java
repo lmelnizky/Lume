@@ -131,74 +131,34 @@ public class MainMenuScene extends BaseScene implements IOnMenuItemClickListener
                 //Load Game Scene!
                 switch (activity.getCurrentWorld()) {
                     case 0:
-                        if (ResourcesManager.getInstance().activity.isStartVideo()) {
-                            ResourcesManager.getInstance().activity.showRewarded(0, 0);
-                        } else {
-                            SceneManager.getInstance().loadWorld0Scene(engine, 0);
-                        }
+                        SceneManager.getInstance().loadWorld0Scene(engine, 0);
                         break;
                     case 1:
-                        if (ResourcesManager.getInstance().activity.isStartVideo()) {
-                            ResourcesManager.getInstance().activity.showRewarded(1, 0);
-                        } else {
-                            SceneManager.getInstance().loadWorld1Scene(engine, 0);
-                        }
+                        SceneManager.getInstance().loadWorld1Scene(engine, 0);
                         break;
                     case 2:
-                        if (ResourcesManager.getInstance().activity.isStartVideo()) {
-                            ResourcesManager.getInstance().activity.showRewarded(2, 0);
-                        } else {
-                            SceneManager.getInstance().loadWorld2Scene(engine, 0);
-                        }
+                        SceneManager.getInstance().loadWorld2Scene(engine, 0);
                         break;
                     case 3:
-                        if (ResourcesManager.getInstance().activity.isStartVideo()) {
-                            ResourcesManager.getInstance().activity.showRewarded(3, 0);
-                        } else {
-                            SceneManager.getInstance().loadWorld3Scene(engine, 0);
-                        }
+                        SceneManager.getInstance().loadWorld3Scene(engine, 0);
                         break;
                     case 4:
-                        if (ResourcesManager.getInstance().activity.isStartVideo()) {
-                            ResourcesManager.getInstance().activity.showRewarded(4, 0);
-                        } else {
-                            SceneManager.getInstance().loadWorld4Scene(engine, 0);
-                        }
+                        SceneManager.getInstance().loadWorld4Scene(engine, 0);
                         break;
                     case 5:
-                        if (ResourcesManager.getInstance().activity.isStartVideo()) {
-                            ResourcesManager.getInstance().activity.showRewarded(5, 0);
-                        } else {
-                            SceneManager.getInstance().loadWorld5Scene(engine, 0);
-                        }
+                        SceneManager.getInstance().loadWorld5Scene(engine, 0);
                         break;
                     case 6:
-                        if (ResourcesManager.getInstance().activity.isStartVideo()) {
-                            ResourcesManager.getInstance().activity.showRewarded(6, 0);
-                        } else {
-                            SceneManager.getInstance().loadWorld6Scene(engine, 0);
-                        }
+                        SceneManager.getInstance().loadWorld6Scene(engine, 0);
                         break;
                     case 7:
-                        if (ResourcesManager.getInstance().activity.isStartVideo()) {
-                            ResourcesManager.getInstance().activity.showRewarded(7, 0);
-                        } else {
-                            SceneManager.getInstance().loadWorld7Scene(engine, 0);
-                        }
+                        SceneManager.getInstance().loadWorld7Scene(engine, 0);
                         break;
                     case 8:
-                        if (ResourcesManager.getInstance().activity.isStartVideo()) {
-                            ResourcesManager.getInstance().activity.showRewarded(8, 0);
-                        } else {
-                            SceneManager.getInstance().loadWorld8Scene(engine, 0);
-                        }
+                        SceneManager.getInstance().loadWorld8Scene(engine, 0);
                         break;
                     case 9:
-                        if (ResourcesManager.getInstance().activity.isStartVideo()) {
-                            ResourcesManager.getInstance().activity.showRewarded(8, 0);
-                        } else {
-                            SceneManager.getInstance().loadWorld8Scene(engine, 0);
-                        }
+                        SceneManager.getInstance().loadWorld8Scene(engine, 0);
                         break;
                 }
 //                disposeWorldText();

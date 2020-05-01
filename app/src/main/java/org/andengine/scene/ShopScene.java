@@ -65,16 +65,16 @@ public class ShopScene extends BaseScene {
         lumeText = new Text(firstXPosition, (float)(camera.getHeight()-2.5*resourcesManager.sideLength),
                 resourcesManager.standardFont, "Lume", vbom);
         attachChild(lumeText);
-        lamporghinaText = new Text(firstXPosition + camera.getWidth()/columns, (float)(camera.getHeight()-2.5*resourcesManager.sideLength),
+        lamporghinaText = new Text(firstXPosition + camera.getWidth()/5, (float)(camera.getHeight()-2.5*resourcesManager.sideLength),
                 resourcesManager.standardFont, "Lamporghina", vbom);
         attachChild(lamporghinaText);
         grumeText = new Text(camera.getCenterX(), (float)(camera.getHeight()-2.5*resourcesManager.sideLength),
                 resourcesManager.standardFont, "Grume", vbom);
         attachChild(grumeText);
-        personalText = new Text(firstXPosition+3*camera.getWidth()/columns, (float)(camera.getHeight()-2.5*resourcesManager.sideLength),
+        personalText = new Text(firstXPosition+3*camera.getWidth()/5, (float)(camera.getHeight()-2.5*resourcesManager.sideLength),
                 resourcesManager.standardFont, "Available soon", vbom);
         attachChild(personalText);
-        moreCoinsText = new Text(firstXPosition+4*camera.getWidth()/columns, (float)(camera.getHeight()-2.5*resourcesManager.sideLength),
+        moreCoinsText = new Text(firstXPosition+4*camera.getWidth()/5, (float)(camera.getHeight()-2.5*resourcesManager.sideLength),
                 resourcesManager.standardFont, "Get more coins!", vbom);
         attachChild(moreCoinsText);
         lumeText.setColor(Color.WHITE_ARGB_PACKED_INT);
@@ -89,8 +89,7 @@ public class ShopScene extends BaseScene {
             public boolean onAreaTouched(final TouchEvent pSceneTouchEvent, final float pTouchAreaLocalX,
                                          final float pTouchAreaLocalY) {
                 if (pSceneTouchEvent.isActionDown()) {
-                    activity.setPlayer(0);
-                    updateChosenRect();
+                    activity.showCoinHint(0, 0, ShopScene.this);
                     return true;
                 } else {
                     return false;
@@ -98,14 +97,17 @@ public class ShopScene extends BaseScene {
             }
         };
         attachChild(lumeSprite);
-        lamporghinaSprite = new Sprite(firstXPosition + camera.getWidth()/columns, (float)resourcesManager.sideLength*4,
+        lamporghinaSprite = new Sprite(firstXPosition + camera.getWidth()/5, (float)resourcesManager.sideLength*4,
                 sideLength*2.8f, sideLength*2.8f, resourcesManager.lamporghina_big_region, vbom) {
             @Override
             public boolean onAreaTouched(final TouchEvent pSceneTouchEvent, final float pTouchAreaLocalX,
                                          final float pTouchAreaLocalY) {
                 if (pSceneTouchEvent.isActionDown()) {
-                    activity.setPlayer(1);
-                    updateChosenRect();
+                    if (activity.getCurrentBeersos() >= 100) {
+                        activity.showCoinHint(1, 100, ShopScene.this);
+                    } else {
+                        activity.toastOnUiThread("Not enough coins, man!", 0);
+                    }
                     return true;
                 } else {
                     return false;
@@ -119,8 +121,11 @@ public class ShopScene extends BaseScene {
             public boolean onAreaTouched(final TouchEvent pSceneTouchEvent, final float pTouchAreaLocalX,
                                          final float pTouchAreaLocalY) {
                 if (pSceneTouchEvent.isActionDown()) {
-                    activity.setPlayer(2);
-                    updateChosenRect();
+                    if (activity.getCurrentBeersos() >= 1000) {
+                        activity.showCoinHint(0, 1000, ShopScene.this);
+                    } else {
+                        activity.toastOnUiThread("Not enough coins, man!");
+                    }
                     return true;
                 } else {
                     return false;
@@ -134,7 +139,7 @@ public class ShopScene extends BaseScene {
             public boolean onAreaTouched(final TouchEvent pSceneTouchEvent, final float pTouchAreaLocalX,
                                          final float pTouchAreaLocalY) {
                 if (pSceneTouchEvent.isActionDown()) {
-                    activity.setPlayer(0);
+                    activity.toastOnUiThread("Available soon!", 0);
                     updateChosenRect();
                     return true;
                 } else {
@@ -143,13 +148,13 @@ public class ShopScene extends BaseScene {
             }
         };
         attachChild(personalSprite);
-        moreCoinsSprite = new Sprite(firstXPosition+3*camera.getWidth()/5, (float)resourcesManager.sideLength*4,
+        moreCoinsSprite = new Sprite(firstXPosition+4*camera.getWidth()/5, (float)resourcesManager.sideLength*4,
                 sideLength*2.8f, sideLength*2.8f, resourcesManager.more_coins_region, vbom) {
             @Override
             public boolean onAreaTouched(final TouchEvent pSceneTouchEvent, final float pTouchAreaLocalX,
                                          final float pTouchAreaLocalY) {
                 if (pSceneTouchEvent.isActionDown()) {
-                    activity.showRewarded(0,0); //todo reward system
+                    activity.showRewarded(1);
                     return true;
                 } else {
                     return false;
@@ -164,27 +169,27 @@ public class ShopScene extends BaseScene {
         registerTouchArea(moreCoinsSprite);
 
         //attach price
-        lumePrice = new Text(camera.getCenterX()/columns, (float)(float)(1.5*resourcesManager.sideLength),
+        lumePrice = new Text(firstXPosition, (float)(float)(1.5*resourcesManager.sideLength),
                 resourcesManager.smallFont, "0", vbom);
         attachChild(lumePrice);
-        lamporghinaPrice = new Text(camera.getCenterX()/columns + camera.getWidth()/columns, (float)(1.5*resourcesManager.sideLength),
+        lamporghinaPrice = new Text(firstXPosition+camera.getWidth()/5, (float)(1.5*resourcesManager.sideLength),
                 resourcesManager.smallFont, "100", vbom);
         attachChild(lamporghinaPrice);
         grumePrice = new Text(camera.getCenterX(), (float)(1.5*resourcesManager.sideLength),
                 resourcesManager.smallFont, "1000", vbom);
         attachChild(grumePrice);
-        personalPrice = new Text(camera.getCenterX()+camera.getWidth()/columns, (float)(1.5*resourcesManager.sideLength),
+        personalPrice = new Text(firstXPosition+3*camera.getWidth()/5, (float)(1.5*resourcesManager.sideLength),
                 resourcesManager.smallFont, "?", vbom);
         attachChild(personalPrice);
 
         //add chosen rect
-        chosen = new Sprite(lumeSprite.getX()+sideLength*5/16*activity.getCurrentPlayer(), lumeSprite.getY(),
-                sideLength*5/16, sideLength*6, resourcesManager.chosen_region, vbom);
+        chosen = new Sprite(lumeSprite.getX()+camera.getWidth()/5*activity.getCurrentPlayer(), lumeSprite.getY(),
+                camera.getWidth()/5, sideLength*6, resourcesManager.chosen_region, vbom);
         attachChild(chosen);
     }
 
-    private void updateChosenRect() {
-        chosen.setPosition(lumeSprite.getX()+sideLength*5/16*activity.getCurrentPlayer(), lumeSprite.getY());
+    public void updateChosenRect() {
+        chosen.setPosition(lumeSprite.getX()+camera.getWidth()/5*activity.getCurrentPlayer(), lumeSprite.getY());
     }
 
     @Override

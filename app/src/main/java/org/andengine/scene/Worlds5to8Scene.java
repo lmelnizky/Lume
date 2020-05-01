@@ -95,15 +95,11 @@ public class Worlds5to8Scene extends BaseScene {
 
                 public boolean onAreaTouched(TouchEvent touchEvent, float x, float y) {
                     if (touchEvent.isActionDown()) {
-                        if (ResourcesManager.getInstance().activity.isStartVideo()) {
-                            ResourcesManager.getInstance().activity.showRewarded(5, finalI + 1);
-                        } else {
                             if (activity.getCurrentWorld() >= 5) {
                                 SceneManager.getInstance().loadWorld5Scene(engine, finalI + 1);
                             } else {
                                 activity.toastOnUiThread("Level locked");
                             }
-                        }
                         return true;
                     } else {
                         return false;
@@ -118,15 +114,11 @@ public class Worlds5to8Scene extends BaseScene {
                     resourcesManager.worldNumberFont, String.valueOf(finalI +1), new TextOptions(HorizontalAlign.CENTER), vbom) {
                 public boolean onAreaTouched(TouchEvent touchEvent, float x, float y) {
                     if (touchEvent.isActionDown()) {
-                        if (ResourcesManager.getInstance().activity.isStartVideo()) {
-                            ResourcesManager.getInstance().activity.showRewarded(6, finalI + 1);
-                        } else {
                             if (activity.getCurrentWorld() >= 6) {
                                 SceneManager.getInstance().loadWorld6Scene(engine, finalI + 1);
                             } else {
                                 activity.toastOnUiThread("Level locked");
                             }
-                        }
                         return true;
                     } else {
                         return false;
@@ -141,15 +133,11 @@ public class Worlds5to8Scene extends BaseScene {
                     resourcesManager.worldNumberFont, String.valueOf(finalI +1), new TextOptions(HorizontalAlign.CENTER), vbom) {
                 public boolean onAreaTouched(TouchEvent touchEvent, float x, float y) {
                     if (touchEvent.isActionDown()) {
-                        if (ResourcesManager.getInstance().activity.isStartVideo()) {
-                            ResourcesManager.getInstance().activity.showRewarded(7, finalI + 1);
-                        } else {
                             if (activity.getCurrentWorld() >= 7) {
                                 SceneManager.getInstance().loadWorld7Scene(engine, finalI + 1);
                             } else {
                                 activity.toastOnUiThread("Level locked");
                             }
-                        }
                         return true;
                     } else {
                         return false;
@@ -164,15 +152,11 @@ public class Worlds5to8Scene extends BaseScene {
                     resourcesManager.worldNumberFont, String.valueOf(finalI +1), new TextOptions(HorizontalAlign.CENTER), vbom) {
                 public boolean onAreaTouched(TouchEvent touchEvent, float x, float y) {
                     if (touchEvent.isActionDown()) {
-                        if (ResourcesManager.getInstance().activity.isStartVideo()) {
-                            ResourcesManager.getInstance().activity.showRewarded(8, finalI + 1);
-                        } else {
                             if (activity.getCurrentWorld() >= 8) {
                                 SceneManager.getInstance().loadWorld8Scene(engine, finalI + 1);
                             } else {
                                 activity.toastOnUiThread("Level locked");
                             }
-                        }
                         return true;
                     } else {
                         return false;

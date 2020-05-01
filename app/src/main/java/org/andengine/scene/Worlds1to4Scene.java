@@ -109,11 +109,7 @@ public class Worlds1to4Scene extends BaseScene {
 
                 public boolean onAreaTouched(TouchEvent touchEvent, float x, float y) {
                     if (touchEvent.isActionDown()) {
-                        if (ResourcesManager.getInstance().activity.isStartVideo()) {
-                            ResourcesManager.getInstance().activity.showRewarded(1, finalI + 1);
-                        } else {
-                            SceneManager.getInstance().loadWorld1Scene(engine, finalI + 1);
-                        }
+                        SceneManager.getInstance().loadWorld1Scene(engine, finalI + 1);
                         return true;
                     } else {
                         return false;
@@ -129,15 +125,11 @@ public class Worlds1to4Scene extends BaseScene {
                     resourcesManager.worldNumberFont, String.valueOf(finalI +1), new TextOptions(HorizontalAlign.CENTER), vbom) {
                 public boolean onAreaTouched(TouchEvent touchEvent, float x, float y) {
                     if (touchEvent.isActionDown()) {
-                        if (ResourcesManager.getInstance().activity.isStartVideo()) {
-                            ResourcesManager.getInstance().activity.showRewarded(2, finalI + 1);
-                        } else {
                             if (activity.getCurrentWorld() >= 2) {
                                 SceneManager.getInstance().loadWorld2Scene(engine, finalI + 1);
                             } else {
                                 activity.toastOnUiThread("Level locked");
                             }
-                        }
                         return true;
                     } else {
                         return false;
@@ -152,15 +144,11 @@ public class Worlds1to4Scene extends BaseScene {
                     resourcesManager.worldNumberFont, String.valueOf(finalI +1), new TextOptions(HorizontalAlign.CENTER), vbom) {
                 public boolean onAreaTouched(TouchEvent touchEvent, float x, float y) {
                     if (touchEvent.isActionDown()) {
-                        if (ResourcesManager.getInstance().activity.isStartVideo()) {
-                            ResourcesManager.getInstance().activity.showRewarded(3, finalI + 1);
-                        } else {
                             if (activity.getCurrentWorld() >= 3) {
                                 SceneManager.getInstance().loadWorld3Scene(engine, finalI + 1);
                             } else {
                                 activity.toastOnUiThread("Level locked");
                             }
-                        }
                         return true;
                     } else {
                         return false;
@@ -175,15 +163,11 @@ public class Worlds1to4Scene extends BaseScene {
                     resourcesManager.worldNumberFont, String.valueOf(finalI +1), new TextOptions(HorizontalAlign.CENTER), vbom) {
                 public boolean onAreaTouched(TouchEvent touchEvent, float x, float y) {
                     if (touchEvent.isActionDown()) {
-                        if (ResourcesManager.getInstance().activity.isStartVideo()) {
-                            ResourcesManager.getInstance().activity.showRewarded(4, finalI + 1);
-                        } else {
                             if (activity.getCurrentWorld() >= 4) {
                                 SceneManager.getInstance().loadWorld4Scene(engine, finalI + 1);
                             } else {
                                 activity.toastOnUiThread("Level locked");
                             }
-                        }
                         return true;
                     } else {
                         return false;

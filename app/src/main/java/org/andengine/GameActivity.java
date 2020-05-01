@@ -9,9 +9,7 @@ import android.os.Handler;
 import android.os.Looper;
 import android.util.DisplayMetrics;
 import android.view.KeyEvent;
-import android.view.SurfaceView;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
@@ -44,6 +42,7 @@ import org.andengine.entity.text.Text;
 import org.andengine.manager.ResourcesManager;
 import org.andengine.manager.SceneManager;
 import org.andengine.opengl.view.RenderSurfaceView;
+import org.andengine.scene.ShopScene;
 import org.andengine.ui.activity.BaseGameActivity;
 
 import java.io.IOException;
@@ -93,7 +92,7 @@ public class GameActivity extends BaseGameActivity implements RewardedVideoAdLis
 
     private AdView adView;
     private InterstitialAd mMultiInterstitialAd, mSingleInterstitialAd;
-    private RewardedVideoAd mAd;
+    private RewardedVideoAd mWalkthroughAd, mCoinsAd;
     //public TappxInterstitial tappxInterstitial;
 
 
@@ -423,7 +422,7 @@ public class GameActivity extends BaseGameActivity implements RewardedVideoAdLis
         mSingleInterstitialAd = new InterstitialAd(this);
         mSingleInterstitialAd.setAdUnitId("ca-app-pub-4787870052129424/2094173543"); //id from admob
         mSingleInterstitialAd.loadAd(new AdRequest.Builder()
-               // .addTestDevice("E8F7D3C5F811FFE1D5AEB61BB219CECC")
+                .addTestDevice("E8F7D3C5F811FFE1D5AEB61BB219CECC")
                 .build());
         mSingleInterstitialAd.setAdListener(new AdListener() {
             @Override
@@ -433,9 +432,13 @@ public class GameActivity extends BaseGameActivity implements RewardedVideoAdLis
             }
         });
 
-        mAd = MobileAds.getRewardedVideoAdInstance(this);
-        mAd.setRewardedVideoAdListener(this);
+        mWalkthroughAd = MobileAds.getRewardedVideoAdInstance(this);
+        mWalkthroughAd.setRewardedVideoAdListener(this);
+
+        mCoinsAd = MobileAds.getRewardedVideoAdInstance(this);
+        mCoinsAd.setRewardedVideoAdListener(this);
         this.loadRewardedVideoAd();
+
 
 
 //        adView.refreshDrawableState();
@@ -443,7 +446,7 @@ public class GameActivity extends BaseGameActivity implements RewardedVideoAdLis
 
             //loading setAdVisibility
             AdRequest adRequest = new AdRequest.Builder()
-                    //.addTestDevice("E8F7D3C5F811FFE1D5AEB61BB219CECC")
+                    .addTestDevice("E8F7D3C5F811FFE1D5AEB61BB219CECC")
                     .build();
             //adView.loadAd(adRequest); //TODO that is crashing my logs on the emulator!
             adView.setAdListener(new AdListener() {
@@ -475,8 +478,11 @@ public class GameActivity extends BaseGameActivity implements RewardedVideoAdLis
         this.runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                mAd.loadAd("ca-app-pub-4787870052129424/4739684035", new AdRequest.Builder()
-                        //.addTestDevice("E8F7D3C5F811FFE1D5AEB61BB219CECC")
+                mWalkthroughAd.loadAd("ca-app-pub-4787870052129424/4739684035", new AdRequest.Builder()
+                        .addTestDevice("E8F7D3C5F811FFE1D5AEB61BB219CECC")
+                        .build());
+                mCoinsAd.loadAd("ca-app-pub-4787870052129424/7199859943", new AdRequest.Builder()
+                        .addTestDevice("E8F7D3C5F811FFE1D5AEB61BB219CECC")
                         .build());
                 //ad unit ca-app-pub-4787870052129424/4739684035
                 //test ca-app-pub-3940256099942544/5224354917
@@ -619,18 +625,26 @@ public class GameActivity extends BaseGameActivity implements RewardedVideoAdLis
         }
     }
 
-    public void showHighHint() {
+    public void showCoinHint(int player, int coins, ShopScene scene) {
         this.runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                String message = "This Mode will be available soon!";
+                String message = "Do you want to unlock this player?";
                 AlertDialog.Builder alert = new AlertDialog.Builder(GameActivity.this);
-                alert.setTitle("Hey Man!");
+                alert.setTitle("Hey!");
                 alert.setMessage(message);
                 alert.setIcon(R.drawable.kimmelnitz);
-                alert.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                alert.setPositiveButton("Good deal!", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface arg0, int arg1) {
+                        setPlayer(player);
+                        addBeersos(-coins);
+                        scene.updateChosenRect();
+                    }
+                });
+                alert.setNegativeButton("No, too expensive", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
                         //nothing to do
                     }
                 });
@@ -651,29 +665,53 @@ public class GameActivity extends BaseGameActivity implements RewardedVideoAdLis
         });
     }
 
-    public void showRewarded(int worldToStart, int levelToStart) {
+    public void showRewarded(int rewardedType) {
         this.worldToStart = worldToStart;
         this.levelToStart = levelToStart;
-        this.runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                if (mAd.isLoaded()) {
-                    mAd.show();
-                } else {
-                    AlertDialog.Builder alert = new AlertDialog.Builder(GameActivity.this);
-                    alert.setTitle("Sorry, Man!");
-                    alert.setMessage("Ad video could not load");
-                    alert.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface arg0, int arg1) {
+        if (rewardedType == 0) {
+            this.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    if (mWalkthroughAd.isLoaded()) {
+                        mWalkthroughAd.show();
+                    } else {
+                        AlertDialog.Builder alert = new AlertDialog.Builder(GameActivity.this);
+                        alert.setTitle("Sorry, Man!");
+                        alert.setMessage("Ad video could not load");
+                        alert.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface arg0, int arg1) {
 
-                        }
-                    });
+                            }
+                        });
 
-                    alert.show();
+                        alert.show();
+                    }
                 }
-            }
-        });
+            });
+        } else if (rewardedType == 1) {
+            this.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    if (mCoinsAd.isLoaded()) {
+                        mCoinsAd.show();
+                    } else {
+                        AlertDialog.Builder alert = new AlertDialog.Builder(GameActivity.this);
+                        alert.setTitle("Sorry, Man!");
+                        alert.setMessage("Ad video could not load");
+                        alert.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface arg0, int arg1) {
+
+                            }
+                        });
+
+                        alert.show();
+                    }
+                }
+            });
+        }
+
     }
 
     public void resetMainMenuResources() {
@@ -701,19 +739,22 @@ public class GameActivity extends BaseGameActivity implements RewardedVideoAdLis
     protected void onResume() {
         super.onResume();
         mEngine.start();
-        mAd.resume(this);
+        mWalkthroughAd.resume(this);
+        mCoinsAd.resume(this);
     }
 
     @Override
     protected void onPause() {
         mEngine.stop();
-        mAd.pause(this);
+        mWalkthroughAd.pause(this);
+        mCoinsAd.pause(this);
         super.onPause();
     }
 
     @Override
     protected void onDestroy() {
-        mAd.destroy(this);
+        mWalkthroughAd.destroy(this);
+        mCoinsAd.destroy(this);
         //if (tappxInterstitial != null) tappxInterstitial.destroy();
         super.onDestroy();
     }
@@ -836,14 +877,19 @@ public class GameActivity extends BaseGameActivity implements RewardedVideoAdLis
 
     @Override
     public void onRewarded(RewardItem rewardItem) {
-        toastOnUiThread("Showing Walkthrough Video");
+        if (rewardItem.getAmount()>1) {
+            toastOnUiThread("Received 100 coins!");
+            addBeersos(100);
+        } else {
+            toastOnUiThread("Showing Walkthrough Video");
 
-        showWalkthroughVideo();
-        this.loadRewardedVideoAd(); //load next video
+            showWalkthroughVideo();
+            this.loadRewardedVideoAd(); //load next video
 
-        playedGames = 0;
-        editor.putInt(PLAYED_GAMES, playedGames);
-        editor.commit();
+            playedGames = 0;
+            editor.putInt(PLAYED_GAMES, playedGames);
+            editor.commit();
+        }
 
         //this.resetMainMenuResources();
     }
@@ -868,8 +914,8 @@ public class GameActivity extends BaseGameActivity implements RewardedVideoAdLis
             @Override
             public void run() {
                 AlertDialog.Builder alert = new AlertDialog.Builder(GameActivity.this);
-                alert.setTitle("Hey, Luser!");
-                alert.setMessage("Do you really want to see the Walkthrough Video?");
+                alert.setTitle("Hey, Lad!");
+                alert.setMessage("Do you want to see the Walkthrough Video?");
                 alert.setIcon(R.drawable.kimmelnitz);
                 alert.setCancelable(true);
 
@@ -877,7 +923,7 @@ public class GameActivity extends BaseGameActivity implements RewardedVideoAdLis
                         "Yes, I am helpless",
                         new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int id) {
-                                showRewarded(0,0);
+                                showRewarded(0);
                             }
                         });
 

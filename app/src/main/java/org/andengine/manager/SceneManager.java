@@ -462,7 +462,6 @@ public class SceneManager {
         ResourcesManager.getInstance().unloadCurrentScene(currentScene);
         loadingScene = new LoadingScene();
         setScene(loadingScene);
-        ResourcesManager.getInstance().unloadMenuTextures();
         mEngine.registerUpdateHandler(new TimerHandler(0.1f, new ITimerCallback() {
             @Override
             public void onTimePassed(TimerHandler pTimerHandler) {

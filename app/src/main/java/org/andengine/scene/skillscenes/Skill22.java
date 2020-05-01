@@ -289,7 +289,7 @@ public class Skill22 extends SkillScene {
                     if (!thorny) crackyStonesToRemove.add(this);
 
                     survivedStones++;
-                    if (survivedStones >= 13) addToScore(10);
+                    if (survivedStones >= 14) addToScore(10);
 
                     engine.runOnUpdateThread(new Runnable() {
                         @Override
@@ -437,34 +437,33 @@ public class Skill22 extends SkillScene {
         float ratio = resourcesManager.screenRatio;
         float factor = (directionVariant%2 == 0) ? ratio : 1f;
         float distance = 2.0f;
-        addBall(true, 2, 0, 0, 0.6f*factor);
-        addBall(true, 2, 1, 0, 0.6f*factor);
-        addBall(false, 2, 2, 0, 0.6f*factor);
+        addBall(true, 2, 0, 0, 0.5f*ratio);
+        addBall(true, 2, 1, 0, 0.5f*ratio);
+        addBall(false, 2, 2, 0, 0.5f*ratio);
 
-        addBall(true, 2, 0, 1*distance, 0.6f*factor);
-        addBall(false, 2, 1, 1*distance, 0.6f*factor);
-        addBall(true, 2, 2, 1*distance, 0.6f*factor);
+        addBall(true, 2, 0, 1*distance, 0.5f*ratio);
+        addBall(false, 2, 1, 1*distance, 0.5f*ratio);
+        addBall(true, 2, 2, 1*distance, 0.5f*ratio);
 
-        addBall(false, 2, 0, 2*distance, 0.6f*factor);
-        addBall(true, 2, 1, 2*distance, 0.6f*factor);
-        addBall(true, 2, 2, 2*distance, 0.6f*factor);
+        addBall(false, 2, 0, 2*distance, 0.5f*ratio);
+        addBall(true, 2, 1, 2*distance, 0.5f*ratio);
+        addBall(true, 2, 2, 2*distance, 0.5f*ratio);
 
-        addBall(true, 2, 0, 3.5f*distance, 0.6f*factor);
-        addBall(true, 2, 1, 3.5f*distance, 0.6f*factor);
-        addBall(false, 2, 2, 3.5f*distance, 0.6f*factor);
+        addBall(true, 2, 0, 3.5f*distance, 0.5f*ratio);
+        addBall(true, 2, 1, 3.5f*distance, 0.5f*ratio);
+        addBall(false, 2, 2, 3.5f*distance, 0.5f*ratio);
 
-        addBall(true, 2, 0, 4.5f*distance, 0.6f*factor);
-        addBall(false, 2, 1, 4.5f*distance, 0.6f*factor);
-        addBall(true, 2, 2, 4.5f*distance, 0.6f*factor);
+        addBall(true, 2, 0, 4.5f*distance, 0.5f*ratio);
+        addBall(false, 2, 1, 4.5f*distance, 0.5f*ratio);
+        addBall(true, 2, 2, 4.5f*distance, 0.5f*ratio);
 
-        addBall(true, 2, 0, 5.5f*distance, 0.6f*factor);
-        addBall(true, 2, 1, 5.5f*distance, 0.6f*factor);
-        addBall(false, 2, 2, 5.5f*distance, 0.6f*factor);
+        addBall(true, 2, 0, 5.5f*distance, 0.5f*ratio);
+        addBall(true, 2, 1, 5.5f*distance, 0.5f*ratio);
+        addBall(false, 2, 2, 5.5f*distance, 0.5f*ratio);
 
-        addBall(false, 2, 0, 7f*distance, 0.6f*factor);
-        addBall(true, 2, 1, 7f*distance, 0.6f*factor);
-        addBall(true, 2, 2, 7f*distance, 0.6f*factor);
-
+        addBall(false, 2, 0, 7f*distance, 0.5f*ratio);
+        addBall(true, 2, 1, 7f*distance, 0.5f*ratio);
+        addBall(true, 2, 2, 7f*distance, 0.5f*ratio);
     }
 
 }
