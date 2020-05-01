@@ -8,6 +8,7 @@ import org.andengine.input.touch.TouchEvent;
 import org.andengine.manager.ResourcesManager;
 import org.andengine.manager.SceneManager;
 import org.andengine.manager.SceneType;
+import org.andengine.util.adt.color.Color;
 
 public class SkillMenu extends BaseScene {
     private float sideLength;
@@ -26,6 +27,7 @@ public class SkillMenu extends BaseScene {
 
         Text title = new Text(camera.getCenterX(), camera.getHeight()-sideLength, resourcesManager.bigFont,
                 "Skill gym", vbom);
+        title.setColor(new Color(0.4f, 0.4f, 0.4f));
         this.attachChild(title);
     }
 

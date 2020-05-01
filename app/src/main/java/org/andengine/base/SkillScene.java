@@ -493,7 +493,8 @@ public abstract class SkillScene extends BaseScene {
         do {
             xPosCoin = randomGenerator.nextInt(3) + 1;
             yPosCoin = randomGenerator.nextInt(3) + 1;
-        } while (xPosCoin == xPosLume && yPosCoin == yPosLume);
+        } while ((xPosCoin == xPosLume && yPosCoin == yPosLume)
+            || (level == 6 && xPosCoin == xPosGrume && yPosCoin == yPosGrume));
         if (coinSprite == null) {
             coinSprite = new Sprite(camera.getCenterX() - sideLength + ((xPosCoin - 1) * sideLength), camera.getCenterY() - sideLength + ((yPosCoin - 1) * sideLength),
                     sideLength * 7 / 8, sideLength * 7 / 8, resourcesManager.coin_region, vbom);

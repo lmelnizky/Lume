@@ -138,15 +138,10 @@ public class SceneManager {
             currentScene.disposeScene();
         }
         ResourcesManager.getInstance().loadMenuResources();
+        //ResourcesManager.getInstance().loadInitialGameResources(); //load game resources for now and ever
         loadingScene = new LoadingScene();
         menuScene = new MainMenuScene();
         SceneManager.getInstance().setScene(menuScene);
-    }
-
-    public void loadHelpScene(final Engine mEngine) {
-        ResourcesManager.getInstance().loadHelpBackground();
-        helpScene = new HelpScene();
-        setScene(helpScene);
     }
 
     public void loadWorld0Scene(final Engine mEngine, final int level) {
@@ -342,7 +337,7 @@ public class SceneManager {
         loadingScene = new LoadingScene();
         setScene(loadingScene);
         ResourcesManager.getInstance().unloadMenuTextures();
-        mEngine.registerUpdateHandler(new TimerHandler(0.1f, new ITimerCallback() {
+        mEngine.registerUpdateHandler(new TimerHandler(1f, new ITimerCallback() {
             @Override
             public void onTimePassed(TimerHandler pTimerHandler) {
                 mEngine.unregisterUpdateHandler(pTimerHandler);
@@ -358,7 +353,7 @@ public class SceneManager {
         loadingScene = new LoadingScene();
         setScene(loadingScene);
         ResourcesManager.getInstance().unloadMenuTextures();
-        mEngine.registerUpdateHandler(new TimerHandler(0.1f, new ITimerCallback() {
+        mEngine.registerUpdateHandler(new TimerHandler(1f, new ITimerCallback() {
             @Override
             public void onTimePassed(TimerHandler pTimerHandler) {
                 mEngine.unregisterUpdateHandler(pTimerHandler);
@@ -369,12 +364,28 @@ public class SceneManager {
         }));
     }
 
+    public void loadInfoScene(final Engine mEngine) {
+        ResourcesManager.getInstance().unloadCurrentScene(currentScene);
+        loadingScene = new LoadingScene();
+        setScene(loadingScene);
+        ResourcesManager.getInstance().unloadMenuTextures();
+        mEngine.registerUpdateHandler(new TimerHandler(1f, new ITimerCallback() {
+            @Override
+            public void onTimePassed(TimerHandler pTimerHandler) {
+                mEngine.unregisterUpdateHandler(pTimerHandler);
+                ResourcesManager.getInstance().loadInfoResources();
+                helpScene = new HelpScene();
+                setScene(helpScene);
+            }
+        }));
+    }
+
     public void loadSkillGameScene(final Engine mEngine, int level) {
         ResourcesManager.getInstance().unloadCurrentScene(currentScene);
         loadingScene = new LoadingScene();
         setScene(loadingScene);
         ResourcesManager.getInstance().unloadMenuTextures();
-        mEngine.registerUpdateHandler(new TimerHandler(0.1f, new ITimerCallback() {
+        mEngine.registerUpdateHandler(new TimerHandler(1f, new ITimerCallback() {
             @Override
             public void onTimePassed(TimerHandler pTimerHandler) {
                 mEngine.unregisterUpdateHandler(pTimerHandler);
@@ -416,7 +427,7 @@ public class SceneManager {
         loadingScene = new LoadingScene();
         setScene(loadingScene);
         if (currentScene.getSceneType() == SceneType.SCENE_MENU) ResourcesManager.getInstance().unloadMenuTextures();
-        mEngine.registerUpdateHandler(new TimerHandler(0.1f, new ITimerCallback() {
+        mEngine.registerUpdateHandler(new TimerHandler(1f, new ITimerCallback() {
             @Override
             public void onTimePassed(TimerHandler pTimerHandler) {
                 mEngine.unregisterUpdateHandler(pTimerHandler);
@@ -432,7 +443,7 @@ public class SceneManager {
         loadingScene = new LoadingScene();
         setScene(loadingScene);
         ResourcesManager.getInstance().unloadMenuTextures();
-        mEngine.registerUpdateHandler(new TimerHandler(0.1f, new ITimerCallback() {
+        mEngine.registerUpdateHandler(new TimerHandler(1f, new ITimerCallback() {
             @Override
             public void onTimePassed(TimerHandler pTimerHandler) {
                 mEngine.unregisterUpdateHandler(pTimerHandler);
@@ -446,7 +457,7 @@ public class SceneManager {
         ResourcesManager.getInstance().unloadCurrentScene(currentScene);
         loadingScene = new LoadingScene();
         setScene(loadingScene);
-        mEngine.registerUpdateHandler(new TimerHandler(0.1f, new ITimerCallback() {
+        mEngine.registerUpdateHandler(new TimerHandler(1f, new ITimerCallback() {
             @Override
             public void onTimePassed(TimerHandler pTimerHandler) {
                 mEngine.unregisterUpdateHandler(pTimerHandler);
@@ -462,7 +473,7 @@ public class SceneManager {
         ResourcesManager.getInstance().unloadCurrentScene(currentScene);
         loadingScene = new LoadingScene();
         setScene(loadingScene);
-        mEngine.registerUpdateHandler(new TimerHandler(0.1f, new ITimerCallback() {
+        mEngine.registerUpdateHandler(new TimerHandler(1f, new ITimerCallback() {
             @Override
             public void onTimePassed(TimerHandler pTimerHandler) {
                 mEngine.unregisterUpdateHandler(pTimerHandler);
@@ -475,17 +486,15 @@ public class SceneManager {
 
     public void loadMenuScene(final Engine mEngine) {
         ResourcesManager.getInstance().unloadCurrentScene(currentScene);
-        currentScene.disposeScene();
+        //currentScene.disposeScene();
         setScene(loadingScene);
-//        gameScene.disposeScene();
-//        ResourcesManager.getInstance().unloadGameTextures();
         ResourcesManager.getInstance().unloadCurrentScene(currentScene);
         ResourcesManager.getInstance().bluetoothSocket = null;
         ResourcesManager.getInstance().bluetoothDevice = null;
-        mEngine.registerUpdateHandler(new TimerHandler(0.1f, new ITimerCallback() {
+        mEngine.registerUpdateHandler(new TimerHandler(1f, new ITimerCallback() {
             public void onTimePassed(final TimerHandler pTimerHandler) {
                 mEngine.unregisterUpdateHandler(pTimerHandler);
-                ResourcesManager.getInstance().loadMenuTextures();
+                ResourcesManager.getInstance().loadMenuResources();
                 setScene(menuScene);
                 menuScene.updateWorldText();
                 menuScene.updateCoinText();

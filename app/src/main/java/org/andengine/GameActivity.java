@@ -66,6 +66,7 @@ public class GameActivity extends BaseGameActivity implements RewardedVideoAdLis
     private static final String COINS = "COINS";
     private static final String HIGHSCORE = "HIGHSCORE";
     private static final String PLAYER = "PLAYER";
+    private static final String IS_SLOWMO = "IS_SLOWMO";
 
     private BoundCamera camera;
     private EngineOptions engineOptions;
@@ -273,6 +274,15 @@ public class GameActivity extends BaseGameActivity implements RewardedVideoAdLis
 
     public void setLoudVisible(boolean loudvisible) {
         editor.putBoolean(LOUDVISIBLE, loudvisible);
+        editor.commit();
+    }
+
+    public boolean isSlowMotion() {
+        return pref.getBoolean(IS_SLOWMO, false);
+    }
+
+    public void setSlowMotion(boolean slowMo) {
+        editor.putBoolean(IS_SLOWMO, slowMo);
         editor.commit();
     }
 
@@ -748,6 +758,7 @@ public class GameActivity extends BaseGameActivity implements RewardedVideoAdLis
         mEngine.stop();
         mWalkthroughAd.pause(this);
         mCoinsAd.pause(this);
+        ResourcesManager.getInstance().unloadGameAudio();
         super.onPause();
     }
 

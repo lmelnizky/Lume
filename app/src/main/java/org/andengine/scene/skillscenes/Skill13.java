@@ -386,9 +386,9 @@ public class Skill13 extends SkillScene {
     private void showStonesToScreen(int directionVariant, final boolean thornyFirst) {
         float ratio = resourcesManager.screenRatio;
 
-        addBall(false, 2, 0, 1f*ratio);
-        addBall(false, 2, 1, 1f*ratio);
-        addBall(false, 2, 2, 1f*ratio);
+        addBall(false, 1, 0, 1f);
+        addBall(false, 1, 1, 1f);
+        addBall(false, 1, 2, 1f);
     }
 
 }

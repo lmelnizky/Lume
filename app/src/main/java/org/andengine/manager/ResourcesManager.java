@@ -25,7 +25,9 @@ import org.andengine.opengl.texture.atlas.bitmap.BuildableBitmapTextureAtlas;
 import org.andengine.opengl.texture.atlas.bitmap.source.IBitmapTextureAtlasSource;
 import org.andengine.opengl.texture.atlas.buildable.builder.BlackPawnTextureAtlasBuilder;
 import org.andengine.opengl.texture.atlas.buildable.builder.ITextureAtlasBuilder;
+import org.andengine.opengl.texture.bitmap.BitmapTexture;
 import org.andengine.opengl.texture.region.ITextureRegion;
+import org.andengine.opengl.texture.region.TextureRegion;
 import org.andengine.opengl.texture.region.TiledTextureRegion;
 import org.andengine.opengl.vbo.VertexBufferObjectManager;
 import org.andengine.util.debug.Debug;
@@ -81,6 +83,7 @@ public class ResourcesManager {
     public ITextureRegion military;
     public ITextureRegion play_coin_region;
     public ITextureRegion shopping_region;
+    public ITextureRegion info_region;
     public ITextureRegion skill_gym_region;
     public TiledTextureRegion finger_tiled;
 
@@ -96,6 +99,7 @@ public class ResourcesManager {
     public BuildableBitmapTextureAtlas multiTextureAtlas = null;
     public BuildableBitmapTextureAtlas menuTextureAtlas = null;
     public BuildableBitmapTextureAtlas shopTextureAtlas = null;
+    public BuildableBitmapTextureAtlas infoTextureAtlas = null;
     public BuildableBitmapTextureAtlas helpTextureAtlas = null;
     public BitmapTextureAtlas splashTextureAtlas = null;
     public BuildableBitmapTextureAtlas world0TextureAtlas = null;
@@ -229,6 +233,10 @@ public class ResourcesManager {
     public ITextureRegion grume_big_region;
     public TiledTextureRegion coin_tiled_region;
 
+    //Info Graphics
+    public ITextureRegion help_shop_region;
+    public ITextureRegion info_shop_region;
+
     //Bluetooth and Multiplayer
     public BluetoothSocket bluetoothSocket;
     public BluetoothDevice bluetoothDevice;
@@ -249,8 +257,14 @@ public class ResourcesManager {
         loadMenuAudio();
     }
 
+    public void loadInitialGameResources() {
+        loadGameGraphics();
+        loadGameAudio();
+    }
+
     public void loadGameResources(int world) {
         loadGameGraphics();
+        loadPlayerGraphics();
         loadWorldGraphics(world);
         loadGameAudio();
     }
@@ -282,6 +296,8 @@ public class ResourcesManager {
             change_page = BitmapTextureAtlasTextureRegionFactory.createFromAsset(chooseLevelTextureAtlas, activity, "finger_w.png");
         }
         video_show_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(chooseLevelTextureAtlas, activity, "video_show.png");
+        snail_sign_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(chooseLevelTextureAtlas, activity, "snail_sign.png");
+        no_snail_sign_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(chooseLevelTextureAtlas, activity, "no_snail_sign.png");
 
         try {
             this.chooseLevelTextureAtlas.build(new BlackPawnTextureAtlasBuilder<IBitmapTextureAtlasSource, BitmapTextureAtlas>(0, 1, 0));
@@ -316,6 +332,7 @@ public class ResourcesManager {
             play_coin_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(menuTextureAtlas, activity, "play_coin.png");
             coin_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(menuTextureAtlas, activity, "coin.png");
             shopping_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(menuTextureAtlas, activity, "shopping.png");
+            info_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(menuTextureAtlas, activity, "info.png");
             skill_gym_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(menuTextureAtlas, activity, "skill_gym.png");
             upload_background_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(menuTextureAtlas, activity, "upload_background.png");
             confirm_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(menuTextureAtlas, activity, "confirm.png");
@@ -378,6 +395,23 @@ public class ResourcesManager {
 
     }
 
+    public void loadInfoResources() {
+        if (infoTextureAtlas == null) {
+            BitmapTextureAtlasTextureRegionFactory.setAssetBasePath("gfx/shop/");
+            infoTextureAtlas = new BuildableBitmapTextureAtlas(activity.getTextureManager(), 1024, 1024, TextureOptions.BILINEAR);
+            help_shop_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(infoTextureAtlas, activity, "help.png");
+            info_shop_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(infoTextureAtlas, activity, "info.png");
+            try {
+                this.infoTextureAtlas.build(new BlackPawnTextureAtlasBuilder<IBitmapTextureAtlasSource, BitmapTextureAtlas>(0, 1, 0));
+                this.infoTextureAtlas.load();
+            } catch (final ITextureAtlasBuilder.TextureAtlasBuilderException e) {
+                Debug.e(e);
+            }
+        } else {
+            infoTextureAtlas.load();
+        }
+    }
+
     public void loadSkillMenuResources() {
         if (skillMenuAtlas == null) {
             BitmapTextureAtlasTextureRegionFactory.setAssetBasePath("gfx/skill/");
@@ -434,11 +468,15 @@ public class ResourcesManager {
     private void unloadSkillResources() {
         unloadGameTextures();
         skillGameAtlas.unload();
+        skillGameAtlas.clearTextureAtlasSources();
+        skillGameAtlas = null;
         unloadGameAudio();
     }
 
     private void unloadHighscoreGraphics() {
-        highScoreAtlas.unload();
+        if (highScoreAtlas != null) highScoreAtlas.unload();
+        highScoreAtlas.clearTextureAtlasSources();
+        highScoreAtlas = null;
     }
 
     private void unloadShopGraphics() {
@@ -476,7 +514,7 @@ public class ResourcesManager {
     private void loadGameGraphics() {
         if (gameTextureAtlas == null) {
             BitmapTextureAtlasTextureRegionFactory.setAssetBasePath("gfx/game/");
-            gameTextureAtlas = new BuildableBitmapTextureAtlas(activity.getTextureManager(), 4096, 4096, TextureOptions.BILINEAR);
+            gameTextureAtlas = new BuildableBitmapTextureAtlas(activity.getTextureManager(), 1024, 1024, TextureOptions.BILINEAR);
 
             cracky_stone_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gameTextureAtlas, activity, "cracky_stone.png");
             thorny_stone_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gameTextureAtlas, activity, "thorny_stone.png");
@@ -532,8 +570,7 @@ public class ResourcesManager {
             lume_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(playerTextureAtlas, activity, "lume.png");
             lamporghina_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(playerTextureAtlas, activity, "lamporghina.png");
             grume_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(playerTextureAtlas, activity, "grume.png");
-            personal_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(playerTextureAtlas, activity, "personal.png");
-
+            //personal_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(playerTextureAtlas, activity, "personal.png");
 
             switch (activity.getCurrentPlayer()) {
                 case 0: //lume
@@ -571,8 +608,14 @@ public class ResourcesManager {
                     player_region = personal_region;
                     break;
             }
-            this.playerTextureAtlas.load();
+            //this.playerTextureAtlas.load();
         }
+    }
+
+    public void unloadPlayerGraphics() {
+        if (playerTextureAtlas != null) playerTextureAtlas.unload();
+        playerTextureAtlas.clearTextureAtlasSources();
+        playerTextureAtlas = null;
     }
 
     private void loadWorldGraphics(int world) {
@@ -757,24 +800,41 @@ public class ResourcesManager {
         switch (world) {
             case 0:
                 this.world0TextureAtlas.unload();
+                this.world0TextureAtlas.clearTextureAtlasSources();
+                this.world0TextureAtlas = null;
                 break;
             case 1:
                 this.world1TextureAtlas.unload();
+                this.world1TextureAtlas.clearTextureAtlasSources();
+                this.world1TextureAtlas = null;
                 break;
             case 2:
                 this.world2TextureAtlas.unload();
+                this.world2TextureAtlas.clearTextureAtlasSources();
                 break;
             case 3:
                 this.world3TextureAtlas.unload();
+                this.world3TextureAtlas.clearTextureAtlasSources();
                 break;
             case 4:
                 this.world4TextureAtlas.unload();
+                this.world4TextureAtlas.clearTextureAtlasSources();
                 break;
             case 5:
                 this.world5TextureAtlas.unload();
+                this.world5TextureAtlas.clearTextureAtlasSources();
                 break;
             case 6:
                 this.world6TextureAtlas.unload();
+                this.world6TextureAtlas.clearTextureAtlasSources();
+                break;
+            case 7:
+                this.world7TextureAtlas.unload();
+                this.world7TextureAtlas.clearTextureAtlasSources();
+                break;
+            case 8:
+                this.world8TextureAtlas.unload();
+                this.world8TextureAtlas.clearTextureAtlasSources();
                 break;
         }
     }
@@ -853,12 +913,12 @@ public class ResourcesManager {
     }
 
     public void unloadGameAudio() {
-        backgroundMusic.release();
-        luserSound.release();
-        easySound.release();
-        belchSound1.release();
-        belchSound2.release();
-        belchSound3.release();
+        if (backgroundMusic != null && !backgroundMusic.isReleased()) backgroundMusic.release();
+        if (luserSound != null && !luserSound.isReleased()) luserSound.release();
+        if (easySound != null && !easySound.isReleased()) easySound.release();
+        if (belchSound1 != null && !belchSound1.isReleased()) belchSound1.release();
+        if (belchSound2 != null && !belchSound2.isReleased()) belchSound2.release();
+        if (belchSound3 != null && !belchSound3.isReleased()) belchSound3.release();
 
         backgroundMusic = null;
         luserSound = null;
@@ -966,11 +1026,13 @@ public class ResourcesManager {
     }
 
     public void unloadMenuTextures() {
-        menuTextureAtlas.unload();
+        if (menuTextureAtlas != null) menuTextureAtlas.unload();
     }
 
     public void unloadGameTextures() {
-        gameTextureAtlas.unload();
+        unloadPlayerGraphics();
+        if (gameTextureAtlas != null) gameTextureAtlas.unload();
+        gameTextureAtlas = null;
     }
 
     public void unloadLevelTextures() {

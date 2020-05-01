@@ -226,6 +226,9 @@ public class MainMenuScene extends BaseScene implements IOnMenuItemClickListener
                 SceneManager.getInstance().loadShopScene(engine);
                 //TODO camera
                 return true;
+            case MENU_INFO:
+                SceneManager.getInstance().loadInfoScene(engine);
+                return true;
             case MENU_SKILL:
                 SceneManager.getInstance().loadSkillMenuScene(engine);
                 return true;
@@ -257,7 +260,7 @@ public class MainMenuScene extends BaseScene implements IOnMenuItemClickListener
         Sprite lumeTextSprite = new Sprite(camera.getCenterX(), camera.getHeight()-resourcesManager.sideLength*1f,
                 resourcesManager.sideLength*5, resourcesManager.sideLength*1.5f, resourcesManager.lume_text_region, vbom);
         this.attachChild(lumeTextSprite);
-        Sprite darkCloudSprite = new Sprite(sideLength*2.25f, camera.getHeight()-sideLength*1f, sideLength*6, sideLength*2.5f,
+        Sprite darkCloudSprite = new Sprite(sideLength*1.9f, camera.getHeight()-sideLength*1f, sideLength*6, sideLength*2.5f,
                 resourcesManager.cloud_dark_region, vbom);
         this.attachChild(darkCloudSprite);
 
@@ -465,7 +468,7 @@ public class MainMenuScene extends BaseScene implements IOnMenuItemClickListener
 
     private void createMenuChildScene() {
         float factorLeft = 1.5f;
-        float factorRight = 1.3f;
+        float factorRight = 1.4f;
         loudVisible = activity.isLoudVisible();
         //helpVisible = !activity.isMultiTutorialSeen();
 
@@ -476,7 +479,8 @@ public class MainMenuScene extends BaseScene implements IOnMenuItemClickListener
         final IMenuItem highMenuItem = new ScaleMenuItemDecorator(new SpriteMenuItem(MENU_HIGH, sideLength*factorLeft, sideLength*factorLeft, resourcesManager.play_coin_region, vbom), 1.2f, 1);
         final IMenuItem playMenuItem = new ScaleMenuItemDecorator(new SpriteMenuItem(MENU_PLAY, sideLength*factorLeft, sideLength*factorLeft, resourcesManager.play_region, vbom), 1.2f, 1);
         final IMenuItem levelsMenuItem = new ScaleMenuItemDecorator(new SpriteMenuItem(MENU_LEVELS, sideLength*factorLeft, sideLength*factorLeft, resourcesManager.world_region, vbom), 1.2f, 1);
-        final IMenuItem shoppingMenuItem = new ScaleMenuItemDecorator(new SpriteMenuItem(MENU_SHOPPING, sideLength*1.09f*factorRight, sideLength*factorRight, resourcesManager.shopping_region, vbom), 1.2f, 1);
+        final IMenuItem shoppingMenuItem = new ScaleMenuItemDecorator(new SpriteMenuItem(MENU_SHOPPING, sideLength*factorRight, sideLength*0.92f*factorRight, resourcesManager.shopping_region, vbom), 1.2f, 1);
+        final IMenuItem infoMenuItem = new ScaleMenuItemDecorator(new SpriteMenuItem(MENU_INFO, sideLength*factorRight*0.56f, sideLength*factorRight, resourcesManager.info_region, vbom), 1.2f, 1);
         final IMenuItem skillMenuItem = new ScaleMenuItemDecorator(new SpriteMenuItem(MENU_SKILL, sideLength*factorLeft, sideLength*factorLeft, resourcesManager.skill_gym_region, vbom), 1.2f, 1);
 //        ballFallMenuItem = new ScaleMenuItemDecorator(new SpriteMenuItem(MENU_AD_PARTNER, 110, 110, resourcesManager.ball_fall, vbom), 1.2f, 1);
 //        militaryMenuItem = new ScaleMenuItemDecorator(new SpriteMenuItem(MENU_AD_PARTNER, 110, 110, resourcesManager.military, vbom), 1.2f, 1);
@@ -492,6 +496,7 @@ public class MainMenuScene extends BaseScene implements IOnMenuItemClickListener
         menuChildScene.addMenuItem(playMenuItem);
         menuChildScene.addMenuItem(levelsMenuItem);
         menuChildScene.addMenuItem(shoppingMenuItem);
+        menuChildScene.addMenuItem(infoMenuItem);
         menuChildScene.addMenuItem(skillMenuItem);
         menuChildScene.addMenuItem(multiMenuItem);
         menuChildScene.addMenuItem(testMultiItem);
@@ -509,7 +514,8 @@ public class MainMenuScene extends BaseScene implements IOnMenuItemClickListener
         highMenuItem.setPosition(sideLength*4, sideLength*5);
         playMenuItem.setPosition(sideLength*6, sideLength*5);
         levelsMenuItem.setPosition(sideLength*6, sideLength*3);
-        shoppingMenuItem.setPosition(sideLength*11, sideLength*2.5f);
+        shoppingMenuItem.setPosition(sideLength*10.7f, sideLength*2.5f);
+        infoMenuItem.setPosition(sideLength*13.4f, sideLength*2.5f);
         skillMenuItem.setPosition(sideLength*4, sideLength*3);
         multiMenuItem.setPosition(sideLength*11, sideLength*5.5f);
         testMultiItem.setPosition(sideLength*13, sideLength*5.5f);
@@ -518,8 +524,8 @@ public class MainMenuScene extends BaseScene implements IOnMenuItemClickListener
 //        helpMultiMenuItem.setPosition(camera.getCenterX()+50, playMenuItem.getY() - 170);
 //        knowMultiMenuItem.setPosition(camera.getCenterX()+50, playMenuItem.getY() - 170);
 
-        loudMenuItem.setPosition(sideLength*13, sideLength*2.5f);
-        psstMenuItem.setPosition(sideLength*13, sideLength*2.5f);
+        loudMenuItem.setPosition(sideLength*12, sideLength*2.5f);
+        psstMenuItem.setPosition(sideLength*12, sideLength*2.5f);
 
         if (loudVisible) {
             loudMenuItem.setVisible(true);

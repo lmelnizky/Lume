@@ -95,18 +95,18 @@ public class Skill23 extends SkillScene {
                         if (Math.abs(deltaX) > Math.abs(deltaY)) { //horizontal
                             if (deltaX > 0) { //left to right
                                 movePlayer('R');
-                                showStonesToScreen(4, true);
+                                if (score < 10) showStonesToScreen(4, true);
                             } else { //right to left
                                 movePlayer('L');
-                                showStonesToScreen(2, true);
+                                if (score < 10) showStonesToScreen(2, true);
                             }
                         } else { //vertical
                             if (deltaY > 0) { //up to down
                                 movePlayer('U');
-                                showStonesToScreen(3, false);
+                                if (score < 10) showStonesToScreen(3, false);
                             } else { //down to up
                                 movePlayer('D');
-                                showStonesToScreen(1, false);
+                                if (score < 10) showStonesToScreen(1, false);
                             }
                         }
                     }
@@ -370,7 +370,7 @@ public class Skill23 extends SkillScene {
         if (age >= interval && firstStonesInLevel) {
             if (firstStonesInLevel) createCoin();
             firstStonesInLevel = false;
-            this.showStonesToScreen(2, false);
+            //this.showStonesToScreen(2, false);
             stoneTime = new Date().getTime();
         }
     }

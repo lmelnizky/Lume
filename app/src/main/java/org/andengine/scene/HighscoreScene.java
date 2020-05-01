@@ -216,6 +216,22 @@ public class HighscoreScene extends BaseScene {
         timeText.detachSelf();
         timeText.dispose();
 
+        moveNormalSign.detachSelf();
+        moveNormalSign.dispose();
+        moveDiagonalSign.detachSelf();
+        moveDiagonalSign.dispose();
+        helmetSign.detachSelf();
+        helmetSign.dispose();
+
+        shootNormalSign.detachSelf();
+        shootNormalSign.dispose();
+        shootDiagonalSign.detachSelf();
+        shootDiagonalSign.dispose();
+        mirrorSign.detachSelf();
+        mirrorSign.dispose();
+        lamporghinaSign.detachSelf();
+        lamporghinaSign.dispose();
+
         gameHUD.detachChildren();
         gameHUD.detachSelf();
         gameHUD.dispose();
@@ -224,6 +240,7 @@ public class HighscoreScene extends BaseScene {
     @Override
     public void onBackKeyPressed() {
         ResourcesManager.getInstance().backgroundMusic.stop();
+        disposeHUD();
         SceneManager.getInstance().loadMenuScene(engine);
     }
 
@@ -332,8 +349,8 @@ public class HighscoreScene extends BaseScene {
                     setIgnoreUpdate(false);
                     gameOverDisplayed = false;
                     registerUpdateHandler(physicsWorld);
-                    SceneManager.getInstance().loadHighscoreScene(engine);
                     disposeHUD();
+                    SceneManager.getInstance().loadHighscoreScene(engine);
                     return true;
                 } else {
                     return false;
@@ -356,8 +373,8 @@ public class HighscoreScene extends BaseScene {
                     setIgnoreUpdate(false);
                     gameOverDisplayed = false;
                     registerUpdateHandler(physicsWorld);
-                    SceneManager.getInstance().loadMenuScene(engine);
                     disposeHUD();
+                    SceneManager.getInstance().loadMenuScene(engine);
                     return true;
                 } else {
                     return false;
@@ -492,7 +509,8 @@ public class HighscoreScene extends BaseScene {
         do {
             xPosCoin = randomGenerator.nextInt(3) + 1;
             yPosCoin = randomGenerator.nextInt(3) + 1;
-        } while (xPosCoin == xPosLume && yPosCoin == yPosLume);
+        } while ((xPosCoin == xPosLume && yPosCoin == yPosLume) ||
+                (isLamporghina && xPosCoin == xPosGrume && yPosCoin == yPosGrume));
         if (coinSprite == null) {
             coinSprite = new Sprite(camera.getCenterX() - sideLength + ((xPosCoin - 1) * sideLength), camera.getCenterY() - sideLength + ((yPosCoin - 1) * sideLength),
                     sideLength * 7 / 8, sideLength * 7 / 8, resourcesManager.coin_region, vbom);

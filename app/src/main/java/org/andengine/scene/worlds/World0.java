@@ -185,6 +185,10 @@ public class World0 extends BaseScene {
         levelText.dispose();
         timeText.detachSelf();
         timeText.dispose();
+        shootSign.detachSelf();
+        shootSign.dispose();
+        moveSign.detachSelf();
+        moveSign.dispose();
 
         gameHUD.detachSelf();
         gameHUD.dispose();
@@ -192,7 +196,7 @@ public class World0 extends BaseScene {
 
     @Override
     public void onBackKeyPressed() {
-        ResourcesManager.getInstance().backgroundMusic.stop();
+        if (!ResourcesManager.getInstance().backgroundMusic.isReleased()) ResourcesManager.getInstance().backgroundMusic.stop();
         if (cameFromLevelsScene) {
             SceneManager.getInstance().loadWorlds1to4Scene(engine);
             disposeHUD();

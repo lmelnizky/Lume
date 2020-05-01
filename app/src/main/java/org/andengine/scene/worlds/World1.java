@@ -12,6 +12,7 @@ import org.andengine.engine.handler.timer.ITimerCallback;
 import org.andengine.engine.handler.timer.TimerHandler;
 import org.andengine.entity.Entity;
 import org.andengine.entity.IEntity;
+import org.andengine.entity.modifier.AlphaModifier;
 import org.andengine.entity.modifier.RotationModifier;
 import org.andengine.entity.modifier.ScaleModifier;
 import org.andengine.entity.primitive.Rectangle;
@@ -38,6 +39,8 @@ import org.andengine.util.adt.color.Color;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Random;
+
+import javax.microedition.khronos.opengles.GL10;
 
 public class World1 extends BaseScene {
 
@@ -103,12 +106,14 @@ public class World1 extends BaseScene {
         this.level = 1;
         cameFromLevelsScene = false;
         createHUD();
+        showLevelText();
     }
 
     public World1(int level) { //constructor used when selecting a level
         this.level = level;
         cameFromLevelsScene = true;
         createHUD();
+        showLevelText();
     }
 
     @Override
@@ -176,6 +181,23 @@ public class World1 extends BaseScene {
             stoneTimes[i] = new Date().getTime();
         }
         firstStonesInLevel = true;
+    }
+
+    private void showLevelText() {
+        Text levelText = new Text(camera.getCenterX(), camera.getCenterY(), resourcesManager.bigFont,
+                "Level " + String.valueOf(level), vbom);
+        secondLayer.attachChild(levelText);
+        levelText.setColor(new Color(1f, 1f, 1f, 1f));
+        levelText.registerEntityModifier(new ScaleModifier(0.6f, 0.5f, 1.5f));
+        levelText.setBlendFunction(GL10.GL_SRC_ALPHA, GL10.GL_ONE_MINUS_SRC_ALPHA);
+        levelText.registerEntityModifier(new AlphaModifier(0.6f, 0.6f, 0.6f));
+        engine.registerUpdateHandler(new TimerHandler(0.6f, new ITimerCallback() {
+            public void onTimePassed(final TimerHandler pTimerHandler) {
+                engine.unregisterUpdateHandler(pTimerHandler);
+                levelText.detachSelf();
+                levelText.dispose();
+            }
+        }));
     }
 
     public void disposeHUD() {
@@ -1144,6 +1166,7 @@ public class World1 extends BaseScene {
                         } else {
                             levelText.setText("L" + String.valueOf(level));
                             resetData();
+                            showLevelText();
                         }
                     }
                 }

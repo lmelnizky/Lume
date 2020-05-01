@@ -21,6 +21,9 @@ public class Worlds1to4Scene extends BaseScene {
     private Text[] w1Levels, w2Levels, w3Levels, w4Levels;
     private Sprite changePage1;
     private Sprite showVideoSprite;
+    private Sprite slowMotionSprite, noSnailSprite;
+
+    private boolean slowMo = false;
 
     private float startX1 = camera.getWidth()*5/32; //was 3
     private float startX2 = camera.getWidth()*10/16;
@@ -35,6 +38,7 @@ public class Worlds1to4Scene extends BaseScene {
         this.initTextArrays();
         createTexts();
         showVideoButton();
+        createSlowMotionSprite();
     }
 
     @Override
@@ -56,6 +60,31 @@ public class Worlds1to4Scene extends BaseScene {
         SpriteBackground spriteBackground = new SpriteBackground(new Sprite(camera.getCenterX(), camera.getCenterY(),
                 camera.getWidth(), camera.getHeight(), resourcesManager.chooseLevel_region, vbom));
         this.setBackground(spriteBackground);
+    }
+
+    private void createSlowMotionSprite() {
+        slowMotionSprite = new Sprite(camera.getCenterX(), camera.getCenterY(), resourcesManager.sideLength*2.5f,
+                resourcesManager.sideLength*2.5f, resourcesManager.snail_sign_region, vbom) {
+            public boolean onAreaTouched(TouchEvent touchEvent, float x, float y) {
+                if (touchEvent.isActionDown()) {
+                    slowMo = !slowMo;
+                    slowMotionSprite.setVisible(slowMo);
+                    noSnailSprite.setVisible(!slowMo);
+                    activity.setSlowMotion(slowMo);
+                    return true;
+                } else {
+                    return false;
+                }
+            }
+        };
+        noSnailSprite = new Sprite(camera.getCenterX(), camera.getCenterY(), resourcesManager.sideLength*2.5f,
+                resourcesManager.sideLength*2.5f, resourcesManager.no_snail_sign_region, vbom);
+        attachChild(slowMotionSprite);
+        attachChild(noSnailSprite);
+        registerTouchArea(slowMotionSprite);
+        registerTouchArea(noSnailSprite);
+        slowMotionSprite.setVisible(activity.isSlowMotion());
+        noSnailSprite.setVisible(!activity.isSlowMotion());
     }
 
     private void createChangePageButton() {
