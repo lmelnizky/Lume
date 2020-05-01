@@ -27,10 +27,12 @@ public class RequestPopUp extends Sprite{
     private Text yesText, noText, questionText;
     private ButtonSprite yes, no;
     private MultiplayerUsersScene scene = MultiplayerUsersScene.getInstance();
+    private String room;
     //constructor
-    public RequestPopUp(Player requestFrom) {
+    public RequestPopUp(Player requestFrom, String room) {
         super(CAMERA_WIDTH/2, CAMERA_HEIGHT/2, ResourcesManager.getInstance().inputtext_region, ResourcesManager.getInstance().vbom); //TODO set the textureRegion to a grey texture
         //super.setAlpha(200/255);
+        this.room = room;
         super.setSize(CAMERA_WIDTH/2, CAMERA_HEIGHT/2);
         this.requestFrom = requestFrom;
         create();
@@ -52,7 +54,7 @@ public class RequestPopUp extends Sprite{
     }
     public void onClick(ButtonSprite pButtonSprite, float pTouchAreaLocalX, float pTouchAreaLocalY) {
         if(pButtonSprite == yes){
-            scene.getServer().sendAnswer(true, requestFrom.getId());
+            scene.getServer().sendAnswer(true, requestFrom.getId(), room);
             scene.registerUpdateHandler(new TimerHandler(3f, new ITimerCallback() {
                 @Override
                 public void onTimePassed(TimerHandler pTimerHandler) {
@@ -64,7 +66,7 @@ public class RequestPopUp extends Sprite{
             }));
         }
         if(pButtonSprite == no){
-            scene.getServer().sendAnswer(false, requestFrom.getId());
+            scene.getServer().sendAnswer(false, requestFrom.getId(), room);
         }
     }
 }
