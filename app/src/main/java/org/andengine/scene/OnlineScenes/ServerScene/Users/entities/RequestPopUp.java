@@ -4,11 +4,15 @@ import android.widget.Button;
 
 import com.google.android.gms.common.util.concurrent.NamedThreadFactory;
 
+import org.andengine.engine.handler.timer.ITimerCallback;
+import org.andengine.engine.handler.timer.TimerHandler;
 import org.andengine.entity.sprite.ButtonSprite;
 import org.andengine.entity.sprite.Sprite;
 import org.andengine.entity.text.Text;
 import org.andengine.manager.ResourcesManager;
+import org.andengine.manager.SceneManager;
 import org.andengine.scene.OnlineScenes.ServerScene.Player;
+import org.andengine.scene.OnlineScenes.ServerScene.Users.LumeUserActions;
 import org.andengine.scene.OnlineScenes.ServerScene.Users.MultiplayerUsersScene;
 import org.andengine.util.adt.dictionary.Dictionary;
 
@@ -23,10 +27,12 @@ public class RequestPopUp extends Sprite{
     private Text yesText, noText, questionText;
     private ButtonSprite yes, no;
     private MultiplayerUsersScene scene = MultiplayerUsersScene.getInstance();
+    private String room;
     //constructor
-    public RequestPopUp(Player requestFrom) {
+    public RequestPopUp(Player requestFrom, String room) {
         super(CAMERA_WIDTH/2, CAMERA_HEIGHT/2, ResourcesManager.getInstance().inputtext_region, ResourcesManager.getInstance().vbom); //TODO set the textureRegion to a grey texture
         //super.setAlpha(200/255);
+        this.room = room;
         super.setSize(CAMERA_WIDTH/2, CAMERA_HEIGHT/2);
         this.requestFrom = requestFrom;
         create();
@@ -48,10 +54,19 @@ public class RequestPopUp extends Sprite{
     }
     public void onClick(ButtonSprite pButtonSprite, float pTouchAreaLocalX, float pTouchAreaLocalY) {
         if(pButtonSprite == yes){
-            scene.getServer().sendAnswer(true, requestFrom.getId());
+            scene.getServer().sendAnswer(true, requestFrom.getId(), room);
+            scene.registerUpdateHandler(new TimerHandler(3f, new ITimerCallback() {
+                @Override
+                public void onTimePassed(TimerHandler pTimerHandler) {
+                    LinkedList<Player> players = new LinkedList();
+                    for(Player p: scene.getPlayers()) if(p.getId().equals(requestFrom.getId())) players.add(p);
+                    if(scene.getServer().getUserActions() instanceof LumeUserActions)players.add(((LumeUserActions) scene.getServer().getUserActions()).getLocalPLayer());
+                    SceneManager.getInstance().loadMultiOnlineGameScene(ResourcesManager.getInstance().engine, players, scene.getServer());
+                }
+            }));
         }
         if(pButtonSprite == no){
-            scene.getServer().sendAnswer(false, requestFrom.getId());
+            scene.getServer().sendAnswer(false, requestFrom.getId(), room);
         }
     }
 }

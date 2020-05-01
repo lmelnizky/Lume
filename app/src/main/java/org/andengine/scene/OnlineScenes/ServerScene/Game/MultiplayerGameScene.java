@@ -22,6 +22,7 @@ import org.andengine.input.touch.TouchEvent;
 import org.andengine.manager.ResourcesManager;
 import org.andengine.manager.SceneManager;
 import org.andengine.manager.SceneType;
+import org.andengine.scene.OnlineScenes.ServerScene.Game.Creator.BallCreator;
 import org.andengine.scene.OnlineScenes.ServerScene.Multiplayer;
 import org.andengine.scene.OnlineScenes.ServerScene.Player;
 import org.andengine.scene.OnlineScenes.ServerScene.Server;
@@ -122,9 +123,7 @@ public class MultiplayerGameScene extends BaseScene {
 
     }
     @Override
-    public SceneType getSceneType() {
-        return null;
-    }
+    public SceneType getSceneType() {return SceneType.SCENE_ONLINEMULTI;}
     @Override
     public void disposeScene() {
         //don't call the static destroy method, it will be recursive :)

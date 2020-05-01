@@ -2,6 +2,7 @@ package org.andengine.scene.OnlineScenes.ServerScene;
 
 import org.andengine.scene.OnlineScenes.ServerScene.Game.Creator.BallCreator;
 import org.andengine.scene.OnlineScenes.ServerScene.Game.Creator.CoinCreator;
+import org.andengine.scene.OnlineScenes.ServerScene.Game.Creator.Creator;
 import org.andengine.scene.OnlineScenes.ServerScene.Game.Creator.MoveCreator;
 import org.andengine.scene.OnlineScenes.ServerScene.Game.GameActions;
 import org.andengine.scene.OnlineScenes.ServerScene.Users.UserActions;
@@ -71,9 +72,9 @@ public class Server {
         }).on(newUserConnected, args ->{
             userActions.newUser(ServerDataFactory.getPlayerFromData(args));
         }).on(request, args ->{
-            userActions.getRequest(ServerDataFactory.getRequestFromData(args));
+            userActions.getRequest(ServerDataFactory.getRequestFromData(args)[0], ServerDataFactory.getRequestFromData(args)[1]);
         }).on(answerRequest, args ->{
-            userActions.answerRequest((Boolean) ServerDataFactory.getAnswerFromRequestData()[0], (String) ServerDataFactory.getAnswerFromRequestData()[1]);
+            userActions.getAnswerRequest((Boolean) ServerDataFactory.getAnswerFromRequestData(args)[0], (String) ServerDataFactory.getAnswerFromRequestData(args)[1],(String) ServerDataFactory.getAnswerFromRequestData(args)[2]);
         }).on(createGameRoom, args ->{
             gameActions.createdGame((String[])ServerDataFactory.getStartGameFromData(args)[0],(String) ServerDataFactory.getStartGameFromData(args)[1]);
         }).on(joinRoom, args ->{
@@ -94,17 +95,18 @@ public class Server {
         if(!socket.connected()) throw new RuntimeException("method requestGame is called in buildTime.. it needs to be called event based! Or Client cannot connect to server");
         socket.emit(request, ServerDataFactory.getRequestData(toPlayerID, id));
     }
-    public void sendAnswer(boolean angenommen, String toID){
-        socket.emit(answerRequest, ServerDataFactory.getAnswerRequestData(angenommen, toID, id));
+    public void sendAnswer(boolean angenommen, String toID, String room){
+        socket.emit(answerRequest, ServerDataFactory.getAnswerRequestData(angenommen, toID, id, room));
     }
-    public void createGameRoom(String[] IDs, String room){ //TODO for generating a room on the server, you have to create your own link.. so you have to create your own random link
+    public void createGameRoom(String[] IDs, String room){
         socket.emit(createGameRoom, ServerDataFactory.getCreateGameData(IDs, room));
     }
     //these are methods, which can called by the referee
-    public void emitBall(BallCreator creator){socket.emit(loadBall, creator.getJSON());}
-    public void emitCoin(CoinCreator creator){socket.emit(loadCoin, creator.getJSON());}
-    //this method is called when a player moved
-    public void emitMove(MoveCreator creator){socket.emit(playerMoved, creator.getJSON());}
+    public void emit(Creator creator){
+        if(creator instanceof CoinCreator)  socket.emit(loadCoin, creator.getJSON());
+        if(creator instanceof MoveCreator)  socket.emit(playerMoved, creator.getJSON());
+        if(creator instanceof BallCreator)  socket.emit(loadBall, creator.getJSON());
+    }
     //createPlayer and save the username on the server
     public void createPlayer(String username){
         try {socket.emit(createPlayer, new JSONObject("{\"name\":" + "\"" +  username + "\"" + "}"));}

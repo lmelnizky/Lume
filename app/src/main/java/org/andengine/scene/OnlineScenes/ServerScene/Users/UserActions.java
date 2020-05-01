@@ -9,7 +9,7 @@ public interface UserActions {
     void allUsers(Collection<Player> players);
     void newUser(Player player);
     void userDisconnected(String playerID);
-    void getRequest(String id);
+    void getRequest(String id, String room);
     void disconnect();
-    void answerRequest(boolean angenommen, String fromID);
+    void getAnswerRequest(boolean angenommen, String fromID, String room);
 }

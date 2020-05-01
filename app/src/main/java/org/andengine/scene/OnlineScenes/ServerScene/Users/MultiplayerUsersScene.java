@@ -60,13 +60,10 @@ public class MultiplayerUsersScene extends BaseScene implements ButtonSprite.OnC
         for(Entity e: entities) this.attachChild(e);
         for(ITouchArea area: touchAreas)this.registerTouchArea(area);
     }
-    public void addRequestPopUp(String id){
-        Log.i("MultiPlayerUserScene", "addRequestPopUp");
-        for(Player p: players) if(p.getId().equals(id)) entities.add(new RequestPopUp(p));
-    }
+    public void addRequestPopUp(String id, String room){}
     public void updateScene(){
         Log.i("MultiPlayerUserScene", "updateScene");
-        for(Player p: players) entities.add(new PlayersField(p));
+        for(Player p: players) playerEntities.add(new PlayersField(p));
     }
     //constructor
     private MultiplayerUsersScene(){}
@@ -77,9 +74,7 @@ public class MultiplayerUsersScene extends BaseScene implements ButtonSprite.OnC
     }
 
     @Override
-    public SceneType getSceneType() {
-        return null;
-    }
+    public SceneType getSceneType() {return SceneType.SCENE_ONLINEUSERS;}
 
     @Override
     public void disposeScene() {

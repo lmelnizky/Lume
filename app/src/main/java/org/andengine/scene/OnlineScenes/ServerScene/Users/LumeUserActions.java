@@ -4,6 +4,7 @@ import android.util.Log;
 
 import org.andengine.entity.Entity;
 import org.andengine.scene.OnlineScenes.ServerScene.Player;
+import org.andengine.scene.OnlineScenes.ServerScene.Users.entities.AnswerRequest;
 import org.andengine.scene.OnlineScenes.ServerScene.Users.entities.PlayersField;
 import org.andengine.scene.OnlineScenes.ServerScene.Users.entities.RequestPopUp;
 
@@ -40,16 +41,19 @@ public class LumeUserActions implements UserActions {
         for(Entity t: scene.getPlayerEntities()) if(t instanceof PlayersField) if(((PlayersField) t).getPlayer().getId().equals(userID)) scene.detachChild(t);
     }
     @Override
-    public void getRequest(String id) {
+    public void getRequest(String id, String room) {
         Log.i("LumeUserActions", "getRequest");
-        for(Player p: scene.getPlayers()) if(p.getId().equals(id)) scene.getEntitiesList().add(new RequestPopUp(p));
+        for(Player p: scene.getPlayers()) if(p.getId().equals(id)) scene.getEntitiesList().add(new RequestPopUp(p, room));
     }
     @Override
     public void disconnect() {
         Log.i("LumeUserActions", "disconnect");
     }
     @Override
-    public void answerRequest(boolean angenommen, String fromID) {
+    public void getAnswerRequest(boolean angenommen, String fromID, String room) {
         Log.i("LumeUserActions", "answerRequest");
+        for(Player p: scene.getPlayers()) if(p.getId().equals(fromID)) new AnswerRequest(p, angenommen, room);
     }
+
+    public Player getLocalPLayer() {return localPLayer;}
 }

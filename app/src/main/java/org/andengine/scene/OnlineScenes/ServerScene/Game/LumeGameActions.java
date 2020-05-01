@@ -1,5 +1,7 @@
 package org.andengine.scene.OnlineScenes.ServerScene.Game;
 
+import android.util.Log;
+
 import com.badlogic.gdx.math.Vector2;
 
 import org.andengine.object.Ball;
@@ -35,10 +37,12 @@ public class LumeGameActions implements GameActions {
         //overwritten methods from interface(s)
     @Override
     public void createdGame(String[] opponentsIDs, String refereeID) {
+        Log.i("LumaGameActions", "createdGame");
         //method is called when both player's connected to the server.
     }
     @Override
     public void playerMoved(MoveCreator creator) {
+        Log.i("LumaGameActions", "playerMoved");
         /*for (Player p : scene.getMultiplayer().getPlayers()) {
             if (p.getId().equals(player.getId())) {
                 p.getSprite().setPosition(newPosition.x, newPosition.y);
@@ -48,25 +52,29 @@ public class LumeGameActions implements GameActions {
     }
     @Override
     public void loadBall(BallCreator creator) {
+        Log.i("LumaGameActions", "new Ball");
         //method is called when the referee uploaded a new Ball
     }
     @Override
     public void loadCoin(CoinCreator creator) {
+        Log.i("LumaGameActions", "loadCoin");
         //is called when the referee uploaded a new Coin
     }
     @Override
     public void opponentDisconnected() {
+        Log.i("LumaGameActions", "opponent Disconnected from the service");
         //opponent lost connection to the server
     }
 
     @Override
     public void youDisconnected() {
+        Log.i("LumaGameActions", "Lost connection to the server");
         //user lost connection
     }
 
     @Override
     public void startGame() {
-
+        Log.i("LumaGameActions", "startGame");
     }
     //inner classes
         //public classes
