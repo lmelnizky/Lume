@@ -4,6 +4,7 @@ import com.badlogic.gdx.math.Vector2;
 
 import org.andengine.base.BaseScene;
 import org.andengine.engine.camera.hud.HUD;
+import org.andengine.engine.handler.IUpdateHandler;
 import org.andengine.engine.handler.timer.ITimerCallback;
 import org.andengine.engine.handler.timer.TimerHandler;
 import org.andengine.entity.Entity;
@@ -46,15 +47,18 @@ public class MultiplayerGameScene extends BaseScene {
     private static final int SWIPE_MIN_DISTANCE = 10;
 
     //primitives
-    public boolean gameOverDisplayed;
+    public boolean gameOverDisplayed, waitingForStonesToDisappear, gameFinished, firstStonesInLevel;
     public float sideLength;
     public float shootX1, shootX2, shootY1, shootY2;
     public float swipeX1, swipeX2, swipeY1, swipeY2;
+    public long stoneTime;
     public int xPositions, yPositions;
     public int xPosLume, yPosLume;
     public int xPosGrume, yPosGrume;
     public int xPosCoin, yPosCoin;
     public int xPosBomb, yPosBomb;
+    public int time;
+    public int variant;
 
     //andengine variables
     public Scene gameOverScene;

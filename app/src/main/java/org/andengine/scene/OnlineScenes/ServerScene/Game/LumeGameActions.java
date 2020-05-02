@@ -57,6 +57,7 @@ public class LumeGameActions implements GameActions {
     @Override
     public void loadBall(BallCreator creator) {
         Log.i("LumaGameActions", "new Ball");
+        scene.attachChild(creator.createSprite());
         //method is called when the referee uploaded a new Ball
     }
     @Override
@@ -96,6 +97,7 @@ public class LumeGameActions implements GameActions {
         scene.getMultiplayer().getServer().emit(new CannonCreator(scene.getMultiplayer().getRoom(), 1, scene.getMultiplayer().getServer().id));
         scene.getMultiplayer().getServer().emit(new CoinCreator(scene.getMultiplayer().getRoom(), 1, 1));
         scene.getMultiplayer().getServer().emit(new MoveCreator(scene.getMultiplayer().getRoom(),'R', scene.getMultiplayer().getServer().id));
+
     }
     //inner classes
         //public classes

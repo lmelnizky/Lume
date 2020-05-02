@@ -62,6 +62,8 @@ public class BallCreator extends Creator {
         Ball ball;
         PhysicsWorld physicsWorld = gameScene.physicsWorld;
 
+        speed = (direction%2 == 0) ? ResourcesManager.getInstance().screenRatio : 1f;
+
         switch (direction) {
             case 1:
                 x = ResourcesManager.getInstance().camera.getCenterX() - sideLength + sideLength*position;
