@@ -93,15 +93,13 @@ public class LumeGameActions implements GameActions {
     @Override
     public void startGame() {
         Log.i("LumaGameActions", "startGame");
-
-        SceneManager.getInstance().loadMultiOnlineGameScene(ResourcesManager.getInstance().engine, );
         scene = MultiplayerGameScene.getInstance();
         if(referee.equals(scene.getMultiplayer().getServer().id)) scene.referee = new Referee();
-        scene.getMultiplayer().getServer().emit(new BallCreator(scene.getMultiplayer().getRoom(), true, (short) 1,(short) 1));
+        /*scene.getMultiplayer().getServer().emit(new BallCreator(scene.getMultiplayer().getRoom(), true, (short) 1,(short) 1));
         scene.getMultiplayer().getServer().emit(new CannonCreator(scene.getMultiplayer().getRoom(), 1, scene.getMultiplayer().getServer().id));
         scene.getMultiplayer().getServer().emit(new CoinCreator(scene.getMultiplayer().getRoom(), 1, 1));
         scene.getMultiplayer().getServer().emit(new MoveCreator(scene.getMultiplayer().getRoom(),'R', scene.getMultiplayer().getServer().id));
-
+*/
     }
     //inner classes
         //public classes

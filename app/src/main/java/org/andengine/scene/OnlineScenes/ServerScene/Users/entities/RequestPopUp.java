@@ -54,14 +54,14 @@ public class RequestPopUp extends Sprite{
     }
     public void onClick(ButtonSprite pButtonSprite, float pTouchAreaLocalX, float pTouchAreaLocalY) {
         if(pButtonSprite == yes){
+            LinkedList<Player> players = new LinkedList();
+            for(Player p: scene.getPlayers()) if(p.getId().equals(requestFrom.getId())) players.add(p);
+            if(scene.getServer().getUserActions() instanceof LumeUserActions)players.add(((LumeUserActions) scene.getServer().getUserActions()).getLocalPLayer());
             scene.getServer().sendAnswer(true, requestFrom.getId(), room);
             scene.registerUpdateHandler(new TimerHandler(2f, new ITimerCallback() {
                 @Override
                 public void onTimePassed(TimerHandler pTimerHandler) {
-                    LinkedList<Player> players = new LinkedList();
-                    for(Player p: scene.getPlayers()) if(p.getId().equals(requestFrom.getId())) players.add(p);
-                    if(scene.getServer().getUserActions() instanceof LumeUserActions)players.add(((LumeUserActions) scene.getServer().getUserActions()).getLocalPLayer());
-                    //SceneManager.getInstance().loadMultiOnlineGameScene(ResourcesManager.getInstance().engine, players, scene.getServer(), room);
+                    SceneManager.getInstance().loadMultiOnlineGameScene(ResourcesManager.getInstance().engine, players, scene.getServer(), room);
                 }
             }));
         }
@@ -69,4 +69,20 @@ public class RequestPopUp extends Sprite{
             scene.getServer().sendAnswer(false, requestFrom.getId(), room);
         }
     }
+    public Player getRequestFrom() {return requestFrom;}
+    public void setRequestFrom(Player requestFrom) {this.requestFrom = requestFrom;}
+    public Text getYesText() {return yesText;}
+    public void setYesText(Text yesText) {this.yesText = yesText;}
+    public Text getNoText() {return noText;}
+    public void setNoText(Text noText) {this.noText = noText;}
+    public Text getQuestionText() {return questionText;}
+    public void setQuestionText(Text questionText) {this.questionText = questionText;}
+    public ButtonSprite getYes() {return yes;}
+    public void setYes(ButtonSprite yes) {this.yes = yes;}
+    public ButtonSprite getNo() {return no;}
+    public void setNo(ButtonSprite no) {this.no = no;}
+    public MultiplayerUsersScene getScene() {return scene;}
+    public void setScene(MultiplayerUsersScene scene) {this.scene = scene;}
+    public String getRoom() {return room;}
+    public void setRoom(String room) {this.room = room;}
 }

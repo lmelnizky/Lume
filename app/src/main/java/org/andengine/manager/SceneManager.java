@@ -457,13 +457,13 @@ public class SceneManager {
         ResourcesManager.getInstance().unloadCurrentScene(currentScene);
         loadingScene = new LoadingScene();
         setScene(loadingScene);
+        ResourcesManager.getInstance().loadOnlineMultiResources();
+        MultiplayerGameScene.createInstance(players, server, room);
+        onlineGameScene = MultiplayerGameScene.getInstance();
         mEngine.registerUpdateHandler(new TimerHandler(1f, new ITimerCallback() {
             @Override
             public void onTimePassed(TimerHandler pTimerHandler) {
                 mEngine.unregisterUpdateHandler(pTimerHandler);
-                ResourcesManager.getInstance().loadOnlineMultiResources();
-                MultiplayerGameScene.createInstance(players, server, room);
-                onlineGameScene = MultiplayerGameScene.getInstance();
                 setScene(onlineGameScene);
             }
         }));
