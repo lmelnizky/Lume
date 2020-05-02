@@ -4,7 +4,6 @@ import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
 import android.graphics.Color;
 import android.graphics.Typeface;
-import android.util.Log;
 
 import org.andengine.GameActivity;
 import org.andengine.audio.music.Music;
@@ -26,9 +25,7 @@ import org.andengine.opengl.texture.atlas.bitmap.BuildableBitmapTextureAtlas;
 import org.andengine.opengl.texture.atlas.bitmap.source.IBitmapTextureAtlasSource;
 import org.andengine.opengl.texture.atlas.buildable.builder.BlackPawnTextureAtlasBuilder;
 import org.andengine.opengl.texture.atlas.buildable.builder.ITextureAtlasBuilder;
-import org.andengine.opengl.texture.bitmap.BitmapTexture;
 import org.andengine.opengl.texture.region.ITextureRegion;
-import org.andengine.opengl.texture.region.TextureRegion;
 import org.andengine.opengl.texture.region.TiledTextureRegion;
 import org.andengine.opengl.vbo.VertexBufferObjectManager;
 import org.andengine.util.debug.Debug;
@@ -146,7 +143,7 @@ public class ResourcesManager {
     //Signs Texture Regions
     public ITextureRegion shoot_normal_region;
     public ITextureRegion shoot_diagonal_sign_region;
-    public ITextureRegion move_normal_region;
+    public ITextureRegion move_normal_sign_region;
     public ITextureRegion move_diagonal_sign_region;
     public ITextureRegion cracky_mirror_sign_region;
     public ITextureRegion snail_sign_region;
@@ -398,10 +395,18 @@ public class ResourcesManager {
 
     public void loadInfoResources() {
         if (infoTextureAtlas == null) {
-            BitmapTextureAtlasTextureRegionFactory.setAssetBasePath("gfx/shop/");
+            BitmapTextureAtlasTextureRegionFactory.setAssetBasePath("gfx/game/");
             infoTextureAtlas = new BuildableBitmapTextureAtlas(activity.getTextureManager(), 1024, 1024, TextureOptions.BILINEAR);
             help_shop_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(infoTextureAtlas, activity, "help.png");
             info_shop_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(infoTextureAtlas, activity, "info.png");
+            kimmelnitz_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(infoTextureAtlas, activity, "kimmelnitz.png");
+            move_normal_sign_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(infoTextureAtlas, activity, "move_normal_sign.png");
+            shoot_normal_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(infoTextureAtlas, activity, "shoot_normal_sign.png");
+            move_diagonal_sign_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(infoTextureAtlas, activity, "move_diagonal_sign.png");
+            shoot_diagonal_sign_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(infoTextureAtlas, activity, "shoot_diagonal_sign.png");
+            cracky_mirror_sign_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(infoTextureAtlas, activity, "cracky_mirror_sign.png");
+            lamporghina_sign_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(infoTextureAtlas, activity, "lamporghina_sign.png");
+            helmet_sign_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(infoTextureAtlas, activity, "helmet_sign.png");
             try {
                 this.infoTextureAtlas.build(new BlackPawnTextureAtlasBuilder<IBitmapTextureAtlasSource, BitmapTextureAtlas>(0, 1, 0));
                 this.infoTextureAtlas.load();
@@ -548,7 +553,7 @@ public class ResourcesManager {
             //signs
             shoot_normal_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gameTextureAtlas, activity, "shoot_normal_sign.png");
             shoot_diagonal_sign_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gameTextureAtlas, activity, "shoot_diagonal_sign.png");
-            move_normal_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gameTextureAtlas, activity, "move_normal_sign.png");
+            move_normal_sign_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gameTextureAtlas, activity, "move_normal_sign.png");
             move_diagonal_sign_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gameTextureAtlas, activity, "move_diagonal_sign.png");
 
             try {

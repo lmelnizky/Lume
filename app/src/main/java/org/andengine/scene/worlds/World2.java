@@ -409,7 +409,7 @@ public class World2 extends BaseScene {
         gameHUD.attachChild(timeText);
 
         shootSign = new Sprite(camera.getCenterX() - 3*sideLength, camera.getHeight()-35, sideLength*7/8, sideLength*7/8, resourcesManager.shoot_diagonal_sign_region, vbom);
-        moveSign = new Sprite(camera.getCenterX() + 3*sideLength, camera.getHeight()-35, sideLength*7/8, sideLength*7/8, resourcesManager.move_normal_region, vbom);
+        moveSign = new Sprite(camera.getCenterX() + 3*sideLength, camera.getHeight()-35, sideLength*7/8, sideLength*7/8, resourcesManager.move_normal_sign_region, vbom);
         snailSign = new Sprite(camera.getCenterX() + 4*sideLength, camera.getHeight()-35, sideLength*7/8, sideLength*7/8, resourcesManager.snail_sign_region, vbom);
         noSnailSign = new Sprite(camera.getCenterX() + 4*sideLength, camera.getHeight()-35, sideLength*7/8, sideLength*7/8, resourcesManager.no_snail_sign_region, vbom);
         gameHUD.attachChild(shootSign);
@@ -1253,7 +1253,7 @@ public class World2 extends BaseScene {
 
     private int getGravityDirection(int direction) {
         int gravityDirection;
-        gravityDirection = (level == 1) ? 3 : ((direction%2+1) + randomGenerator.nextInt(2)*2);
+        gravityDirection = ((direction%2+1) + randomGenerator.nextInt(2)*2);
         return gravityDirection;
     }
 

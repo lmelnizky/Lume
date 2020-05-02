@@ -14,7 +14,6 @@ import org.andengine.entity.text.TickerText;
 import org.andengine.extension.physics.box2d.PhysicsConnector;
 import org.andengine.extension.physics.box2d.PhysicsFactory;
 import org.andengine.input.touch.TouchEvent;
-import org.andengine.manager.ResourcesManager;
 import org.andengine.object.Ball;
 import org.andengine.object.Circle;
 import org.andengine.opengl.texture.region.ITextureRegion;
@@ -260,7 +259,7 @@ public class Skill24 extends SkillScene {
             case 1:
                 x = camera.getCenterX() - sideLength + sideLength*position;
                 y = camera.getHeight() - sideLength / 2;
-                xVel = (level == 4) ? 0 : (gravityDirection-3)*xSpeed; //2 v 4
+                xVel = (gravityDirection-3)*xSpeed; //2 v 4
                 yVel = -ySpeed;
                 break;
             case 2:
@@ -272,7 +271,7 @@ public class Skill24 extends SkillScene {
             case 3:
                 x = camera.getCenterX()-sideLength + sideLength*position;
                 y = sideLength / 2;
-                xVel = (level == 4) ? 0 : (gravityDirection-3)*xSpeed; //2 v 4
+                xVel = (gravityDirection-3)*xSpeed; //2 v 4
                 yVel = ySpeed;
                 break;
             case 4:
@@ -307,7 +306,7 @@ public class Skill24 extends SkillScene {
     @Override
     public void addShootandMoveSign() {
         shootSign = new Sprite(camera.getCenterX() - 3*sideLength, camera.getHeight()-35, sideLength*7/8, sideLength*7/8, resourcesManager.shoot_diagonal_sign_region, vbom);
-        moveSign = new Sprite(camera.getCenterX() + 3*sideLength, camera.getHeight()-35, sideLength*7/8, sideLength*7/8, resourcesManager.move_normal_region, vbom);
+        moveSign = new Sprite(camera.getCenterX() + 3*sideLength, camera.getHeight()-35, sideLength*7/8, sideLength*7/8, resourcesManager.move_normal_sign_region, vbom);
     }
 
     //moves the player in X or Y direction
@@ -343,11 +342,11 @@ public class Skill24 extends SkillScene {
 
     @Override
     public void showText() {
-        String tvText0 = "Try to shoot very fast, little piss-tolero! Select the ten coins!";
+        String tvText0 = "Shoot as many balls as you can! You get one point for every destroyed ball, and lose one for every one you cannot catch.";
         if (kimmelnitzText == null) {
             //sideLength*6.6f
             kimmelnitzText = new TickerText(sideLength*6.6f, camera.getHeight() / 6, resourcesManager.smallFont, tvText0,
-                    new TickerText.TickerTextOptions(AutoWrap.WORDS, sideLength*13.2f, HorizontalAlign.CENTER,30), resourcesManager.vbom);
+                    new TickerText.TickerTextOptions(AutoWrap.WORDS, sideLength*13.2f, HorizontalAlign.CENTER,50), resourcesManager.vbom);
             secondLayer.attachChild(kimmelnitzText);
             kimmelnitzText.setAlpha(0.7f);
             activity.createTypingText(tvText0, kimmelnitzText, false);

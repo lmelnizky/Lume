@@ -13,7 +13,6 @@ import org.andengine.entity.text.TickerText;
 import org.andengine.extension.physics.box2d.PhysicsConnector;
 import org.andengine.extension.physics.box2d.PhysicsFactory;
 import org.andengine.input.touch.TouchEvent;
-import org.andengine.manager.ResourcesManager;
 import org.andengine.object.Ball;
 import org.andengine.object.Circle;
 import org.andengine.opengl.texture.region.ITextureRegion;
@@ -363,7 +362,7 @@ public class Skill21 extends SkillScene {
     @Override
     public void addShootandMoveSign() {
         shootSign = new Sprite(camera.getCenterX() - 3*sideLength, camera.getHeight()-35, sideLength*7/8, sideLength*6/8, resourcesManager.cracky_mirror_sign_region, vbom);
-        moveSign = new Sprite(camera.getCenterX() + 3*sideLength, camera.getHeight()-35, sideLength*7/8, sideLength*7/8, resourcesManager.move_normal_region, vbom);
+        moveSign = new Sprite(camera.getCenterX() + 3*sideLength, camera.getHeight()-35, sideLength*7/8, sideLength*7/8, resourcesManager.move_normal_sign_region, vbom);
     }
 
     //moves the player in X or Y direction
