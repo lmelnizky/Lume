@@ -65,12 +65,13 @@ public class LumeGameActions implements GameActions {
     @Override
     public void loadCoin(CoinCreator creator) {
         Log.i("LumaGameActions", "loadCoin");
+        scene.attachChild(creator.createSprite());
         //is called when the referee uploaded a new Coin
     }
 
     @Override
     public void loadCanon(CannonCreator creator) {
-
+        scene.attachChild(creator.createSprite());
     }
 
     @Override
@@ -94,7 +95,7 @@ public class LumeGameActions implements GameActions {
     public void startGame() {
         Log.i("LumaGameActions", "startGame");
         scene = MultiplayerGameScene.getInstance();
-        if(referee.equals(scene.getMultiplayer().getServer().id)){ scene.referee = new Referee(); Log.i("Lume", "")}
+        if(referee.equals(scene.getMultiplayer().getServer().id)){ scene.referee = new Referee(); Log.i("LumeGameActions", "I am a referees");}
     }
     //inner classes
         //public classes
