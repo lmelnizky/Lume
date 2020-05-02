@@ -43,6 +43,7 @@ public class HelpScene extends BaseScene {
         float lowerY, upperY;
         float distance = camera.getWidth()/4;
         firstX = sideLength*2;
+        upperY = sideLength*2;
         Sprite kimmelnitzSprite = new Sprite(firstX, upperY, sideLength*3, sideLength*3, resourcesManager.kimmelnitz_region, vbom);
     }
 
