@@ -21,12 +21,17 @@ public class Worlds5to8Scene extends BaseScene {
     private Text[] w5Levels, w6Levels, w7Levels, w8Levels;
     private Sprite changePage2;
 
+    private Sprite slowMotionSprite, noSnailSprite;
+
+    private boolean slowMo = false;
+
     @Override
     public void createScene() {
         this.createBackground();
         this.createChangePageButton();
         this.initTextArrays();
         createTexts();
+        createSlowMotionSprite();
     }
 
     @Override
@@ -166,6 +171,31 @@ public class Worlds5to8Scene extends BaseScene {
             this.registerTouchArea(w8Levels[i]);
             this.attachChild(w8Levels[i]);
         }
+    }
+
+    private void createSlowMotionSprite() {
+        slowMotionSprite = new Sprite(camera.getCenterX(), camera.getCenterY(), resourcesManager.sideLength*2.5f,
+                resourcesManager.sideLength*2.5f, resourcesManager.snail_sign_region, vbom) {
+            public boolean onAreaTouched(TouchEvent touchEvent, float x, float y) {
+                if (touchEvent.isActionDown()) {
+                    slowMo = !slowMo;
+                    slowMotionSprite.setVisible(slowMo);
+                    noSnailSprite.setVisible(!slowMo);
+                    activity.setSlowMotion(slowMo);
+                    return true;
+                } else {
+                    return false;
+                }
+            }
+        };
+        noSnailSprite = new Sprite(camera.getCenterX(), camera.getCenterY(), resourcesManager.sideLength*2.5f,
+                resourcesManager.sideLength*2.5f, resourcesManager.no_snail_sign_region, vbom);
+        attachChild(slowMotionSprite);
+        attachChild(noSnailSprite);
+        registerTouchArea(slowMotionSprite);
+        registerTouchArea(noSnailSprite);
+        slowMotionSprite.setVisible(activity.isSlowMotion());
+        noSnailSprite.setVisible(!activity.isSlowMotion());
     }
 
     private void createWorldTexts() {

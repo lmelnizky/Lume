@@ -1,6 +1,9 @@
 package org.andengine.base;
 
+import android.hardware.SensorManager;
+
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.physics.box2d.Body;
 
 import org.andengine.engine.camera.hud.HUD;
 import org.andengine.engine.handler.IUpdateHandler;
@@ -23,6 +26,7 @@ import org.andengine.manager.ResourcesManager;
 import org.andengine.manager.SceneManager;
 import org.andengine.manager.SceneType;
 import org.andengine.object.Ball;
+import org.andengine.object.Circle;
 import org.andengine.util.adt.align.HorizontalAlign;
 import org.andengine.util.adt.color.Color;
 
@@ -41,6 +45,14 @@ public abstract class SkillScene extends BaseScene {
     protected static final int FIRST_LAYER = 0; //is used for ground, player and coin
     protected static final int SECOND_LAYER = 1; //is used for  stones
     protected static final int THIRD_LAYER = 2; //is used for cannons
+
+    protected final short CATEGORY_CANNONBALL = 0x0001;  // 0000000000000001 in binary
+    protected final short CATEGORY_THORNY = 0x0002; // 0000000000000010 in binary
+    protected final short CATEGORY_CRACKY = 0x0003;
+
+    protected final short MASK_CANNONBALL = ~CATEGORY_THORNY;
+    protected final short MASK_THORNY = ~(CATEGORY_CANNONBALL | CATEGORY_THORNY | CATEGORY_CRACKY);
+    protected final short MASK_CRACKY = ~(CATEGORY_THORNY | CATEGORY_CRACKY);
 
     protected static final int SWIPE_MIN_DISTANCE = 20;
 
@@ -97,8 +109,8 @@ public abstract class SkillScene extends BaseScene {
     public void onBackKeyPressed() {
         ResourcesManager.getInstance().backgroundMusic.stop();
         ResourcesManager.getInstance().backgroundMusic.pause();
-        SceneManager.getInstance().loadSkillMenuScene(engine);
         disposeHUD();
+        SceneManager.getInstance().loadSkillMenuScene(engine);
     }
 
     public SceneType getSceneType () {
@@ -158,6 +170,7 @@ public abstract class SkillScene extends BaseScene {
                         timeText.setColor(Color.RED);
                     }
                 }
+                if (level == 8) moveStones();
             }
             @Override
             public void reset() {
@@ -428,11 +441,19 @@ public abstract class SkillScene extends BaseScene {
                         ResourcesManager.getInstance().backgroundMusic.stop();
                         ResourcesManager.getInstance().backgroundMusic.pause();
                         ResourcesManager.getInstance().easySound.play();
+                        Text tooEasyText = new Text(camera.getCenterX(), sideLength*7.5f, resourcesManager.bigFont,
+                                "T O O  E A S Y !", vbom);
+                        int color = android.graphics.Color.parseColor("#1eb1e1");
+                        tooEasyText.setColor(color);
+                        attachChild(tooEasyText);
+                        tooEasyText.registerEntityModifier(new ScaleModifier(2f, 0.5f, 1.5f));
                         engine.registerUpdateHandler(new TimerHandler(2f, new ITimerCallback() {
                             public void onTimePassed(final TimerHandler pTimerHandler) {
                                 engine.unregisterUpdateHandler(pTimerHandler);
-                                SceneManager.getInstance().loadSkillMenuScene(engine);
+                                tooEasyText.detachSelf();
+                                tooEasyText.dispose();
                                 disposeHUD();
+                                SceneManager.getInstance().loadSkillMenuScene(engine);
                             }
                         }));
                     }
@@ -610,8 +631,8 @@ public abstract class SkillScene extends BaseScene {
                     setIgnoreUpdate(false);
                     gameOverDisplayed = false;
                     registerUpdateHandler(physicsWorld);
-                    SceneManager.getInstance().loadSkillGameScene(engine, level);
                     disposeHUD();
+                    SceneManager.getInstance().loadSkillGameScene(engine, level);
                     return true;
                 } else {
                     return false;
@@ -634,8 +655,8 @@ public abstract class SkillScene extends BaseScene {
                     setIgnoreUpdate(false);
                     gameOverDisplayed = false;
                     registerUpdateHandler(physicsWorld);
-                    SceneManager.getInstance().loadSkillMenuScene(engine);
                     disposeHUD();
+                    SceneManager.getInstance().loadSkillMenuScene(engine);
                     return true;
                 } else {
                     return false;
@@ -644,6 +665,75 @@ public abstract class SkillScene extends BaseScene {
         };
         gameOverScene.registerTouchArea(finishSprite);
         gameOverScene.attachChild(finishSprite);
+    }
+
+    public void moveStones() {
+        for (Sprite stone : stones) {
+            final Circle lumeCircle, stoneCircle;
+            lumeCircle = new Circle(lumeSprite.getX(), lumeSprite.getY(), lumeSprite.getWidth() / 2);
+            stoneCircle = new Circle(stone.getX(), stone.getY(), stone.getWidth() / 2);
+            Ball ball = (Ball) stone.getUserData();
+
+            Vector2 gravity = ball.getGravity();
+            Body body = ball.getBody();
+            boolean thorny = ball.isThorny();
+
+            body.applyForce(gravity, body.getWorldCenter());
+
+            if (stoneCircle.collision(lumeCircle) && !gameOverDisplayed) {
+                displayGameOverScene();
+                score = 0;
+            }
+            if (stone.getX() < -sideLength || stone.getY() < -sideLength ||
+                    stone.getX() > camera.getWidth() + sideLength || stone.getY() > camera.getWidth() + sideLength) {
+                stonesToRemove.add(stone);
+                if (!thorny) crackyStonesToRemove.add(stone);
+
+                engine.runOnUpdateThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        for (Sprite sprite : stonesToRemove) {
+                            sprite.detachSelf();
+                            sprite.dispose();
+                        }
+                        crackyStonesToRemove.clear();
+                        stonesToRemove.clear();
+                    }
+
+                });
+//                 crackyStones.remove(stone);
+//                this.detachSelf();
+//                this.dispose();
+            }
+        }
+        crackyStones.removeAll(crackyStonesToRemove);
+        stones.removeAll(stonesToRemove);
+    }
+
+    public int getGravityDirection(int direction) {
+        int gravityDirection;
+        gravityDirection = (level == 1) ? 3 : ((direction%2+1) + randomGenerator.nextInt(2)*2);
+        return gravityDirection;
+    }
+
+    public Vector2 getGravity(int gravityDirection) {
+        Vector2 gravity = null;
+
+        switch(gravityDirection) {
+            case 1:
+                gravity = new Vector2(0, SensorManager.GRAVITY_EARTH); //everything goes down
+                break;
+            case 2:
+                gravity = new Vector2(SensorManager.GRAVITY_EARTH, 0); //everything goes right
+                break;
+            case 3:
+                gravity = new Vector2(0, -SensorManager.GRAVITY_EARTH); //everything goes up
+                break;
+            case 4:
+                gravity = new Vector2(-SensorManager.GRAVITY_EARTH, 0); //everything goes left
+                break;
+        }
+        return gravity;
     }
 
     //given methods

@@ -468,15 +468,15 @@ public class ResourcesManager {
 
     private void unloadSkillResources() {
         unloadGameTextures();
-        skillGameAtlas.unload();
-        skillGameAtlas.clearTextureAtlasSources();
+        if (skillGameAtlas != null) skillGameAtlas.unload();
+        if (skillGameAtlas != null) skillGameAtlas.clearTextureAtlasSources();
         skillGameAtlas = null;
         unloadGameAudio();
     }
 
     private void unloadHighscoreGraphics() {
         if (highScoreAtlas != null) highScoreAtlas.unload();
-        highScoreAtlas.clearTextureAtlasSources();
+        if (highScoreAtlas != null) highScoreAtlas.clearTextureAtlasSources();
         highScoreAtlas = null;
     }
 
@@ -615,7 +615,7 @@ public class ResourcesManager {
 
     public void unloadPlayerGraphics() {
         if (playerTextureAtlas != null) playerTextureAtlas.unload();
-        playerTextureAtlas.clearTextureAtlasSources();
+        if (playerTextureAtlas != null) playerTextureAtlas.clearTextureAtlasSources();
         playerTextureAtlas = null;
     }
 
@@ -802,42 +802,49 @@ public class ResourcesManager {
     private void unloadWorldGraphics(int world) {
         switch (world) {
             case 0:
-                this.world0TextureAtlas.unload();
-                this.world0TextureAtlas.clearTextureAtlasSources();
+                if (world0TextureAtlas != null) this.world0TextureAtlas.unload();
+                if (world0TextureAtlas != null) this.world0TextureAtlas.clearTextureAtlasSources();
                 this.world0TextureAtlas = null;
                 break;
             case 1:
-                this.world1TextureAtlas.unload();
-                this.world1TextureAtlas.clearTextureAtlasSources();
+                if (world1TextureAtlas != null) this.world1TextureAtlas.unload();
+                if (world1TextureAtlas != null) this.world1TextureAtlas.clearTextureAtlasSources();
                 this.world1TextureAtlas = null;
                 break;
             case 2:
-                this.world2TextureAtlas.unload();
-                this.world2TextureAtlas.clearTextureAtlasSources();
+                if (world2TextureAtlas != null) this.world2TextureAtlas.unload();
+                if (world2TextureAtlas != null) this.world2TextureAtlas.clearTextureAtlasSources();
+                this.world2TextureAtlas = null;
                 break;
             case 3:
-                this.world3TextureAtlas.unload();
-                this.world3TextureAtlas.clearTextureAtlasSources();
+                if (world3TextureAtlas != null) this.world3TextureAtlas.unload();
+                if (world3TextureAtlas != null) this.world3TextureAtlas.clearTextureAtlasSources();
+                this.world3TextureAtlas = null;
                 break;
             case 4:
-                this.world4TextureAtlas.unload();
-                this.world4TextureAtlas.clearTextureAtlasSources();
+                if (world4TextureAtlas != null) this.world4TextureAtlas.unload();
+                if (world4TextureAtlas != null) this.world4TextureAtlas.clearTextureAtlasSources();
+                this.world4TextureAtlas = null;
                 break;
             case 5:
-                this.world5TextureAtlas.unload();
-                this.world5TextureAtlas.clearTextureAtlasSources();
+                if (world5TextureAtlas != null) this.world5TextureAtlas.unload();
+                if (world5TextureAtlas != null) this.world5TextureAtlas.clearTextureAtlasSources();
+                this.world5TextureAtlas = null;
                 break;
             case 6:
-                this.world6TextureAtlas.unload();
-                this.world6TextureAtlas.clearTextureAtlasSources();
+                if (world6TextureAtlas != null) this.world6TextureAtlas.unload();
+                if (world6TextureAtlas != null) this.world6TextureAtlas.clearTextureAtlasSources();
+                this.world6TextureAtlas = null;
                 break;
             case 7:
-                this.world7TextureAtlas.unload();
-                this.world7TextureAtlas.clearTextureAtlasSources();
+                if (world7TextureAtlas != null) this.world7TextureAtlas.unload();
+                if (world7TextureAtlas != null) this.world7TextureAtlas.clearTextureAtlasSources();
+                this.world7TextureAtlas = null;
                 break;
             case 8:
-                this.world8TextureAtlas.unload();
-                this.world8TextureAtlas.clearTextureAtlasSources();
+                if (world8TextureAtlas != null) this.world8TextureAtlas.unload();
+                if (world8TextureAtlas != null) this.world8TextureAtlas.clearTextureAtlasSources();
+                this.world8TextureAtlas = null;
                 break;
         }
     }
@@ -1035,6 +1042,7 @@ public class ResourcesManager {
     public void unloadGameTextures() {
         unloadPlayerGraphics();
         if (gameTextureAtlas != null) gameTextureAtlas.unload();
+        if (gameTextureAtlas != null) gameTextureAtlas.clearTextureAtlasSources();
         gameTextureAtlas = null;
     }
 
