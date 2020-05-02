@@ -84,7 +84,7 @@ public class MultiplayerGameScene extends BaseScene {
 
     //public attributes
     public ArrayList<Sprite> crackyStones, crackyStonesToRemove, cannonBallsToRemove;
-    public ArrayList<Sprite> stones, stonesToRemove;
+    public ArrayList<Sprite> stones = new ArrayList<Sprite>(), stonesToRemove = new ArrayList<Sprite>();
     public PhysicsWorld physicsWorld;
 
     //createScene method
