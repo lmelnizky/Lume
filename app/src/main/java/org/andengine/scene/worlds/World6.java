@@ -12,6 +12,7 @@ import org.andengine.engine.handler.timer.ITimerCallback;
 import org.andengine.engine.handler.timer.TimerHandler;
 import org.andengine.entity.Entity;
 import org.andengine.entity.IEntity;
+import org.andengine.entity.modifier.AlphaModifier;
 import org.andengine.entity.modifier.RotationModifier;
 import org.andengine.entity.modifier.ScaleModifier;
 import org.andengine.entity.primitive.Rectangle;
@@ -38,6 +39,8 @@ import org.andengine.util.adt.color.Color;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Random;
+
+import javax.microedition.khronos.opengles.GL10;
 
 public class World6 extends BaseScene {
 
@@ -107,12 +110,14 @@ public class World6 extends BaseScene {
         this.level = 1;
         cameFromLevelsScene = false;
         createHUD();
+        showLevelText();
     }
 
     public World6(int level) { //constructor used when selecting a level
         this.level = level;
         cameFromLevelsScene = true;
         createHUD();
+        showLevelText();
     }
 
     @Override
@@ -135,9 +140,9 @@ public class World6 extends BaseScene {
         createMusic();
         createPhysics();
         createBoard();
-        createLume();
         createHalves();
         createCannons();
+        createLume();
         createHUD();
 
         resetData();
@@ -179,6 +184,23 @@ public class World6 extends BaseScene {
         variantUsed = false;
     }
 
+    private void showLevelText() {
+        Text levelText = new Text(camera.getCenterX(), camera.getCenterY(), resourcesManager.bigFont,
+                "Level " + String.valueOf(level), vbom);
+        secondLayer.attachChild(levelText);
+        levelText.setColor(new Color(1f, 1f, 1f, 1f));
+        levelText.registerEntityModifier(new ScaleModifier(0.6f, 0.5f, 1.5f));
+        levelText.setBlendFunction(GL10.GL_SRC_ALPHA, GL10.GL_ONE_MINUS_SRC_ALPHA);
+        levelText.registerEntityModifier(new AlphaModifier(0.6f, 0.6f, 0.6f));
+        engine.registerUpdateHandler(new TimerHandler(0.6f, new ITimerCallback() {
+            public void onTimePassed(final TimerHandler pTimerHandler) {
+                engine.unregisterUpdateHandler(pTimerHandler);
+                levelText.detachSelf();
+                levelText.dispose();
+            }
+        }));
+    }
+
     public void disposeHUD() {
         scoreText.detachSelf();
         scoreText.dispose();
@@ -203,11 +225,11 @@ public class World6 extends BaseScene {
     public void onBackKeyPressed() {
         ResourcesManager.getInstance().backgroundMusic.stop();
         if (cameFromLevelsScene) {
+            disposeHUD();
             SceneManager.getInstance().loadWorlds5to8Scene(engine);
-            disposeHUD();
         } else {
-            SceneManager.getInstance().loadMenuScene(engine);
             disposeHUD();
+            SceneManager.getInstance().loadMenuScene(engine);
         }
     }
 
@@ -300,12 +322,12 @@ public class World6 extends BaseScene {
                     setIgnoreUpdate(false);
                     gameOverDisplayed = false;
                     registerUpdateHandler(physicsWorld);
+                    disposeHUD();
                     if (cameFromLevelsScene) {
                         SceneManager.getInstance().loadWorld6Scene(engine, level);
                     } else {
                         SceneManager.getInstance().loadWorld6Scene(engine, 0);
                     }
-                    disposeHUD();
                     return true;
                 } else {
                     return false;
@@ -328,12 +350,12 @@ public class World6 extends BaseScene {
                     setIgnoreUpdate(false);
                     gameOverDisplayed = false;
                     registerUpdateHandler(physicsWorld);
+                    disposeHUD();
                     if (cameFromLevelsScene) {
                         SceneManager.getInstance().loadWorlds5to8Scene(engine);
                     } else {
                         SceneManager.getInstance().loadMenuScene(engine);
                     }
-                    disposeHUD();
                     return true;
                 } else {
                     return false;
@@ -380,6 +402,8 @@ public class World6 extends BaseScene {
         gameHUD.attachChild(snailSign);
         gameHUD.attachChild(noSnailSign);
 
+        slowMotion = activity.isSlowMotion();
+        if (!cameFromLevelsScene) slowMotion = false; //in normal game mode anyway false, without changing prefs
         snailSign.setVisible(slowMotion);
         noSnailSign.setVisible(!slowMotion && cameFromLevelsScene);
         camera.setHUD(gameHUD);
@@ -505,6 +529,7 @@ public class World6 extends BaseScene {
                     } else { //TAP - show slowMotion
                         if (cameFromLevelsScene) {
                             slowMotion = !slowMotion;
+                            activity.setSlowMotion(slowMotion);
                             setSlowMotionMode(); //sets values of current moving stones
                             snailSign.setVisible(slowMotion);
                             noSnailSign.setVisible(!slowMotion);
@@ -769,7 +794,7 @@ public class World6 extends BaseScene {
                 long age;
                 age = (new Date()).getTime() - stoneTime;
                 interval = 5000*slowMotionFactor;
-                if (firstStonesInLevel) interval = 700*slowMotionFactor;
+                if (firstStonesInLevel) interval = 1800*slowMotionFactor;
                 if (!this.variantUsed && age >= interval) {
                     if (firstStonesInLevel) createCoin();
                     firstStonesInLevel = false;
@@ -806,7 +831,7 @@ public class World6 extends BaseScene {
             case 2:
                 age = (new Date()).getTime() - stoneTime;
                 interval = 1800*slowMotionFactor;
-                if (firstStonesInLevel) interval = 500*slowMotionFactor;
+                if (firstStonesInLevel) interval = 1800*slowMotionFactor;
 
                 float timeBetweenStones = 2500*slowMotionFactor;
 
@@ -829,7 +854,7 @@ public class World6 extends BaseScene {
             case 3:
                 age = (new Date()).getTime() - stoneTime;
                 interval = 9000*slowMotionFactor;
-                if (firstStonesInLevel) interval = 700*slowMotionFactor;
+                if (firstStonesInLevel) interval = 1800*slowMotionFactor;
                 if (age >= interval) {
                     if (firstStonesInLevel) createCoin();
                     firstStonesInLevel = false;
@@ -842,7 +867,7 @@ public class World6 extends BaseScene {
             case 4:
                 age = (new Date()).getTime() - stoneTime;
                 interval = 50*slowMotionFactor; //3000
-                if (firstStonesInLevel) interval = 50*slowMotionFactor;
+                if (firstStonesInLevel) interval = 1800*slowMotionFactor;
                 if (!this.variantUsed && age >= interval && firstStonesInLevel) { //only brings the first stones here
                     if (firstStonesInLevel) createCoin();
                     firstStonesInLevel = false;
@@ -1218,8 +1243,8 @@ public class World6 extends BaseScene {
         if (score%10 == 0) {
             if (cameFromLevelsScene) {
                 ResourcesManager.getInstance().backgroundMusic.stop();
-                SceneManager.getInstance().loadWorlds5to8Scene(engine);
                 disposeHUD();
+                SceneManager.getInstance().loadWorlds5to8Scene(engine);
                 return;
             }
             removeCoin();
@@ -1235,16 +1260,26 @@ public class World6 extends BaseScene {
                             ResourcesManager.getInstance().backgroundMusic.stop();
                             ResourcesManager.getInstance().backgroundMusic.pause();
                             ResourcesManager.getInstance().easySound.play();
+                            Text tooEasyText = new Text(camera.getCenterX(), sideLength*7.5f, resourcesManager.bigFont,
+                                    "T O O  E A S Y !", vbom);
+                            int color = android.graphics.Color.parseColor("#1eb1e1");
+                            tooEasyText.setColor(color);
+                            attachChild(tooEasyText);
+                            tooEasyText.registerEntityModifier(new ScaleModifier(2f, 0.5f, 1.5f));
                             engine.registerUpdateHandler(new TimerHandler(2f, new ITimerCallback() {
                                 public void onTimePassed(final TimerHandler pTimerHandler) {
                                     engine.unregisterUpdateHandler(pTimerHandler);
                                     activity.unlockWorld(7);
+                                    tooEasyText.detachSelf();
+                                    tooEasyText.dispose();
+                                    disposeHUD();
                                     SceneManager.getInstance().loadMenuScene(engine);
                                 }
                             }));
                         } else {
                             levelText.setText("L" + String.valueOf(level));
                             resetData();
+                            showLevelText();
                         }
                     }
                 }

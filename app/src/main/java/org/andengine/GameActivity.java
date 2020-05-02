@@ -79,7 +79,7 @@ public class GameActivity extends BaseGameActivity implements RewardedVideoAdLis
     public final static float CAMERA_HEIGHT = 720;
     private int playedGames = 4;
     private int showedLevelHints;
-    private int worldToStart, levelToStart;
+    private int rewardedType;
 
     public SharedPreferences pref;
     public SharedPreferences.Editor editor;
@@ -676,8 +676,7 @@ public class GameActivity extends BaseGameActivity implements RewardedVideoAdLis
     }
 
     public void showRewarded(int rewardedType) {
-        this.worldToStart = worldToStart;
-        this.levelToStart = levelToStart;
+        this.rewardedType = rewardedType;
         if (rewardedType == 0) {
             this.runOnUiThread(new Runnable() {
                 @Override
@@ -888,10 +887,11 @@ public class GameActivity extends BaseGameActivity implements RewardedVideoAdLis
 
     @Override
     public void onRewarded(RewardItem rewardItem) {
-        if (rewardItem.getAmount()>1) {
+        if (rewardedType == 1) {
             toastOnUiThread("Received 100 coins!");
             addBeersos(100);
-        } else {
+            this.loadRewardedVideoAd();
+        } else if (rewardedType == 0) {
             toastOnUiThread("Showing Walkthrough Video");
 
             showWalkthroughVideo();
@@ -901,8 +901,6 @@ public class GameActivity extends BaseGameActivity implements RewardedVideoAdLis
             editor.putInt(PLAYED_GAMES, playedGames);
             editor.commit();
         }
-
-        //this.resetMainMenuResources();
     }
 
     @Override

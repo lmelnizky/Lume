@@ -136,9 +136,9 @@ public class World1 extends BaseScene {
         createMusic();
         createPhysics();
         createBoard();
-        createLume();
         createHalves();
         createCannons();
+        createLume();
         createHUD();
 
         resetData();
@@ -224,11 +224,11 @@ public class World1 extends BaseScene {
     public void onBackKeyPressed() {
         ResourcesManager.getInstance().backgroundMusic.stop();
         if (cameFromLevelsScene) {
+            disposeHUD();
             SceneManager.getInstance().loadWorlds1to4Scene(engine);
-            disposeHUD();
         } else {
-            SceneManager.getInstance().loadMenuScene(engine);
             disposeHUD();
+            SceneManager.getInstance().loadMenuScene(engine);
         }
     }
 
@@ -318,12 +318,12 @@ public class World1 extends BaseScene {
                     setIgnoreUpdate(false);
                     gameOverDisplayed = false;
                     registerUpdateHandler(physicsWorld);
+                    disposeHUD();
                     if (cameFromLevelsScene) {
                         SceneManager.getInstance().loadWorld1Scene(engine, level);
                     } else {
                         SceneManager.getInstance().loadWorld1Scene(engine, 0);
                     }
-                    disposeHUD();
                     return true;
                 } else {
                     return false;
@@ -346,12 +346,12 @@ public class World1 extends BaseScene {
                     setIgnoreUpdate(false);
                     gameOverDisplayed = false;
                     registerUpdateHandler(physicsWorld);
+                    disposeHUD();
                     if (cameFromLevelsScene) {
                         SceneManager.getInstance().loadWorlds1to4Scene(engine);
                     } else {
                         SceneManager.getInstance().loadMenuScene(engine);
                     }
-                    disposeHUD();
                     return true;
                 } else {
                     return false;
@@ -398,6 +398,8 @@ public class World1 extends BaseScene {
         gameHUD.attachChild(snailSign);
         gameHUD.attachChild(noSnailSign);
 
+        slowMotion = activity.isSlowMotion();
+        if (!cameFromLevelsScene) slowMotion = false; //in normal game mode anyway false, without changing prefs
         snailSign.setVisible(slowMotion);
         noSnailSign.setVisible(!slowMotion && cameFromLevelsScene);
 
@@ -522,6 +524,7 @@ public class World1 extends BaseScene {
                     } else { //TAP - show slowMotion
                         if (cameFromLevelsScene) {
                             slowMotion = !slowMotion;
+                            activity.setSlowMotion(slowMotion);
                             setSlowMotionMode(); //sets values of current moving stones
                             snailSign.setVisible(slowMotion);
                             noSnailSign.setVisible(!slowMotion);
@@ -758,11 +761,11 @@ public class World1 extends BaseScene {
         if (level == 4 && score < 40) {
             boolean horizontal = (direction%2 == 0);
             addBall((horizontal) ? ((yPosLume - 1) == 0) : ((xPosLume-1) == 0),
-                    direction, 0, (horizontal) ? 0.8f*ratio : 0.8f);
+                    direction, 0, 1, (horizontal) ? 0.8f*ratio : 0.8f);
             addBall((horizontal) ? ((yPosLume - 1) == 1) : ((xPosLume-1) == 1),
-                    direction, 1, (horizontal) ? 0.8f*ratio : 0.8f);
+                    direction, 1, 1, (horizontal) ? 0.8f*ratio : 0.8f);
             addBall((horizontal) ? ((yPosLume - 1) == 2) : ((xPosLume-1) == 2),
-                    direction, 2, (horizontal) ? 0.8f*ratio : 0.8f);
+                    direction, 2, 1, (horizontal) ? 0.8f*ratio : 0.8f);
         }
     }
 
@@ -780,7 +783,7 @@ public class World1 extends BaseScene {
                 long[] ages = new long[4]; //is used to prevent screen from showing too many stones
                 interval = (long) (2500*slowMotionFactor);
                 ages[direction - 1] = (new Date()).getTime() - stoneTimes[direction - 1];
-                if (firstStonesInLevel) interval = (long)(1000*slowMotionFactor);
+                if (firstStonesInLevel) interval = (long)(1800*slowMotionFactor);
                 if (ages[direction - 1] >= interval) {
                     if (firstStonesInLevel) createCoin();
                     firstStonesInLevel = false;
@@ -797,7 +800,7 @@ public class World1 extends BaseScene {
                 long age;
                 age = (new Date()).getTime() - stoneTime;
                 interval = (long) (4500*slowMotionFactor);
-                if (firstStonesInLevel) interval = (long)(1000*slowMotionFactor);
+                if (firstStonesInLevel) interval = (long)(1800*slowMotionFactor);
                 if (!this.variantUsed && age >= interval) {
                     if (firstStonesInLevel) createCoin();
                     firstStonesInLevel = false;
@@ -834,7 +837,7 @@ public class World1 extends BaseScene {
             case 3:
                 age = (new Date()).getTime() - stoneTime;
                 interval = (long) (4400*slowMotionFactor);
-                if (firstStonesInLevel) interval = (long) (1000*slowMotionFactor);
+                if (firstStonesInLevel) interval = (long) (1800*slowMotionFactor);
                 if (!this.variantUsed &&  age >= interval) {
                     if (firstStonesInLevel) createCoin();
                     firstStonesInLevel = false;
@@ -864,7 +867,7 @@ public class World1 extends BaseScene {
             case 4:
                 age = (new Date()).getTime() - stoneTime;
                 interval = (long) (1400*slowMotionFactor);
-                if (firstStonesInLevel) interval = (long)(700*slowMotionFactor);
+                if (firstStonesInLevel) interval = (long)(1800*slowMotionFactor);
                 if (age >= interval && firstStonesInLevel) {
                     if (firstStonesInLevel) createCoin();
                     firstStonesInLevel = false;
@@ -884,39 +887,39 @@ public class World1 extends BaseScene {
 
         switch (level) {
             case 1:
-                addBall(thornyFirst, directionVariant, randomRow, 1);
+                addBall(thornyFirst, directionVariant, randomRow, 1, 1);
                 break;
             case 2:
                 switch (directionVariant) {
                     case 1:
                         if (thornyFirst) {
-                            v1FirstStone = addBall(true, 2, 1, 1);
-                            addBall(true, 2, 2, 1);
+                            v1FirstStone = addBall(true, 2, 1, 1, 1);
+                            addBall(true, 2, 2, 1, 1);
                         } else {
-                            addBall(true, 1, 0, 1);
-                            addBall(false, 1, 1, 1);
-                            addBall(false, 3, 2, 1);
+                            addBall(true, 1, 0, 1, 1);
+                            addBall(false, 1, 1, 1, 1);
+                            addBall(false, 3, 2, 1, 1);
                         }
                         break;
                     case 2:
                         if (thornyFirst) {
-                            v2FirstStone = addBall(true, 2, 0, 1);
-                            addBall(true, 4, 1, 1);
-                            addBall(false, 4, 2, 1);
+                            v2FirstStone = addBall(true, 2, 0, 1, 1);
+                            addBall(true, 4, 1, 1, 1);
+                            addBall(false, 4, 2, 1, 1);
                         } else {
-                            addBall(true, 1, 1, 1);
-                            addBall(true, 3, 2, 1);
-                            addBall(false, 3, 0, 1);
+                            addBall(true, 1, 1, 1, 1);
+                            addBall(true, 3, 2, 1, 1);
+                            addBall(false, 3, 0, 1, 1);
                         }
                         break;
                     case 3:
                         if (thornyFirst) {
-                            v3FirstStone = addBall(true, 2, 2, 1);
-                            addBall(false, 2, 1, 1);
-                            addBall(true, 4, 0, 1);
+                            v3FirstStone = addBall(true, 2, 2, 1, 1);
+                            addBall(false, 2, 1, 1, 1);
+                            addBall(true, 4, 0, 1, 1);
                         } else {
-                            addBall(true, 3, 2, 1);
-                            addBall(true, 1, 0, 1);
+                            addBall(true, 3, 2, 1, 1);
+                            addBall(true, 1, 0, 1, 1);
                         }
                         break;
                 }
@@ -926,38 +929,38 @@ public class World1 extends BaseScene {
                 switch (directionVariant) {
                     case 1:
                         if (thornyFirst) {
-                            v1FirstStone = addBall(true, 2, 1, 1.5f*lev3Factor);
-                            addBall(true, 4, 1, 1.5f*lev3Factor);
-                            addBall(false, 1, 0, 1.3f*lev3Factor);
-                            addBall(false, 1, 2, 1.3f*lev3Factor);
-                            addBall(false, 3, 0, 1.3f*lev3Factor);
-                            addBall(false, 3, 2, 1.3f*lev3Factor);
+                            v1FirstStone = addBall(true, 2, 1, 1, 1.5f*lev3Factor);
+                            addBall(true, 4, 1, 1, 1.5f*lev3Factor);
+                            addBall(false, 1, 0, 1, 1.3f*lev3Factor);
+                            addBall(false, 1, 2, 1, 1.3f*lev3Factor);
+                            addBall(false, 3, 0, 1, 1.3f*lev3Factor);
+                            addBall(false, 3, 2, 1, 1.3f*lev3Factor);
                         } else {
-                            addBall(true, 1, 1, 1.5f*lev3Factor);
-                            addBall(true, 3, 1, 1.5f*lev3Factor);
+                            addBall(true, 1, 1, 1, 1.5f*lev3Factor);
+                            addBall(true, 3, 1, 1, 1.5f*lev3Factor);
                         }
                         break;
                     case 2:
                         if (thornyFirst) {
-                            v2FirstStone = addBall(true, 2, 0, 1.5f*lev3Factor);
-                            addBall(true, 4, 2, 1.5f*lev3Factor);
-                            addBall(false, 1, 1, 1.3f*lev3Factor);
-                            addBall(false, 3, 1, 1.3f*lev3Factor);
+                            v2FirstStone = addBall(true, 2, 0, 1, 1.5f*lev3Factor);
+                            addBall(true, 4, 2, 1, 1.5f*lev3Factor);
+                            addBall(false, 1, 1, 1, 1.3f*lev3Factor);
+                            addBall(false, 3, 1, 1, 1.3f*lev3Factor);
                         } else {
-                            addBall(true, 1, 0, 1.5f*lev3Factor);
-                            addBall(true, 3, 2, 1.5f*lev3Factor);
+                            addBall(true, 1, 0, 1, 1.5f*lev3Factor);
+                            addBall(true, 3, 2, 1, 1.5f*lev3Factor);
                         }
                         break;
                 }
                 break;
             case 4:
-                addBall(false, 1, 0, 0.8f);
-                addBall(false, 1, 1, 0.8f);
-                addBall(false, 1, 2, 0.8f);
+                addBall(false, 1, 0, 1, 0.8f);
+                addBall(false, 1, 1, 1, 0.8f);
+                addBall(false, 1, 2, 1, 0.8f);
 
-                addBall(false, 2, 0, 0.7f*ratio);
-                addBall(false, 2, 1, 0.7f*ratio);
-                addBall(false, 2, 2, 0.7f*ratio);
+                addBall(false, 2, 0, 3, 0.8f*ratio);
+                addBall(false, 2, 1, 3, 0.8f*ratio);
+                addBall(false, 2, 2, 3, 0.8f*ratio);
 
 //                int randomDirection = randomGenerator.nextInt(4) ;
 //                float speedFactor = 1f;
@@ -1034,7 +1037,7 @@ public class World1 extends BaseScene {
         }
     }
 
-    public Sprite addBall(final boolean thorny, int direction, int position, float speedFactor) {
+    public Sprite addBall(final boolean thorny, int direction, int position, float row, float speedFactor) {
         final FixtureDef FIXTURE_DEF = PhysicsFactory.createFixtureDef(0, 0.01f, 0.5f);
         float slowMotionFactor = (slowMotion) ? 0.5f : 1f;
         float x = 0;
@@ -1050,21 +1053,21 @@ public class World1 extends BaseScene {
         switch (direction) {
             case 1:
                 x = camera.getCenterX() - sideLength + sideLength*position;
-                y = (float) (camera.getHeight() + sideLength/2);
+                y = (float) (camera.getHeight() - sideLength/2 + sideLength*row);
                 yVel = -speed;
                 break;
             case 2:
-                x = (float) (camera.getWidth() + sideLength/2);
+                x = (float) (camera.getWidth() - sideLength/2 + sideLength*row);
                 y = camera.getCenterY()-sideLength + sideLength*position;
                 xVel = -speed;
                 break;
             case 3:
                 x = camera.getCenterX()-sideLength + sideLength*position;
-                y = -sideLength/2;
+                y = sideLength/2 - sideLength*row;
                 yVel = speed;
                 break;
             case 4:
-                x = -sideLength/2;
+                x = sideLength/2 - sideLength*row;
                 y = camera.getCenterY()-sideLength + sideLength*position;
                 xVel = speed;
                 break;
@@ -1139,8 +1142,8 @@ public class World1 extends BaseScene {
         if (score%10 == 0) {
             if (cameFromLevelsScene) {
                 ResourcesManager.getInstance().backgroundMusic.stop();
-                SceneManager.getInstance().loadWorlds1to4Scene(engine);
                 disposeHUD();
+                SceneManager.getInstance().loadWorlds1to4Scene(engine);
                 return;
             }
             removeCoin();
@@ -1156,10 +1159,19 @@ public class World1 extends BaseScene {
                             ResourcesManager.getInstance().backgroundMusic.stop();
                             ResourcesManager.getInstance().backgroundMusic.pause();
                             ResourcesManager.getInstance().easySound.play();
+                            Text tooEasyText = new Text(camera.getCenterX(), sideLength*7.5f, resourcesManager.bigFont,
+                                    "T O O  E A S Y !", vbom);
+                            int color = android.graphics.Color.parseColor("#1eb1e1");
+                            tooEasyText.setColor(color);
+                            attachChild(tooEasyText);
+                            tooEasyText.registerEntityModifier(new ScaleModifier(2f, 0.5f, 1.5f));
                             engine.registerUpdateHandler(new TimerHandler(2f, new ITimerCallback() {
                                 public void onTimePassed(final TimerHandler pTimerHandler) {
                                     engine.unregisterUpdateHandler(pTimerHandler);
                                     activity.unlockWorld(2);
+                                    tooEasyText.detachSelf();
+                                    tooEasyText.dispose();
+                                    disposeHUD();
                                     SceneManager.getInstance().loadMenuScene(engine);
                                 }
                             }));

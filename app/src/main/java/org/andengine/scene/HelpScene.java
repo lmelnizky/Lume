@@ -2,10 +2,11 @@ package org.andengine.scene;
 
 import org.andengine.base.BaseScene;
 import org.andengine.entity.primitive.Rectangle;
+import org.andengine.entity.scene.CameraScene;
+import org.andengine.entity.scene.Scene;
 import org.andengine.entity.scene.background.Background;
 import org.andengine.entity.scene.background.SpriteBackground;
 import org.andengine.entity.sprite.Sprite;
-import org.andengine.entity.text.Text;
 import org.andengine.input.touch.TouchEvent;
 import org.andengine.manager.SceneManager;
 import org.andengine.manager.SceneType;
@@ -16,13 +17,17 @@ public class HelpScene extends BaseScene {
 
     private Sprite help, info;
 
+    private Scene helpScene, infoScene;
+
     @Override
     public void createScene() {
         createBackground();
-        createTouchRects();
+        createTouchRectsRight();
     }
 
     private void createBackground() {
+        Color colorC = new Color(30/255, 177/255, 225/255);
+        Background background = new Background(colorC);
         help = new Sprite(camera.getCenterX(), camera.getCenterY(), camera.getWidth(), camera.getHeight(),
                 resourcesManager.help_shop_region, vbom);
         this.attachChild(help);
@@ -33,24 +38,18 @@ public class HelpScene extends BaseScene {
         info.setVisible(false);
     }
 
-    private void createTouchRects() {
-        final Rectangle helpTouch = new Rectangle(resourcesManager.sideLength*4, camera.getHeight()-resourcesManager.sideLength/2,
-                resourcesManager.sideLength*6, resourcesManager.sideLength, vbom) {
-            public boolean onAreaTouched(TouchEvent touchEvent, float x, float y) {
-                if (touchEvent.isActionDown()) {
-                    setHelpVisible(true);
-                    return true;
-                } else {
-                    return false;
-                }
-            }
-        };
-
+    private void createTouchRectsRight() {
         final Rectangle infoTouch = new Rectangle(resourcesManager.sideLength*12, camera.getHeight()-resourcesManager.sideLength/2,
                 resourcesManager.sideLength*6, resourcesManager.sideLength, vbom) {
             public boolean onAreaTouched(TouchEvent touchEvent, float x, float y) {
                 if (touchEvent.isActionDown()) {
-                    setHelpVisible(false);
+                    infoScene = new CameraScene();
+                    infoScene.setBackground(new SpriteBackground(new Sprite(camera.getCenterX(), camera.getCenterY(),
+                            camera.getWidth(), camera.getHeight(), resourcesManager.info_shop_region, vbom)));
+                    //infoScene.attachChild(new Sprite());
+                    createTouchRectLeft();
+                    unregisterTouchArea(this);
+                    setChildScene(infoScene, false, true, true);
                     return true;
                 } else {
                     return false;
@@ -58,12 +57,30 @@ public class HelpScene extends BaseScene {
             }
         };
 
-        attachChild(helpTouch);
         attachChild(infoTouch);
-        registerTouchArea(helpTouch);
         registerTouchArea(infoTouch);
-        helpTouch.setAlpha(0f);
         infoTouch.setAlpha(0f);
+    }
+
+    private void createTouchRectLeft() {
+        final Rectangle helpTouch = new Rectangle(resourcesManager.sideLength*4, camera.getHeight()-resourcesManager.sideLength/2,
+                resourcesManager.sideLength*6, resourcesManager.sideLength, vbom) {
+            public boolean onAreaTouched(TouchEvent touchEvent, float x, float y) {
+                if (touchEvent.isActionDown()) {
+                    unregisterTouchArea(this);
+                    infoScene.detachSelf();
+                    infoScene.dispose();
+                    HelpScene.this.detachChildren();
+                    return true;
+                } else {
+                    return false;
+                }
+            }
+        };
+
+        infoScene.attachChild(helpTouch);
+        infoScene.registerTouchArea(helpTouch);
+        helpTouch.setAlpha(0f);
     }
 
     private void setHelpVisible(boolean visible) {
