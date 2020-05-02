@@ -23,7 +23,8 @@ public class LumeGameActions implements GameActions {
         //public
 
         //private
-
+    private String[] ids;
+    private String referee;
     //methods
         //constructor
     public LumeGameActions(){}
@@ -40,6 +41,8 @@ public class LumeGameActions implements GameActions {
     @Override
     public void createdGame(String[] opponentsIDs, String refereeID) {
         Log.i("LumaGameActions", "createdGame");
+        ids = opponentsIDs;
+        referee = refereeID;
         //method is called when both player's connected to the server.
     }
     @Override
@@ -88,6 +91,7 @@ public class LumeGameActions implements GameActions {
     public void startGame() {
         Log.i("LumaGameActions", "startGame");
         scene = MultiplayerGameScene.getInstance();
+        if(referee.equals(scene.getMultiplayer().getServer().id)) scene.referee = new Referee();
         scene.getMultiplayer().getServer().emit(new BallCreator(scene.getMultiplayer().getRoom(), true, (short) 1,(short) 1));
         scene.getMultiplayer().getServer().emit(new CannonCreator(scene.getMultiplayer().getRoom(), 1, scene.getMultiplayer().getServer().id));
         scene.getMultiplayer().getServer().emit(new CoinCreator(scene.getMultiplayer().getRoom(), 1, 1));
