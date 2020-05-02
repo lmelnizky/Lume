@@ -17,12 +17,11 @@ public class HelpScene extends BaseScene {
 
     private Sprite help, info;
 
-    private Scene helpScene, infoScene;
-
     @Override
     public void createScene() {
         createBackground();
         createTouchRectsRight();
+        createTouchRectLeft();
     }
 
     private void createBackground() {
@@ -38,18 +37,26 @@ public class HelpScene extends BaseScene {
         info.setVisible(false);
     }
 
+    private void addSigns() {
+        float sideLength = resourcesManager.sideLength;
+        float firstX;
+        float lowerY, upperY;
+        float distance = camera.getWidth()/4;
+        firstX = sideLength*2;
+        Sprite kimmelnitzSprite = new Sprite(firstX, upperY, sideLength*3, sideLength*3, resourcesManager.kimmelnitz_region, vbom);
+    }
+
+    private void removeSigns() {
+
+    }
+
     private void createTouchRectsRight() {
         final Rectangle infoTouch = new Rectangle(resourcesManager.sideLength*12, camera.getHeight()-resourcesManager.sideLength/2,
                 resourcesManager.sideLength*6, resourcesManager.sideLength, vbom) {
             public boolean onAreaTouched(TouchEvent touchEvent, float x, float y) {
                 if (touchEvent.isActionDown()) {
-                    infoScene = new CameraScene();
-                    infoScene.setBackground(new SpriteBackground(new Sprite(camera.getCenterX(), camera.getCenterY(),
-                            camera.getWidth(), camera.getHeight(), resourcesManager.info_shop_region, vbom)));
-                    //infoScene.attachChild(new Sprite());
-                    createTouchRectLeft();
-                    unregisterTouchArea(this);
-                    setChildScene(infoScene, false, true, true);
+                    helpVisible = false;
+                    setHelpVisible(helpVisible);
                     return true;
                 } else {
                     return false;
@@ -67,10 +74,8 @@ public class HelpScene extends BaseScene {
                 resourcesManager.sideLength*6, resourcesManager.sideLength, vbom) {
             public boolean onAreaTouched(TouchEvent touchEvent, float x, float y) {
                 if (touchEvent.isActionDown()) {
-                    unregisterTouchArea(this);
-                    infoScene.detachSelf();
-                    infoScene.dispose();
-                    HelpScene.this.detachChildren();
+                    helpVisible = true;
+                    setHelpVisible(helpVisible);
                     return true;
                 } else {
                     return false;
@@ -78,8 +83,8 @@ public class HelpScene extends BaseScene {
             }
         };
 
-        infoScene.attachChild(helpTouch);
-        infoScene.registerTouchArea(helpTouch);
+        attachChild(helpTouch);
+        registerTouchArea(helpTouch);
         helpTouch.setAlpha(0f);
     }
 
