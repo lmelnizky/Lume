@@ -61,7 +61,7 @@ public class RequestPopUp extends Sprite{
                     LinkedList<Player> players = new LinkedList();
                     for(Player p: scene.getPlayers()) if(p.getId().equals(requestFrom.getId())) players.add(p);
                     if(scene.getServer().getUserActions() instanceof LumeUserActions)players.add(((LumeUserActions) scene.getServer().getUserActions()).getLocalPLayer());
-                    SceneManager.getInstance().loadMultiOnlineGameScene(ResourcesManager.getInstance().engine, players, scene.getServer(), room);
+                    //SceneManager.getInstance().loadMultiOnlineGameScene(ResourcesManager.getInstance().engine, players, scene.getServer(), room);
                 }
             }));
         }

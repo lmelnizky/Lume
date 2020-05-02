@@ -4,6 +4,8 @@ import android.util.Log;
 
 import com.badlogic.gdx.math.Vector2;
 
+import org.andengine.manager.ResourcesManager;
+import org.andengine.manager.SceneManager;
 import org.andengine.object.Ball;
 import org.andengine.scene.OnlineScenes.ServerScene.Game.Creator.BallCreator;
 import org.andengine.scene.OnlineScenes.ServerScene.Game.Creator.CannonCreator;
@@ -87,6 +89,8 @@ public class LumeGameActions implements GameActions {
     @Override
     public void startGame() {
         Log.i("LumaGameActions", "startGame");
+
+        SceneManager.getInstance().loadMultiOnlineGameScene(ResourcesManager.getInstance().engine, );
         scene = MultiplayerGameScene.getInstance();
         scene.getMultiplayer().getServer().emit(new BallCreator(scene.getMultiplayer().getRoom(), true, (short) 1,(short) 1));
         scene.getMultiplayer().getServer().emit(new CannonCreator(scene.getMultiplayer().getRoom(), 1, scene.getMultiplayer().getServer().id));

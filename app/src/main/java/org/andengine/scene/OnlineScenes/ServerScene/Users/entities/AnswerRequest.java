@@ -40,7 +40,7 @@ public class AnswerRequest extends Sprite {
                 LinkedList<Player> players = new LinkedList();
                 for(Player p: scene.getPlayers()) if(p.getId().equals(fromPLayer.getId())) players.add(p);
                 if(scene.getServer().getUserActions() instanceof LumeUserActions)players.add(((LumeUserActions) scene.getServer().getUserActions()).getLocalPLayer());
-                SceneManager.getInstance().loadMultiOnlineGameScene(ResourcesManager.getInstance().engine, players, scene.getServer(), room);
+                //SceneManager.getInstance().loadMultiOnlineGameScene(ResourcesManager.getInstance().engine, players, scene.getServer(), room);
                 String[] list = new String[2];
                 list[0] = fromPLayer.getId();
                 list[1] = scene.getServer().id;
