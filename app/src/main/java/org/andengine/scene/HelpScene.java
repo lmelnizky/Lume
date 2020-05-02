@@ -43,10 +43,47 @@ public class HelpScene extends BaseScene {
         float lowerY, upperY;
         float distance = camera.getWidth()/4;
         firstX = sideLength*2;
-        Sprite kimmelnitzSprite = new Sprite(firstX, upperY, sideLength*3, sideLength*3, resourcesManager.kimmelnitz_region, vbom);
+        lowerY = sideLength*2;
+        upperY = sideLength*2;
+        Sprite kimmelnitzSprite = new Sprite(firstX, upperY, sideLength*3, sideLength*3, resourcesManager.kimmelnitz_region, vbom) {
+            public boolean onAreaTouched(TouchEvent touchEvent, float x, float y) {
+                if (touchEvent.isActionDown()) {
+
+                    return true;
+                } else {
+                    return false;
+                }
+            }
+        };
+        Sprite moveNormalSprite = new Sprite(firstX, upperY, sideLength*3, sideLength*3, resourcesManager.move_normal_sign_region, vbom){
+
+        };
+        Sprite shootNormalSprite = new Sprite(firstX, upperY, sideLength*3, sideLength*3, resourcesManager.shoot_normal_region, vbom){
+
+        };
+        Sprite moveDiagonalSprite = new Sprite(firstX, upperY, sideLength*3, sideLength*3, resourcesManager.move_diagonal_sign_region, vbom){
+
+        };
+        Sprite shootDiagonalSprite = new Sprite(firstX, upperY, sideLength*3, sideLength*3, resourcesManager.shoot_diagonal_sign_region, vbom){
+
+        };
+        Sprite mirrorSprite = new Sprite(firstX, upperY, sideLength*3, sideLength*3, resourcesManager.cracky_mirror_sign_region, vbom){
+
+        };
+        Sprite helmetSprite = new Sprite(firstX, upperY, sideLength*3, sideLength*3, resourcesManager.helmet_sign_region, vbom){
+
+        };
+        Sprite lamporghinaSprite = new Sprite(firstX, upperY, sideLength*3, sideLength*3, resourcesManager.lamporghina_sign_region, vbom){
+
+        };
+
     }
 
     private void removeSigns() {
+
+    }
+
+    private void showText() {
 
     }
 
