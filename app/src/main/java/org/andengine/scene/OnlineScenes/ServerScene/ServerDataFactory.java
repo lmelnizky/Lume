@@ -120,4 +120,13 @@ public class ServerDataFactory {
         System.out.println("ROOOOOOOM: " + buffer.toString());
         return buffer.toString();
     }
+    public static String getLostLifeIDFromData(Object ... args){
+        JSONObject o = (JSONObject) args[0];
+        try {
+            return o.getString("ID");
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
 }

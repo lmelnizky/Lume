@@ -8,6 +8,7 @@ import org.andengine.opengl.texture.region.TextureRegion;
 
 public class Player {
     //variables
+    private int score = 0;
     private Vector2 previousPosition, currentPosition;
     private Sprite sprite;
     private boolean referee;
@@ -35,6 +36,7 @@ public class Player {
     public void update(){}
     //methods
     public void updatePosition(Vector2 newPosition){
+        if(currentPosition == null){previousPosition = newPosition; currentPosition = newPosition;}
         if(currentPosition.x == newPosition.x && currentPosition.y == newPosition.y) return;
         if(this.currentPosition != null) this.previousPosition = this.currentPosition;
         this.currentPosition = newPosition;
@@ -49,4 +51,13 @@ public class Player {
     //setter
     public void setSprite(Sprite sprite) {this.sprite = sprite;}
     public void setReferee(boolean referee) {this.referee = referee;}
+
+    public void setScore(int score) {
+        this.score = score;
+        if (this.score > 3) this.score = 3;
+    }
+
+    public int getScore() {
+        return this.score;
+    }
 }

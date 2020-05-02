@@ -1,5 +1,7 @@
 package org.andengine.scene.OnlineScenes.ServerScene.Game.Creator;
 
+import com.badlogic.gdx.math.Vector2;
+
 import org.andengine.engine.camera.BoundCamera;
 import org.andengine.entity.sprite.Sprite;
 import org.andengine.manager.ResourcesManager;
@@ -12,16 +14,12 @@ public class MoveCreator extends Creator {
     //variables for JSON
     private boolean isLume;
     private int xPosPlayer, yPosPlayer;
-    private char direction;
-    private String movedPlayersID;
+    public char direction;
+    public String movedPlayersID;
     //constants
     private final float sideLength =  ResourcesManager.getInstance().sideLength;
     //returnValue
     private Sprite playerSprite;
-    //constructor
-    public MoveCreator(String toPlayerID) {
-        super(toPlayerID);
-    }
     //constructor
     public MoveCreator(String room, char directionToMove, String movedPlayersID) {
         super(room);
@@ -60,6 +58,7 @@ public class MoveCreator extends Creator {
                 }
                 this.setxPosPlayer(xPosPlayer);
                 this.setyPosPlayer(yPosPlayer);
+                player.updatePosition(new Vector2(xPosPlayer, yPosPlayer));
             }
         }
         return playerSprite;

@@ -6,6 +6,7 @@ import com.badlogic.gdx.math.Vector2;
 
 import org.andengine.object.Ball;
 import org.andengine.scene.OnlineScenes.ServerScene.Game.Creator.BallCreator;
+import org.andengine.scene.OnlineScenes.ServerScene.Game.Creator.CannonCreator;
 import org.andengine.scene.OnlineScenes.ServerScene.Game.Creator.CoinCreator;
 import org.andengine.scene.OnlineScenes.ServerScene.Game.Creator.Creator;
 import org.andengine.scene.OnlineScenes.ServerScene.Game.Creator.MoveCreator;
@@ -16,7 +17,7 @@ import org.andengine.scene.OnlineScenes.ServerScene.Player;
 public class LumeGameActions implements GameActions {
     //variables
         //scene
-    //private MultiplayerGameScene scene = MultiplayerGameScene.getInstance(); // to work with the scene in the methods to add sprites or stuff like that
+    private MultiplayerGameScene scene; // to work with the scene in the methods to add sprites or stuff like that
         //static
 
         //public
@@ -44,12 +45,11 @@ public class LumeGameActions implements GameActions {
     @Override
     public void playerMoved(MoveCreator creator) {
         Log.i("LumaGameActions", "playerMoved");
-        /*for (Player p : scene.getMultiplayer().getPlayers()) {
-            if (p.getId().equals(player.getId())) {
-                p.getSprite().setPosition(newPosition.x, newPosition.y);
-            }
-        }*/
+        creator.createSprite();
         //method is called when a player moved.
+        if (scene.referee != null) {
+            scene.referee.playerMoved();
+        }
     }
     @Override
     public void loadBall(BallCreator creator) {
@@ -63,7 +63,7 @@ public class LumeGameActions implements GameActions {
     }
 
     @Override
-    public void loadCanon(Creator creator) {
+    public void loadCanon(CannonCreator creator) {
 
     }
 
@@ -87,6 +87,11 @@ public class LumeGameActions implements GameActions {
     @Override
     public void startGame() {
         Log.i("LumaGameActions", "startGame");
+        scene = MultiplayerGameScene.getInstance();
+        scene.getMultiplayer().getServer().emit(new BallCreator(scene.getMultiplayer().getRoom(), true, (short) 1,(short) 1));
+        scene.getMultiplayer().getServer().emit(new CannonCreator(scene.getMultiplayer().getRoom(), 1, scene.getMultiplayer().getServer().id));
+        scene.getMultiplayer().getServer().emit(new CoinCreator(scene.getMultiplayer().getRoom(), 1, 1));
+        scene.getMultiplayer().getServer().emit(new MoveCreator(scene.getMultiplayer().getRoom(),'R', scene.getMultiplayer().getServer().id));
     }
     //inner classes
         //public classes

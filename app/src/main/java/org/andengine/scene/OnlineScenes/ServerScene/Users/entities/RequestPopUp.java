@@ -55,13 +55,13 @@ public class RequestPopUp extends Sprite{
     public void onClick(ButtonSprite pButtonSprite, float pTouchAreaLocalX, float pTouchAreaLocalY) {
         if(pButtonSprite == yes){
             scene.getServer().sendAnswer(true, requestFrom.getId(), room);
-            scene.registerUpdateHandler(new TimerHandler(3f, new ITimerCallback() {
+            scene.registerUpdateHandler(new TimerHandler(2f, new ITimerCallback() {
                 @Override
                 public void onTimePassed(TimerHandler pTimerHandler) {
                     LinkedList<Player> players = new LinkedList();
                     for(Player p: scene.getPlayers()) if(p.getId().equals(requestFrom.getId())) players.add(p);
                     if(scene.getServer().getUserActions() instanceof LumeUserActions)players.add(((LumeUserActions) scene.getServer().getUserActions()).getLocalPLayer());
-                    SceneManager.getInstance().loadMultiOnlineGameScene(ResourcesManager.getInstance().engine, players, scene.getServer());
+                    SceneManager.getInstance().loadMultiOnlineGameScene(ResourcesManager.getInstance().engine, players, scene.getServer(), room);
                 }
             }));
         }

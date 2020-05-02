@@ -9,9 +9,10 @@ public class Multiplayer {
     //variables
     private LinkedList<Player> players;
     private Server server;
+    private String room;
     //constructor
     public Multiplayer(LinkedList<Player> players){this.players = players; create();}
-    public Multiplayer(Server server, LinkedList<Player> players){this.server = server; this.players = players; create();}
+    public Multiplayer(Server server, LinkedList<Player> players,String room){this.server = server; this.players = players; this.room = room; create();}
     //methods
     private void create(){
         players = players == null ? new LinkedList<>() : players;
@@ -21,4 +22,6 @@ public class Multiplayer {
     //getter
     public LinkedList<Player> getPlayers(){return players;}
     public Server getServer() {return server;}
+    public String getRoom() {return room;}
+    public void setRoom(String room) {this.room = room;}
 }

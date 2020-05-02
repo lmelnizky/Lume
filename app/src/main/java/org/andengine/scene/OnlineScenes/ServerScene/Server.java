@@ -89,6 +89,10 @@ public class Server {
             gameActions.loadBall(BallCreator.getCreatorFromJson((JSONObject) args[0]));
         }).on(loadCoin, args ->{
             gameActions.loadCoin(CoinCreator.getCreatorFromJson((JSONObject) args[0]));
+        }).on(loadCannon, args ->{
+            gameActions.loadCanon(CannonCreator.getCreatorFromJSON((JSONObject) args[0]));
+        }).on(loseLife, args ->{
+            gameActions.lostLife(ServerDataFactory.getLostLifeIDFromData(args));
         }).on(userDisconnected, args ->{
             gameActions.opponentDisconnected();//TODO
             userActions.userDisconnected(ServerDataFactory.getIdFromData(args));

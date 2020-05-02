@@ -23,6 +23,7 @@ import org.andengine.manager.ResourcesManager;
 import org.andengine.manager.SceneManager;
 import org.andengine.manager.SceneType;
 import org.andengine.scene.OnlineScenes.ServerScene.Game.Creator.BallCreator;
+import org.andengine.scene.OnlineScenes.ServerScene.Game.Creator.MoveCreator;
 import org.andengine.scene.OnlineScenes.ServerScene.Multiplayer;
 import org.andengine.scene.OnlineScenes.ServerScene.Player;
 import org.andengine.scene.OnlineScenes.ServerScene.Server;
@@ -30,6 +31,7 @@ import org.andengine.util.adt.color.Color;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
+import java.util.Random;
 
 //this is a singleton because only one instance should be initialized in runtime
 //this class should not extend from the BaseScene class.. It should extend from PlayScene or stuff like that
@@ -44,15 +46,15 @@ public class MultiplayerGameScene extends BaseScene {
     private static final int SWIPE_MIN_DISTANCE = 10;
 
     //primitives
-    private boolean gameOverDisplayed;
-    private float sideLength;
-    private float shootX1, shootX2, shootY1, shootY2;
-    private float swipeX1, swipeX2, swipeY1, swipeY2;
-    private int xPositions, yPositions;
-    private int xPosLume, yPosLume;
-    private int xPosGrume, yPosGrume;
-    private int xPosCoin, yPosCoin;
-    private int xPosBomb, yPosBomb;
+    public boolean gameOverDisplayed;
+    public float sideLength;
+    public float shootX1, shootX2, shootY1, shootY2;
+    public float swipeX1, swipeX2, swipeY1, swipeY2;
+    public int xPositions, yPositions;
+    public int xPosLume, yPosLume;
+    public int xPosGrume, yPosGrume;
+    public int xPosCoin, yPosCoin;
+    public int xPosBomb, yPosBomb;
 
     //andengine variables
     public Scene gameOverScene;
@@ -69,9 +71,12 @@ public class MultiplayerGameScene extends BaseScene {
     public Sprite luserSprite, finishSprite, replaySprite;
     public Text gameOverText;
 
+    public Referee referee;
+
 
     //objects
     private Multiplayer multiplayer;
+    public Random randomGenerator;
 
     //public attributes
     public ArrayList<Sprite> crackyStones, crackyStonesToRemove, cannonBallsToRemove;
@@ -82,7 +87,7 @@ public class MultiplayerGameScene extends BaseScene {
     @Override
     public void createScene() {/*don't write code here, because the method is calling in the super constructor.. so in other classes, the getInstance() method will not work!!!(NullPointerException!)*/}
     //static methods
-    public static void createInstance(LinkedList<Player> players, Server server){ INSTANCE = new MultiplayerGameScene(players, server); INSTANCE.create();}
+    public static void createInstance(LinkedList<Player> players, Server server, String room){ INSTANCE = new MultiplayerGameScene(players, server, room); INSTANCE.create();}
     public static MultiplayerGameScene getInstance(){
         if(INSTANCE == null) throw new RuntimeException("you have to call create Instance before getInstance!!!");
         return INSTANCE;
@@ -95,7 +100,6 @@ public class MultiplayerGameScene extends BaseScene {
     private void create(){
         //initialization
         sideLength = resourcesManager.sideLength;
-        multiplayer = new Multiplayer(null);
         xPositions = 3;
         yPositions = 3;
 
@@ -117,7 +121,7 @@ public class MultiplayerGameScene extends BaseScene {
     }
     //constructor
     private MultiplayerGameScene(LinkedList<Player> players){multiplayer = new Multiplayer(players);}
-    private MultiplayerGameScene(LinkedList<Player> players, Server server){multiplayer = new Multiplayer(server,players);}
+    private MultiplayerGameScene(LinkedList<Player> players, Server server, String room){multiplayer = new Multiplayer(server,players, room);}
     //override methods from superclass
     @Override
     public void onBackKeyPressed() {
@@ -210,14 +214,18 @@ public class MultiplayerGameScene extends BaseScene {
                         if (Math.abs(deltaX) > Math.abs(deltaY)) { //horizontal
                             if (deltaX > 0) { //left to right
                                 //movePlayer('R');
+                                multiplayer.getServer().emit(new MoveCreator(multiplayer.getRoom(), 'R', getMultiplayer().getServer().id));
                             } else { //right to left
                                 //movePlayer('L');
+                                multiplayer.getServer().emit(new MoveCreator(multiplayer.getRoom(), 'L', getMultiplayer().getServer().id));
                             }
                         } else { //vertical
                             if (deltaY > 0) { //up to down
                                 //movePlayer('U');
+                                multiplayer.getServer().emit(new MoveCreator(multiplayer.getRoom(), 'U', getMultiplayer().getServer().id));
                             } else { //down to up
                                 //movePlayer('D');
+                                multiplayer.getServer().emit(new MoveCreator(multiplayer.getRoom(), 'D', getMultiplayer().getServer().id));
                             }
                         }
                     } else { //TAP - show slowMotion
@@ -229,8 +237,6 @@ public class MultiplayerGameScene extends BaseScene {
                     return false;
                 }
             }
-
-            ;
         };
 
         shootLeft.setColor(Color.GREEN);
@@ -241,6 +247,26 @@ public class MultiplayerGameScene extends BaseScene {
         this.registerTouchArea(swipeRight);
         secondLayer.attachChild(shootLeft);
         secondLayer.attachChild(swipeRight);
+    }
+
+    private void playerMoved() {
+        for (Player p : this.getMultiplayer().getPlayers()) {
+            if  (p.getCurrentPosition().x == this.xPosCoin && p.getCurrentPosition().y == this.yPosCoin) {
+                int randomBelch = randomGenerator.nextInt(3) + 1;
+                switch (randomBelch) {
+                    case 1:
+                        ResourcesManager.getInstance().belchSound1.play();
+                        break;
+                    case 2:
+                        ResourcesManager.getInstance().belchSound2.play();
+                        break;
+                    case 3:
+                        ResourcesManager.getInstance().belchSound3.play();
+                        break;
+                }
+                p.setScore(p.getScore()+1);
+            }
+        }
     }
 
     private void createMusic() {
@@ -386,6 +412,9 @@ public class MultiplayerGameScene extends BaseScene {
                 sideLength*3/4, sideLength*3/4, resourcesManager.grume_region, vbom);
         secondLayer.attachChild(grumeSprite);
         grumeSprite.setRotation(270);
+
+        multiplayer.getPlayers().get(0).setSprite(lumeSprite);  multiplayer.getPlayers().get(0).updatePosition(new Vector2(xPosLume, yPosLume));
+        multiplayer.getPlayers().get(1).setSprite(grumeSprite); multiplayer.getPlayers().get(1).updatePosition(new Vector2(xPosGrume, yPosGrume));
     }
 
     private void createHUD() {

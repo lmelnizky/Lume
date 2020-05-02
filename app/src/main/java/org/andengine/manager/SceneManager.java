@@ -453,7 +453,7 @@ public class SceneManager {
         }));
     }
 
-    public void loadMultiOnlineGameScene(final Engine mEngine, LinkedList<Player> players, Server server) {
+    public void loadMultiOnlineGameScene(final Engine mEngine, LinkedList<Player> players, Server server, String room) {
         ResourcesManager.getInstance().unloadCurrentScene(currentScene);
         loadingScene = new LoadingScene();
         setScene(loadingScene);
@@ -462,7 +462,7 @@ public class SceneManager {
             public void onTimePassed(TimerHandler pTimerHandler) {
                 mEngine.unregisterUpdateHandler(pTimerHandler);
                 ResourcesManager.getInstance().loadOnlineMultiResources();
-                MultiplayerGameScene.createInstance(players, server);
+                MultiplayerGameScene.createInstance(players, server, room);
                 onlineGameScene = MultiplayerGameScene.getInstance();
                 setScene(onlineGameScene);
             }
