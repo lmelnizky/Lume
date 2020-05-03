@@ -171,6 +171,7 @@ public abstract class SkillScene extends BaseScene {
                         timeText.setColor(Color.RED);
                     }
                 }
+
                 if (level == 8) moveStones();
             }
             @Override

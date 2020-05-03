@@ -43,6 +43,7 @@ public class Worlds1to4Scene extends BaseScene {
 
     @Override
     public void onBackKeyPressed() {
+        disposeHUD();
         SceneManager.getInstance().loadMenuScene(engine);
     }
 
@@ -60,6 +61,13 @@ public class Worlds1to4Scene extends BaseScene {
         SpriteBackground spriteBackground = new SpriteBackground(new Sprite(camera.getCenterX(), camera.getCenterY(),
                 camera.getWidth(), camera.getHeight(), resourcesManager.chooseLevel_region, vbom));
         this.setBackground(spriteBackground);
+    }
+
+    private void disposeHUD() {
+        noSnailSprite.detachSelf();
+        noSnailSprite.dispose();
+        slowMotionSprite.detachSelf();
+        slowMotionSprite.dispose();
     }
 
     private void createSlowMotionSprite() {
@@ -93,6 +101,7 @@ public class Worlds1to4Scene extends BaseScene {
             public boolean onAreaTouched(TouchEvent touchEvent, float x, float y) {
                 if (touchEvent.isActionDown()) {
                     if (activity.getCurrentWorld() >= 5) {
+                        disposeHUD();
                         SceneManager.getInstance().loadWorlds5to8Scene(engine);
                     } else {
                         activity.toastOnUiThread("Worlds locked");
@@ -138,6 +147,7 @@ public class Worlds1to4Scene extends BaseScene {
 
                 public boolean onAreaTouched(TouchEvent touchEvent, float x, float y) {
                     if (touchEvent.isActionDown()) {
+                        disposeHUD();
                         SceneManager.getInstance().loadWorld1Scene(engine, finalI + 1);
                         return true;
                     } else {
@@ -155,6 +165,7 @@ public class Worlds1to4Scene extends BaseScene {
                 public boolean onAreaTouched(TouchEvent touchEvent, float x, float y) {
                     if (touchEvent.isActionDown()) {
                             if (activity.getCurrentWorld() >= 2) {
+                                disposeHUD();
                                 SceneManager.getInstance().loadWorld2Scene(engine, finalI + 1);
                             } else {
                                 activity.toastOnUiThread("Level locked");
@@ -174,6 +185,7 @@ public class Worlds1to4Scene extends BaseScene {
                 public boolean onAreaTouched(TouchEvent touchEvent, float x, float y) {
                     if (touchEvent.isActionDown()) {
                             if (activity.getCurrentWorld() >= 3) {
+                                disposeHUD();
                                 SceneManager.getInstance().loadWorld3Scene(engine, finalI + 1);
                             } else {
                                 activity.toastOnUiThread("Level locked");
@@ -193,6 +205,7 @@ public class Worlds1to4Scene extends BaseScene {
                 public boolean onAreaTouched(TouchEvent touchEvent, float x, float y) {
                     if (touchEvent.isActionDown()) {
                             if (activity.getCurrentWorld() >= 4) {
+                                disposeHUD();
                                 SceneManager.getInstance().loadWorld4Scene(engine, finalI + 1);
                             } else {
                                 activity.toastOnUiThread("Level locked");

@@ -261,7 +261,7 @@ public class Skill24 extends SkillScene {
             case 1:
                 x = camera.getCenterX() - sideLength + sideLength*position;
                 y = camera.getHeight() - sideLength / 2;
-                xVel = (gravityDirection-3)*xSpeed; //2 v 4
+                xVel = (level == 4) ? 0 : (gravityDirection-3)*xSpeed; //2 v 4
                 yVel = -ySpeed;
                 break;
             case 2:
@@ -273,7 +273,7 @@ public class Skill24 extends SkillScene {
             case 3:
                 x = camera.getCenterX()-sideLength + sideLength*position;
                 y = sideLength / 2;
-                xVel = (gravityDirection-3)*xSpeed; //2 v 4
+                xVel = (level == 4) ? 0 : (gravityDirection-3)*xSpeed; //2 v 4
                 yVel = ySpeed;
                 break;
             case 4:
