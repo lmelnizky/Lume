@@ -90,10 +90,41 @@ public class BallCreator extends Creator {
         //stoneCircle = new Circle(x, y, sideLength*3/8);
         stone = new Sprite(x, y, sideLength*3/4, sideLength*3/4,
                 textureRegion, ResourcesManager.getInstance().vbom) {
-//            @Override
-//            protected void onManagedUpdate(float pSecondsElapsed) {
-//                //TODO check collisions
-//            }
+            @Override
+            protected void onManagedUpdate(float pSecondsElapsed) {
+                final Circle lumeCircle, stoneCircle;
+                lumeCircle = new Circle(gameScene.localPlayer.getSprite().getX(), gameScene.localPlayer.getSprite().getY(),
+                        gameScene.localPlayer.getSprite().getWidth() / 2);
+                stoneCircle = new Circle(this.getX(), this.getY(), this.getWidth() / 2);
+
+                if (stoneCircle.collision(lumeCircle) && !gameScene.gameOverDisplayed) {
+                    gameScene.displayGameOverScene();
+                }
+
+
+                if (this.getX() < -3*sideLength || this.getY() < -3*sideLength ||
+                        this.getX() > camera.getWidth() + 3*sideLength || this.getY() > camera.getWidth() + 3*sideLength) {
+                    gameScene.stonesToRemove.add(this);
+                    if (!thorny) gameScene.crackyStonesToRemove.add(this);
+
+                    ResourcesManager.getInstance().engine.runOnUpdateThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            for (Sprite sprite : gameScene.stonesToRemove) {
+                                sprite.detachSelf();
+                                sprite.dispose();
+                            }
+                            gameScene.crackyStonesToRemove.clear();
+                            gameScene.stonesToRemove.clear();
+                        }
+
+                    });
+                }
+
+                crackyStones.removeAll(gameScene.crackyStonesToRemove);
+                stones.removeAll(gameScene.stonesToRemove);
+
+            }
         };
         body = PhysicsFactory.createCircleBody(physicsWorld, stone, BodyDef.BodyType.KinematicBody, FIXTURE_DEF);
         if (thorny) {

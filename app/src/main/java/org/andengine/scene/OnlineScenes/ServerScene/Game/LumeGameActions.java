@@ -70,7 +70,7 @@ public class LumeGameActions implements GameActions {
 
     @Override
     public void loadCanon(CannonCreator creator) {
-
+        creator.createSprite();
     }
 
     @Override
@@ -94,7 +94,7 @@ public class LumeGameActions implements GameActions {
     public void startGame() {
         Log.i("LumaGameActions", "startGame");
         scene = MultiplayerGameScene.getInstance();
-        if(referee.equals(scene.getMultiplayer().getServer().id)){ scene.referee = new Referee(); Log.i("Lume", "")}
+        if(referee.equals(scene.getMultiplayer().getServer().id)){ scene.referee = new Referee(); Log.i("LumeGameActions", "I'm a referee");}
     }
     //inner classes
         //public classes
