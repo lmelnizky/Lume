@@ -4,7 +4,6 @@ import com.badlogic.gdx.math.Vector2;
 
 import org.andengine.base.BaseScene;
 import org.andengine.engine.camera.hud.HUD;
-import org.andengine.engine.handler.IUpdateHandler;
 import org.andengine.engine.handler.timer.ITimerCallback;
 import org.andengine.engine.handler.timer.TimerHandler;
 import org.andengine.entity.Entity;
@@ -23,7 +22,7 @@ import org.andengine.input.touch.TouchEvent;
 import org.andengine.manager.ResourcesManager;
 import org.andengine.manager.SceneManager;
 import org.andengine.manager.SceneType;
-import org.andengine.scene.OnlineScenes.ServerScene.Game.Creator.BallCreator;
+import org.andengine.scene.OnlineScenes.ServerScene.Game.Creator.CannonCreator;
 import org.andengine.scene.OnlineScenes.ServerScene.Game.Creator.MoveCreator;
 import org.andengine.scene.OnlineScenes.ServerScene.Multiplayer;
 import org.andengine.scene.OnlineScenes.ServerScene.Player;
@@ -31,6 +30,7 @@ import org.andengine.scene.OnlineScenes.ServerScene.Server;
 import org.andengine.util.adt.color.Color;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.Random;
 
@@ -47,14 +47,14 @@ public class MultiplayerGameScene extends BaseScene {
     private static final int SWIPE_MIN_DISTANCE = 10;
 
     //primitives
-    public boolean gameOverDisplayed, waitingForStonesToDisappear, gameFinished, firstStonesInLevel;
+    public boolean gameOverDisplayed = false, waitingForStonesToDisappear, gameFinished, firstStonesInLevel;
     public float sideLength;
     public float shootX1, shootX2, shootY1, shootY2;
     public float swipeX1, swipeX2, swipeY1, swipeY2;
     public long stoneTime;
     public int xPositions, yPositions;
-    public int xPosLume, yPosLume;
-    public int xPosGrume, yPosGrume;
+    public int xPosLocal, yPosLocal;
+    public int xPosOpponent, yPosOpponent;
     public int xPosCoin, yPosCoin;
     public int xPosBomb, yPosBomb;
     public int time;
@@ -74,16 +74,17 @@ public class MultiplayerGameScene extends BaseScene {
     public Sprite[] cannonNU, cannonEU, cannonSU, cannonWU;
     public Sprite luserSprite, finishSprite, replaySprite;
     public Text gameOverText;
+    public Player localPlayer;
 
     public Referee referee;
 
 
     //objects
     private Multiplayer multiplayer;
-    public Random randomGenerator;
+    public Random randomGenerator = new Random();
 
     //public attributes
-    public ArrayList<Sprite> crackyStones, crackyStonesToRemove, cannonBallsToRemove;
+    public ArrayList<Sprite> crackyStones = new ArrayList<>(), crackyStonesToRemove = new ArrayList<>(), cannonBallsToRemove = new ArrayList<>();
     public ArrayList<Sprite> stones = new ArrayList<Sprite>(), stonesToRemove = new ArrayList<Sprite>();
     public PhysicsWorld physicsWorld;
 
@@ -178,13 +179,17 @@ public class MultiplayerGameScene extends BaseScene {
                         if (Math.abs(deltaX) > Math.abs(deltaY)) { //horizontal swipe
                             if (deltaX > 0) { //left to right
                                 //createCannonball(4);
+                                multiplayer.getServer().emit(new CannonCreator(multiplayer.getRoom(), 4, multiplayer.getServer().id));
                             } else { //right to left
                                 //createCannonball(2);
+                                multiplayer.getServer().emit(new CannonCreator(multiplayer.getRoom(), 2, multiplayer.getServer().id));
                             }
                         } else { //vertical swipe
                             if (deltaY > 0) { //up to down
                                 //createCannonball(3);
+                                multiplayer.getServer().emit(new CannonCreator(multiplayer.getRoom(), 1, multiplayer.getServer().id));
                             } else { //down to up
+                                multiplayer.getServer().emit(new CannonCreator(multiplayer.getRoom(), 3, multiplayer.getServer().id));
                                 //createCannonball(1);
                             }
                         }
@@ -218,18 +223,18 @@ public class MultiplayerGameScene extends BaseScene {
                         if (Math.abs(deltaX) > Math.abs(deltaY)) { //horizontal
                             if (deltaX > 0) { //left to right
                                 //movePlayer('R');
-                                multiplayer.getServer().emit(new MoveCreator(multiplayer.getRoom(), 'R', getMultiplayer().getServer().id));
+                                if (localPlayer.getCurrentPosition().x < 3) multiplayer.getServer().emit(new MoveCreator(multiplayer.getRoom(), 'R', getMultiplayer().getServer().id));
                             } else { //right to left
                                 //movePlayer('L');
-                                multiplayer.getServer().emit(new MoveCreator(multiplayer.getRoom(), 'L', getMultiplayer().getServer().id));
+                                if (localPlayer.getCurrentPosition().x  > 1) multiplayer.getServer().emit(new MoveCreator(multiplayer.getRoom(), 'L', getMultiplayer().getServer().id));
                             }
                         } else { //vertical
                             if (deltaY > 0) { //up to down
                                 //movePlayer('U');
-                                multiplayer.getServer().emit(new MoveCreator(multiplayer.getRoom(), 'U', getMultiplayer().getServer().id));
+                                if (localPlayer.getCurrentPosition().y < 3) multiplayer.getServer().emit(new MoveCreator(multiplayer.getRoom(), 'U', getMultiplayer().getServer().id));
                             } else { //down to up
                                 //movePlayer('D');
-                                multiplayer.getServer().emit(new MoveCreator(multiplayer.getRoom(), 'D', getMultiplayer().getServer().id));
+                                if (localPlayer.getCurrentPosition().y > 1) multiplayer.getServer().emit(new MoveCreator(multiplayer.getRoom(), 'D', getMultiplayer().getServer().id));
                             }
                         }
                     } else { //TAP - show slowMotion
@@ -404,21 +409,38 @@ public class MultiplayerGameScene extends BaseScene {
     }
 
     private void createPlayer() {
-        xPosLume = 1;
-        yPosLume = 1;
-        xPosGrume = 3;
-        yPosGrume = 3;
-        lumeSprite = new Sprite(camera.getCenterX() - sideLength, camera.getCenterY() - sideLength,
+        String[] array = new String[2];
+        array[0] = multiplayer.getPlayers().get(0).getId();
+        array[1] = multiplayer.getPlayers().get(1).getId();
+        Arrays.sort(array);
+        xPosLocal = multiplayer.getServer().id.equals(array[0]) ? 1 : 3;
+        yPosLocal = multiplayer.getServer().id.equals(array[0]) ? 1 : 3;
+        xPosOpponent = xPosLocal == 1 ? 3 : 1;
+        yPosOpponent = xPosLocal == 1 ? 3 : 1;
+        lumeSprite = new Sprite(camera.getCenterX() - sideLength + (xPosLocal-1)*sideLength, camera.getCenterY() - sideLength + (yPosLocal-1)*sideLength,
                 sideLength * 3 / 4, sideLength * 3 / 4, resourcesManager.player_region, vbom);
         secondLayer.attachChild(lumeSprite);
         lumeSprite.setRotation(90);
-        grumeSprite = new Sprite(camera.getCenterX() + sideLength, camera.getCenterY() + sideLength,
-                sideLength*3/4, sideLength*3/4, resourcesManager.grume_region, vbom);
+        grumeSprite = new Sprite(camera.getCenterX() - sideLength+ (xPosOpponent-1)*sideLength, camera.getCenterY() - sideLength+ (yPosOpponent-1)*sideLength,
+                sideLength * 3 / 4, sideLength * 3 / 4, resourcesManager.grume_region, vbom);
         secondLayer.attachChild(grumeSprite);
         grumeSprite.setRotation(270);
 
-        multiplayer.getPlayers().get(0).setSprite(lumeSprite);  multiplayer.getPlayers().get(0).updatePosition(new Vector2(xPosLume, yPosLume));
-        multiplayer.getPlayers().get(1).setSprite(grumeSprite); multiplayer.getPlayers().get(1).updatePosition(new Vector2(xPosGrume, yPosGrume));
+        if (multiplayer.getPlayers().get(0).getId().equals(multiplayer.getServer().id)){
+
+            localPlayer = multiplayer.getPlayers().get(0);
+            multiplayer.getPlayers().get(0).setSprite(lumeSprite);
+            multiplayer.getPlayers().get(0).updatePosition(new Vector2(xPosLocal, yPosLocal));
+            multiplayer.getPlayers().get(1).setSprite(grumeSprite);
+            multiplayer.getPlayers().get(1).updatePosition(new Vector2(xPosOpponent, yPosOpponent));
+        }
+        else{
+            localPlayer = multiplayer.getPlayers().get(1);
+            multiplayer.getPlayers().get(0).setSprite(grumeSprite);
+            multiplayer.getPlayers().get(0).updatePosition(new Vector2(xPosOpponent, yPosOpponent));
+            multiplayer.getPlayers().get(1).setSprite(lumeSprite);
+            multiplayer.getPlayers().get(1).updatePosition(new Vector2(xPosLocal, yPosLocal));
+        }
     }
 
     private void createHUD() {
@@ -462,7 +484,7 @@ public class MultiplayerGameScene extends BaseScene {
         gameHUD = null;
     }
 
-    private void displayGameOverScene() {
+    public void displayGameOverScene() {
         gameOverDisplayed = true;
 
         gameOverScene = new CameraScene(camera);
@@ -472,7 +494,7 @@ public class MultiplayerGameScene extends BaseScene {
         ResourcesManager.getInstance().backgroundMusic.pause();
         ResourcesManager.getInstance().luserSound.play();
 
-        float textY = (yPosLume == 2) ? camera.getCenterY() + sideLength : camera.getCenterY();
+        float textY = (yPosLocal == 2) ? camera.getCenterY() + sideLength : camera.getCenterY();
         gameOverText = new Text(camera.getCenterX(), textY,
                 resourcesManager.smallFont, "L u s e r !", vbom);
 

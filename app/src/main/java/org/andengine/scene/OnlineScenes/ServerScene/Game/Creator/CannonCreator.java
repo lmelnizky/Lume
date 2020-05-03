@@ -17,7 +17,7 @@ import org.json.JSONObject;
 
 public class CannonCreator extends Creator {
     //const
-    private final float speed = 1f;
+    private final float speed = 10f;
     private int direction;
     private float sideLength;
     private String playerId;

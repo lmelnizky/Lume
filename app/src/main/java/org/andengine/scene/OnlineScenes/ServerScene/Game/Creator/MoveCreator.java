@@ -33,7 +33,7 @@ public class MoveCreator extends Creator {
     @Override
     public Sprite createSprite() {
         for (Player player : MultiplayerGameScene.getInstance().getMultiplayer().getPlayers()) {
-            if (player.getId().equals(room)) {
+            if (player.getId().equals(movedPlayersID)) {
                 playerSprite = player.getSprite();
                 xPosPlayer = (int) player.getCurrentPosition().x;
                 yPosPlayer = (int) player.getCurrentPosition().y;
@@ -83,11 +83,15 @@ public class MoveCreator extends Creator {
         try {
             returnValue.put("room", room);
             returnValue.put("movedPlayer", movedPlayersID);
-            returnValue.put("direction", direction);
+            returnValue.put("direction", String.valueOf(direction));
         }catch(JSONException e){ e.printStackTrace();}
         return returnValue; //TODO Martin Melnizky
     }
     public static MoveCreator getCreatorFromJson(JSONObject o){
+        try{
+            char s = o.getString("direction").charAt(0);
+            System.out.println(s);
+        }catch (JSONException e){ e.printStackTrace();}
         try{return new MoveCreator(o.getString("room"), o.getString("direction").charAt(0), o.getString("movedPlayer"));} catch(JSONException e){e.printStackTrace();}
         return null;
     }
