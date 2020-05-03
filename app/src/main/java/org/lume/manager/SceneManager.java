@@ -1,0 +1,517 @@
+package org.lume.manager;
+
+import org.lume.base.BaseScene;
+import org.lume.engine.Engine;
+import org.lume.engine.handler.timer.ITimerCallback;
+import org.lume.engine.handler.timer.TimerHandler;
+import org.lume.scene.HelpScene;
+import org.lume.scene.HighscoreScene;
+import org.lume.scene.MultiScene;
+import org.lume.scene.OnlineScenes.ServerScene.Game.MultiplayerGameScene;
+import org.lume.scene.OnlineScenes.ServerScene.Player;
+import org.lume.scene.OnlineScenes.ServerScene.Server;
+import org.lume.scene.OnlineScenes.ServerScene.Users.MultiplayerUsersScene;
+import org.lume.scene.ShopScene;
+import org.lume.scene.SkillMenu;
+import org.lume.scene.Worlds1to4Scene;
+import org.lume.scene.LoadingScene;
+import org.lume.scene.MainMenuScene;
+import org.lume.scene.SplashScene;
+import org.lume.scene.Worlds5to8Scene;
+import org.lume.scene.skillscenes.Skill11;
+import org.lume.scene.skillscenes.Skill12;
+import org.lume.scene.skillscenes.Skill13;
+import org.lume.scene.skillscenes.Skill14;
+import org.lume.scene.skillscenes.Skill21;
+import org.lume.scene.skillscenes.Skill22;
+import org.lume.scene.skillscenes.Skill23;
+import org.lume.scene.skillscenes.Skill24;
+import org.lume.scene.worlds.World0;
+import org.lume.scene.worlds.World1;
+import org.lume.scene.worlds.World2;
+import org.lume.scene.worlds.World3;
+import org.lume.scene.worlds.World4;
+import org.lume.scene.worlds.World5;
+import org.lume.scene.worlds.World6;
+import org.lume.scene.worlds.World7;
+import org.lume.scene.worlds.World8;
+import org.lume.ui.IGameInterface;
+
+import java.util.LinkedList;
+
+/**
+ * Created by Lukas on 15.05.2017.
+ */
+
+public class SceneManager {
+
+    public BaseScene splashScene;
+    public MainMenuScene menuScene;
+    public BaseScene gameScene;
+    public BaseScene multiScene;
+    public BaseScene onlineUsersScene;
+    public BaseScene onlineGameScene;
+    public BaseScene highscoreScene;
+    public BaseScene shopScene;
+    public BaseScene skillGameScene;
+    public BaseScene skillMenuScene;
+    public BaseScene helpScene;
+    public BaseScene loadingScene;
+    public BaseScene worlds1to4Scene;
+    public BaseScene worlds5to8Scene;
+
+    public BaseScene world0Scene;
+    public BaseScene world1Scene;
+    public BaseScene world2Scene;
+    public BaseScene world3Scene;
+    public BaseScene world4Scene;
+    public BaseScene world5Scene;
+    public BaseScene world6Scene;
+    public BaseScene world7Scene;
+    public BaseScene world8Scene;
+//    private BaseScene level2Scene;
+
+    private static final SceneManager INSTANCE = new SceneManager();
+
+    private SceneType currentSceneType = SceneType.SCENE_SPLASH;
+
+    private BaseScene currentScene;
+
+    private Engine engine = ResourcesManager.getInstance().engine;
+
+//    public enum SceneType {
+//        SCENE_SPLASH,
+//        SCENE_MENU,
+//        SCENE_LOADING,
+//        SCENE_LEVELS,
+//        SCENE_MULTI,
+//        SCENE_W1,
+//        SCENE_W2,
+//    }
+
+    public void setScene(BaseScene scene) {
+        engine.setScene(scene);
+        currentScene = scene;
+        currentSceneType = scene.getSceneType();
+
+        //call setContentView in Activity to show ads
+        ResourcesManager.getInstance().activity.setAdVisibility();
+    }
+
+//    public void setScene(SceneType sceneType) {
+//        switch (sceneType) {
+//            case SCENE_MENU:
+//                setScene(menuScene);
+//                break;
+//            case SCENE_GAME:
+//                setScene(gameScene);
+//                break;
+//            case SCENE_SPLASH:
+//                setScene(splashScene);
+//                break;
+//            case SCENE_LOADING:
+//                setScene(loadingScene);
+//                break;
+//            default:
+//                break;
+//        }
+//    }
+
+    public void createSplashScene(IGameInterface.OnCreateSceneCallback pOnCreateSceneCallback) {
+        ResourcesManager.getInstance().loadSplashScreen();
+        splashScene = new SplashScene();
+        currentScene = splashScene;
+        pOnCreateSceneCallback.onCreateSceneFinished(splashScene);
+    }
+
+//    private void disposeSplashScene() {
+//        ResourcesManager.getInstance().unloadSplashScreen();
+//        splashScene.disposeScene();
+//        splashScene = null;
+//    }
+
+    public void createMenuScene() {
+        if (currentScene != null && currentScene == menuScene) { //menuscene can also be tbe current scene
+            ResourcesManager.getInstance().unloadCurrentScene(currentScene);
+            currentScene.disposeScene();
+        }
+        ResourcesManager.getInstance().loadMenuResources();
+        //ResourcesManager.getInstance().loadInitialGameResources(); //load game resources for now and ever
+        loadingScene = new LoadingScene();
+        menuScene = new MainMenuScene();
+        SceneManager.getInstance().setScene(menuScene);
+    }
+
+    public void loadWorld0Scene(final Engine mEngine, final int level) {
+        ResourcesManager.getInstance().unloadCurrentScene(currentScene);
+        setScene(loadingScene);
+        ResourcesManager.getInstance().loadGameResources(0);
+        mEngine.registerUpdateHandler(new TimerHandler(1.5f, new ITimerCallback() {
+        public void onTimePassed(final TimerHandler pTimerHandler) {
+            mEngine.unregisterUpdateHandler(pTimerHandler);
+            if (level == 0) {
+                world0Scene = new World0(); //selected from MainMenuScene
+            } else {
+                world0Scene = new World0(level); //selected from Worlds1to4Scene
+            }
+            setScene(world0Scene);
+        }
+    }));
+}
+
+    public void loadWorld1Scene(final Engine mEngine, final int level) {
+        ResourcesManager.getInstance().unloadCurrentScene(currentScene);
+        setScene(loadingScene);
+        ResourcesManager.getInstance().loadGameResources(1);
+        mEngine.registerUpdateHandler(new TimerHandler(1.5f, new ITimerCallback() {
+            public void onTimePassed(final TimerHandler pTimerHandler) {
+                mEngine.unregisterUpdateHandler(pTimerHandler);
+                if (level == 0) {
+                    world1Scene = new World1(); //selected from MainMenuScene
+                } else {
+                    world1Scene = new World1(level); //selected from Worlds1to4Scene
+                }
+                setScene(world1Scene);
+            }
+        }));
+    }
+
+    public void loadWorld2Scene(final Engine mEngine, final int level) {
+        ResourcesManager.getInstance().unloadCurrentScene(currentScene);
+        setScene(loadingScene);
+        ResourcesManager.getInstance().loadGameResources(2);
+
+        mEngine.registerUpdateHandler(new TimerHandler(1.5f, new ITimerCallback() {
+            public void onTimePassed(final TimerHandler pTimerHandler) {
+                mEngine.unregisterUpdateHandler(pTimerHandler);
+                if (level == 0) {
+                    world2Scene = new World2(); //selected from MainMenuScene
+                } else {
+                    world2Scene = new World2(level); //selected from Worlds1to4Scene
+                }
+                setScene(world2Scene);
+            }
+        }));
+    }
+
+    public void loadWorld3Scene(final Engine mEngine, final int level) {
+        ResourcesManager.getInstance().unloadCurrentScene(currentScene);
+        setScene(loadingScene);
+        ResourcesManager.getInstance().loadGameResources(3);
+
+        mEngine.registerUpdateHandler(new TimerHandler(1.5f, new ITimerCallback() {
+            public void onTimePassed(final TimerHandler pTimerHandler) {
+                mEngine.unregisterUpdateHandler(pTimerHandler);
+                if (level == 0) {
+                    world3Scene = new World3(); //selected from MainMenuScene
+                } else {
+                    world3Scene = new World3(level); //selected from Worlds1to4Scene
+                }
+                setScene(world3Scene);
+            }
+        }));
+    }
+
+    public void loadWorld4Scene(final Engine mEngine, final int level) {
+        ResourcesManager.getInstance().unloadCurrentScene(currentScene);
+        setScene(loadingScene);
+        ResourcesManager.getInstance().loadGameResources(4);
+
+        mEngine.registerUpdateHandler(new TimerHandler(1.5f, new ITimerCallback() {
+            public void onTimePassed(final TimerHandler pTimerHandler) {
+                mEngine.unregisterUpdateHandler(pTimerHandler);
+                if (level == 0) {
+                    world4Scene = new World4(); //selected from MainMenuScene
+                } else {
+                    world4Scene = new World4(level); //selected from Worlds1to4Scene
+                }
+                setScene(world4Scene);
+            }
+        }));
+    }
+
+    public void loadWorld5Scene(final Engine mEngine, final int level) {
+        ResourcesManager.getInstance().unloadCurrentScene(currentScene);
+        setScene(loadingScene);
+        ResourcesManager.getInstance().loadGameResources(5);
+
+        mEngine.registerUpdateHandler(new TimerHandler(1.5f, new ITimerCallback() {
+            public void onTimePassed(final TimerHandler pTimerHandler) {
+                mEngine.unregisterUpdateHandler(pTimerHandler);
+                if (level == 0) {
+                    world5Scene = new World5(); //selected from MainMenuScene
+                } else {
+                    world5Scene = new World5(level); //selected from Worlds1to4Scene
+                }
+                setScene(world5Scene);
+            }
+        }));
+    }
+
+    public void loadWorld6Scene(final Engine mEngine, final int level) {
+        ResourcesManager.getInstance().unloadCurrentScene(currentScene);
+        setScene(loadingScene);
+        ResourcesManager.getInstance().loadGameResources(6);
+
+        mEngine.registerUpdateHandler(new TimerHandler(1.5f, new ITimerCallback() {
+            public void onTimePassed(final TimerHandler pTimerHandler) {
+                mEngine.unregisterUpdateHandler(pTimerHandler);
+                if (level == 0) {
+                    world6Scene = new World6(); //selected from MainMenuScene
+                } else {
+                    world6Scene = new World6(level); //selected from Worlds1to4Scene
+                }
+                setScene(world6Scene);
+            }
+        }));
+    }
+
+    public void loadWorld7Scene(final Engine mEngine, final int level) {
+        ResourcesManager.getInstance().unloadCurrentScene(currentScene);
+        setScene(loadingScene);
+        ResourcesManager.getInstance().loadGameResources(7);
+
+        mEngine.registerUpdateHandler(new TimerHandler(1.5f, new ITimerCallback() {
+            public void onTimePassed(final TimerHandler pTimerHandler) {
+                mEngine.unregisterUpdateHandler(pTimerHandler);
+                if (level == 0) {
+                    world7Scene = new World7(); //selected from MainMenuScene
+                } else {
+                    world7Scene = new World7(level); //selected from Worlds1to4Scene
+                }
+                setScene(world7Scene);
+            }
+        }));
+    }
+
+    public void loadWorld8Scene(final Engine mEngine, final int level) {
+        ResourcesManager.getInstance().unloadCurrentScene(currentScene);
+        setScene(loadingScene);
+        ResourcesManager.getInstance().loadGameResources(8);
+
+        mEngine.registerUpdateHandler(new TimerHandler(1.5f, new ITimerCallback() {
+            public void onTimePassed(final TimerHandler pTimerHandler) {
+                mEngine.unregisterUpdateHandler(pTimerHandler);
+                if (level == 0) {
+                    world8Scene = new World8(); //selected from MainMenuScene
+                } else {
+                    world8Scene = new World8(level); //selected from Worlds5to8Scene
+                }
+                setScene(world8Scene);
+            }
+        }));
+    }
+
+    public void loadWorlds1to4Scene(final Engine mEngine) {
+        ResourcesManager.getInstance().unloadCurrentScene(currentScene);
+        setScene(loadingScene);
+        ResourcesManager.getInstance().loadLevelResources(1);
+
+        mEngine.registerUpdateHandler(new TimerHandler(0.5f, new ITimerCallback() {
+            public void onTimePassed(final TimerHandler pTimerHandler) {
+                mEngine.unregisterUpdateHandler(pTimerHandler);
+                worlds1to4Scene = new Worlds1to4Scene();
+                setScene(worlds1to4Scene);
+            }
+        }));
+    }
+
+    public void loadWorlds5to8Scene(final Engine mEngine) {
+        ResourcesManager.getInstance().unloadCurrentScene(currentScene);
+        setScene(loadingScene);
+        ResourcesManager.getInstance().loadLevelResources(2);
+
+        mEngine.registerUpdateHandler(new TimerHandler(0.5f, new ITimerCallback() {
+            public void onTimePassed(final TimerHandler pTimerHandler) {
+                mEngine.unregisterUpdateHandler(pTimerHandler);
+                worlds5to8Scene = new Worlds5to8Scene();
+                setScene(worlds5to8Scene);
+            }
+        }));
+    }
+
+    public void loadHighscoreScene(final Engine mEngine) {
+        ResourcesManager.getInstance().unloadCurrentScene(currentScene);
+        loadingScene = new LoadingScene();
+        setScene(loadingScene);
+        ResourcesManager.getInstance().unloadMenuTextures();
+        mEngine.registerUpdateHandler(new TimerHandler(1f, new ITimerCallback() {
+            @Override
+            public void onTimePassed(TimerHandler pTimerHandler) {
+                mEngine.unregisterUpdateHandler(pTimerHandler);
+                ResourcesManager.getInstance().loadHighscoreResources();
+                highscoreScene = new HighscoreScene();
+                setScene(highscoreScene);
+            }
+        }));
+    }
+
+    public void loadShopScene(final Engine mEngine) {
+        ResourcesManager.getInstance().unloadCurrentScene(currentScene);
+        loadingScene = new LoadingScene();
+        setScene(loadingScene);
+        ResourcesManager.getInstance().unloadMenuTextures();
+        mEngine.registerUpdateHandler(new TimerHandler(1f, new ITimerCallback() {
+            @Override
+            public void onTimePassed(TimerHandler pTimerHandler) {
+                mEngine.unregisterUpdateHandler(pTimerHandler);
+                ResourcesManager.getInstance().loadShopResources();
+                shopScene = new ShopScene();
+                setScene(shopScene);
+            }
+        }));
+    }
+
+    public void loadInfoScene(final Engine mEngine) {
+        ResourcesManager.getInstance().unloadCurrentScene(currentScene);
+        loadingScene = new LoadingScene();
+        setScene(loadingScene);
+        ResourcesManager.getInstance().unloadMenuTextures();
+        mEngine.registerUpdateHandler(new TimerHandler(1f, new ITimerCallback() {
+            @Override
+            public void onTimePassed(TimerHandler pTimerHandler) {
+                mEngine.unregisterUpdateHandler(pTimerHandler);
+                ResourcesManager.getInstance().loadInfoResources();
+                helpScene = new HelpScene();
+                setScene(helpScene);
+            }
+        }));
+    }
+
+    public void loadSkillGameScene(final Engine mEngine, int level) {
+        ResourcesManager.getInstance().unloadCurrentScene(currentScene);
+        loadingScene = new LoadingScene();
+        setScene(loadingScene);
+        ResourcesManager.getInstance().unloadMenuTextures();
+        mEngine.registerUpdateHandler(new TimerHandler(1f, new ITimerCallback() {
+            @Override
+            public void onTimePassed(TimerHandler pTimerHandler) {
+                mEngine.unregisterUpdateHandler(pTimerHandler);
+                ResourcesManager.getInstance().loadSkillResources();
+                switch (level) {
+                    case 1:
+                        skillGameScene = new Skill11();
+                        break;
+                    case 2:
+                        skillGameScene = new Skill12();
+                        break;
+                    case 3:
+                        skillGameScene = new Skill13();
+                        break;
+                    case 4:
+                        skillGameScene = new Skill14();
+                        break;
+                    case 5:
+                        skillGameScene = new Skill21();
+                        break;
+                    case 6:
+                        skillGameScene = new Skill22();
+                        break;
+                    case 7:
+                        skillGameScene = new Skill23();
+                        break;
+                    case 8:
+                        skillGameScene = new Skill24();
+                        break;
+                }
+                setScene(skillGameScene);
+            }
+        }));
+    }
+
+    public void loadSkillMenuScene(final Engine mEngine) {
+        ResourcesManager.getInstance().unloadCurrentScene(currentScene);
+        BaseScene currentScene = getCurrentScene();
+        loadingScene = new LoadingScene();
+        setScene(loadingScene);
+        if (currentScene.getSceneType() == SceneType.SCENE_MENU) ResourcesManager.getInstance().unloadMenuTextures();
+        mEngine.registerUpdateHandler(new TimerHandler(1f, new ITimerCallback() {
+            @Override
+            public void onTimePassed(TimerHandler pTimerHandler) {
+                mEngine.unregisterUpdateHandler(pTimerHandler);
+                ResourcesManager.getInstance().loadSkillMenuResources();
+                skillMenuScene = new SkillMenu();
+                setScene(skillMenuScene);
+            }
+        }));
+    }
+
+    public void loadOnlineUsersScene(final Engine mEngine) {
+        ResourcesManager.getInstance().unloadCurrentScene(currentScene);
+        loadingScene = new LoadingScene();
+        setScene(loadingScene);
+        ResourcesManager.getInstance().unloadMenuTextures();
+        mEngine.registerUpdateHandler(new TimerHandler(1f, new ITimerCallback() {
+            @Override
+            public void onTimePassed(TimerHandler pTimerHandler) {
+                mEngine.unregisterUpdateHandler(pTimerHandler);
+                onlineUsersScene = MultiplayerUsersScene.getInstance();
+                setScene(onlineUsersScene);
+            }
+        }));
+    }
+
+    public void loadMultiOnlineGameScene(final Engine mEngine, LinkedList<Player> players, Server server, String room) {
+        ResourcesManager.getInstance().unloadCurrentScene(currentScene);
+        loadingScene = new LoadingScene();
+        setScene(loadingScene);
+        ResourcesManager.getInstance().loadOnlineMultiResources();
+        MultiplayerGameScene.createInstance(players, server, room);
+        onlineGameScene = MultiplayerGameScene.getInstance();
+        mEngine.registerUpdateHandler(new TimerHandler(1f, new ITimerCallback() {
+            @Override
+            public void onTimePassed(TimerHandler pTimerHandler) {
+                mEngine.unregisterUpdateHandler(pTimerHandler);
+                setScene(onlineGameScene);
+            }
+        }));
+    }
+
+    public void loadMultiScene(final Engine mEngine) {
+        ResourcesManager.getInstance().unloadCurrentScene(currentScene);
+        loadingScene = new LoadingScene();
+        setScene(loadingScene);
+        mEngine.registerUpdateHandler(new TimerHandler(1f, new ITimerCallback() {
+            @Override
+            public void onTimePassed(TimerHandler pTimerHandler) {
+                mEngine.unregisterUpdateHandler(pTimerHandler);
+                ResourcesManager.getInstance().loadMultiResources();
+                multiScene = new MultiScene();
+                setScene(multiScene);
+            }
+        }));
+    }
+
+    public void loadMenuScene(final Engine mEngine) {
+        ResourcesManager.getInstance().unloadCurrentScene(currentScene);
+        //currentScene.disposeScene();
+        setScene(loadingScene);
+        ResourcesManager.getInstance().unloadCurrentScene(currentScene);
+        ResourcesManager.getInstance().bluetoothSocket = null;
+        ResourcesManager.getInstance().bluetoothDevice = null;
+        mEngine.registerUpdateHandler(new TimerHandler(1f, new ITimerCallback() {
+            public void onTimePassed(final TimerHandler pTimerHandler) {
+                mEngine.unregisterUpdateHandler(pTimerHandler);
+                ResourcesManager.getInstance().loadMenuResources();
+                setScene(menuScene);
+                menuScene.updateWorldText();
+                menuScene.updateCoinText();
+                menuScene.updateHSText();
+            }
+        }));
+    }
+
+
+    public static SceneManager getInstance() {
+        return INSTANCE;
+    }
+
+    public SceneType getCurrentSceneType() {
+        return currentSceneType;
+    }
+
+    public BaseScene getCurrentScene() {
+        return currentScene;
+    }
+
+}

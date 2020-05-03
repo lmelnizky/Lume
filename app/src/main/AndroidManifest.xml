@@ -2,7 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:dist="http://schemas.android.com/apk/distribution"
     xmlns:tools="http://schemas.android.com/tools"
-    package="org.andengine">
+    package="org.lume">
 
     <dist:module dist:instant="true" />
 
@@ -18,7 +18,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme.NoActionBar">
         <activity
-            android:name=".VideoActivity"
+            android:name="org.lume.VideoActivity"
             android:configChanges="keyboardHidden|orientation|screenLayout|uiMode|screenSize"
             android:theme="@android:style/Theme.Black.NoTitleBar.Fullscreen" />
 
@@ -27,7 +27,7 @@
             android:value="ca-app-pub-4787870052129424~3644680594" />
 
         <activity
-            android:name=".GameActivity"
+            android:name="org.lume.GameActivity"
             android:configChanges="keyboardHidden|orientation|screenLayout|uiMode|screenSize">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -36,11 +36,11 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".MultiActivity"
+            android:name="org.lume.MultiActivity"
             android:label="@string/title_activity_multi"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name=".MultiplayerExample"
+            android:name="org.lume.MultiplayerExample"
             android:label="@string/title_activity_multi"
             android:theme="@style/AppTheme.NoActionBar" />
 

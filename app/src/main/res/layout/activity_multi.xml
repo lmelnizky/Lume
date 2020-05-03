@@ -9,7 +9,7 @@
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
     android:layout_centerInParent="true"
-    tools:context="org.andengine.MultiActivity">
+    tools:context="org.lume.MultiActivity">
 
     <Button
         android:id="@+id/enable"

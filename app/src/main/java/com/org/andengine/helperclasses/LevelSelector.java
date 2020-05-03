@@ -16,13 +16,13 @@ package com.org.andengine.helperclasses;
 
 import android.view.VelocityTracker;
 
-import org.andengine.engine.camera.Camera;
-import org.andengine.entity.Entity;
-import org.andengine.entity.sprite.Sprite;
-import org.andengine.input.touch.TouchEvent;
-import org.andengine.input.touch.detector.ScrollDetector;
-import org.andengine.input.touch.detector.ScrollDetector.IScrollDetectorListener;
-import org.andengine.input.touch.detector.SurfaceScrollDetector;
+import org.lume.engine.camera.Camera;
+import org.lume.entity.Entity;
+import org.lume.entity.sprite.Sprite;
+import org.lume.input.touch.TouchEvent;
+import org.lume.input.touch.detector.ScrollDetector;
+import org.lume.input.touch.detector.ScrollDetector.IScrollDetectorListener;
+import org.lume.input.touch.detector.SurfaceScrollDetector;
 
 import java.util.ArrayList;
 

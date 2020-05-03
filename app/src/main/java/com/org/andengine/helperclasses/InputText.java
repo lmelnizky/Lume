@@ -23,13 +23,13 @@ import android.view.Gravity;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 
-import org.andengine.entity.sprite.ButtonSprite;
-import org.andengine.entity.sprite.ButtonSprite.OnClickListener;
-import org.andengine.entity.text.Text;
-import org.andengine.opengl.font.Font;
-import org.andengine.opengl.texture.region.TiledTextureRegion;
-import org.andengine.opengl.vbo.VertexBufferObjectManager;
-import org.andengine.ui.activity.BaseGameActivity;
+import org.lume.entity.sprite.ButtonSprite;
+import org.lume.entity.sprite.ButtonSprite.OnClickListener;
+import org.lume.entity.text.Text;
+import org.lume.opengl.font.Font;
+import org.lume.opengl.texture.region.TiledTextureRegion;
+import org.lume.opengl.vbo.VertexBufferObjectManager;
+import org.lume.ui.activity.BaseGameActivity;
 
 public class InputText extends ButtonSprite implements OnClickListener {
 

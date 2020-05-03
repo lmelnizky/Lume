@@ -4,11 +4,11 @@ android {
     compileSdkVersion 29
     useLibrary 'org.apache.http.legacy'
     defaultConfig {
-        applicationId "org.andengine"
+        applicationId "org.lume"
         minSdkVersion 19
         targetSdkVersion 29
-        versionCode 15
-        versionName "2.5"
+        versionCode 16
+        versionName "2.6"
         multiDexEnabled true
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
