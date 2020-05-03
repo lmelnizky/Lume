@@ -1,5 +1,7 @@
 package org.andengine.scene.skillscenes;
 
+import android.util.Log;
+
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef;
@@ -184,7 +186,7 @@ public class Skill24 extends SkillScene {
                                         final PhysicsConnector physicsConnector =
                                                 physicsWorld.getPhysicsConnectorManager().findPhysicsConnectorByShape(cannonBalltoRemove);
                                         if (physicsConnector != null) {
-                                            physicsWorld.unregisterPhysicsConnector(physicsConnector);
+                                            //physicsWorld.unregisterPhysicsConnector(physicsConnector);
                                             Ball ball = (Ball) cannonBalltoRemove.getUserData();
                                             Body body = ball.getBody();
                                             body.setActive(false);
@@ -198,7 +200,7 @@ public class Skill24 extends SkillScene {
                                         final PhysicsConnector physicsConnector =
                                                 physicsWorld.getPhysicsConnectorManager().findPhysicsConnectorByShape(sprite);
                                         if (physicsConnector != null) {
-                                            physicsWorld.unregisterPhysicsConnector(physicsConnector);
+                                            //physicsWorld.unregisterPhysicsConnector(physicsConnector);
                                             Ball ball = (Ball) sprite.getUserData();
                                             Body body = ball.getBody();
                                             body.setActive(false);
@@ -286,7 +288,7 @@ public class Skill24 extends SkillScene {
 
         stone = new Sprite(x, y, sideLength * 3 / 4, sideLength * 3 / 4, textureRegion, vbom);
         Body body = PhysicsFactory.createCircleBody(physicsWorld, stone, BodyDef.BodyType.DynamicBody, FIXTURE_DEF);
-        body.setLinearVelocity(xVel, yVel);
+        body.setLinearVelocity(xVel/2, yVel/2);
         physicsWorld.registerPhysicsConnector(new PhysicsConnector(stone, body, true, false));
         ball = new Ball(direction, gravity, body, stone, thorny, false, speedFactor);
         stone.setUserData(ball);
@@ -370,7 +372,7 @@ public class Skill24 extends SkillScene {
     private void showStonesToScreen(int directionVariant, final boolean thornyFirst) {
         int randomRow = randomGenerator.nextInt(3); //values 0 to 2
         float ratio = resourcesManager.screenRatio;
-        float factor = (directionVariant%2 == 0) ? ratio : 1f;
+        float factor = directionVariant%2 == 0 ? ratio : 1f;
         int gravityDirection = getGravityDirection(directionVariant);
         addBall(false, directionVariant, gravityDirection, randomRow, 1.5f*factor);
     }

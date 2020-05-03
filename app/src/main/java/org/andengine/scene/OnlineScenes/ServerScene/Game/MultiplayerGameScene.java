@@ -187,9 +187,9 @@ public class MultiplayerGameScene extends BaseScene {
                         } else { //vertical swipe
                             if (deltaY > 0) { //up to down
                                 //createCannonball(3);
-                                multiplayer.getServer().emit(new CannonCreator(multiplayer.getRoom(), 1, multiplayer.getServer().id));
-                            } else { //down to up
                                 multiplayer.getServer().emit(new CannonCreator(multiplayer.getRoom(), 3, multiplayer.getServer().id));
+                            } else { //down to up
+                                multiplayer.getServer().emit(new CannonCreator(multiplayer.getRoom(), 1, multiplayer.getServer().id));
                                 //createCannonball(1);
                             }
                         }

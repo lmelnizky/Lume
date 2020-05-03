@@ -1,6 +1,7 @@
 package org.andengine.base;
 
 import android.hardware.SensorManager;
+import android.util.Log;
 
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
@@ -192,7 +193,13 @@ public abstract class SkillScene extends BaseScene {
     }
 
     public void createPhysics() {
-        physicsWorld = new FixedStepPhysicsWorld(60, new Vector2(0, 0), false);
+        physicsWorld = new FixedStepPhysicsWorld(60, new Vector2(0, 0), false){
+            @Override
+            public void onUpdate(float pSecondsElapsed) {
+                super.onUpdate(pSecondsElapsed);
+                Log.i("UPDATE", "UPDATE");
+            }
+        };
         registerUpdateHandler(physicsWorld);
     }
 
@@ -686,7 +693,6 @@ public abstract class SkillScene extends BaseScene {
             }
             if (stone.getX() < -sideLength || stone.getY() < -sideLength ||
                     stone.getX() > camera.getWidth() + sideLength || stone.getY() > camera.getWidth() + sideLength) {
-                if (score > 0) addToScore(-1);
                 stonesToRemove.add(stone);
                 if (!thorny) crackyStonesToRemove.add(stone);
 
