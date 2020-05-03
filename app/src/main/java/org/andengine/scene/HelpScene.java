@@ -1,5 +1,8 @@
 package org.andengine.scene;
 
+import android.content.Intent;
+import android.net.Uri;
+
 import org.andengine.base.BaseScene;
 import org.andengine.engine.handler.timer.ITimerCallback;
 import org.andengine.engine.handler.timer.TimerHandler;
@@ -33,11 +36,14 @@ public class HelpScene extends BaseScene {
     //help
     private Sprite kimmelnitzSprite, moveNormalSprite, moveDiagonalSprite,  shootNormalSprite, shootDiagonalSprite;
     private Sprite mirrorSprite, lamporghinaSprite, helmetSprite;
+    private Sprite chosen;
     private Rectangle backRect;
     private Text helpText;
 
-    //
+    //info
     private Text worldText, highscoreText, coinText, soundText, playerText;
+    private Text installText;
+    private Sprite ballFall, military;
 
     @Override
     public void createScene() {
@@ -45,7 +51,7 @@ public class HelpScene extends BaseScene {
         createBackground();
         createTouchRectsRight();
         createTouchRectLeft();
-        engine.registerUpdateHandler(new TimerHandler(0.5f, new ITimerCallback() {
+        engine.registerUpdateHandler(new TimerHandler(0.2f, new ITimerCallback() {
             public void onTimePassed(final TimerHandler pTimerHandler) {
                 engine.unregisterUpdateHandler(pTimerHandler);
                 addHelpSigns();
@@ -84,6 +90,10 @@ public class HelpScene extends BaseScene {
         backRect.setColor(0.8f, 0.8f, 0.8f, 0.9f);
         backRect.setVisible(false);
         thirdLayer.attachChild(backRect);
+        chosen = new Sprite(camera.getWidth()/4, sideLength*6, sideLength*4, sideLength*4,
+                resourcesManager.chosen_region, vbom);
+        chosen.setVisible(false);
+        thirdLayer.attachChild(chosen);
         helpText = new Text(camera.getCenterX(), sideLength*2, resourcesManager.smallFont,
                 " ABCDEFGHIJKLMNOPQRSTUVWXYZ:,.!  ABCDEFGHIJKLMNOPQRSTUVWXYZ:,.!  ABCDEFGHIJKLMNOPQRSTUVWXYZ:,.!  ABCDEFGHIJKLMNOPQRSTUVWXYZ:,.!  ABCDEFGHIJKLMNOPQRSTUVWXYZ:,.!" +
                         " ABCDEFGHIJKLMNOPQRSTUVWXYZ:,.!  ABCDEFGHIJKLMNOPQRSTUVWXYZ:,.!  ABCDEFGHIJKLMNOPQRSTUVWXYZ:,.!  ABCDEFGHIJKLMNOPQRSTUVWXYZ:,.!",
@@ -100,6 +110,8 @@ public class HelpScene extends BaseScene {
                     helpText.setVisible(true);
                     helpText.setPosition(camera.getCenterX(), sideLength*2);
                     helpText.setText("THIS IS DR. KIMMELNITZ. HE IS VERY INTELLIGENT, SO BETTER LISTEN TO HIM!");
+                    chosen.setPosition(firstX, upperY);
+                    chosen.setVisible(true);
                     return true;
                 } else {
                     return false;
@@ -114,6 +126,8 @@ public class HelpScene extends BaseScene {
                     helpText.setVisible(true);
                     helpText.setPosition(camera.getCenterX(), sideLength*2);
                     helpText.setText("THIS SIGN MEANS THAT YOU CAN MOVE IN ONE OF THE FOUR DIRECTIONS BY SWIPING ON THE RIGHT HALF OF THE SCREEN IN ANY GAME.");
+                    chosen.setPosition(firstX+distance, upperY);
+                    chosen.setVisible(true);
                     return true;
                 } else {
                     return false;
@@ -128,6 +142,8 @@ public class HelpScene extends BaseScene {
                     helpText.setVisible(true);
                     helpText.setPosition(camera.getCenterX(), sideLength*2);
                     helpText.setText("THIS SIGN MEANS THAT YOU CAN SHOOT IN ONE OF THE FOUR DIRECTIONS BY SWIPING ON THE LEFT HALF OF THE SCREEN IN ANY GAME.");
+                    chosen.setPosition(firstX+2*distance, upperY);
+                    chosen.setVisible(true);
                     return true;
                 } else {
                     return false;
@@ -142,6 +158,8 @@ public class HelpScene extends BaseScene {
                     helpText.setVisible(true);
                     helpText.setPosition(camera.getCenterX(), sideLength*2);
                     helpText.setText("THIS SIGN MEANS THAT YOU CAN MOVE IN ONE OF EIGHT DIRECTIONS, SO DIAGONAL MOVING IS ALSO POSSIBLE.");
+                    chosen.setPosition(firstX+3*distance, upperY);
+                    chosen.setVisible(true);
                     return true;
                 } else {
                     return false;
@@ -156,6 +174,8 @@ public class HelpScene extends BaseScene {
                     helpText.setVisible(true);
                     helpText.setPosition(camera.getCenterX(), upperY);
                     helpText.setText("THIS SIGN MEANS THAT YOU CAN SHOOT IN ALL DIRECTIONS, SO BETTER AIM ACCURATELY.");
+                    chosen.setPosition(firstX, lowerY);
+                    chosen.setVisible(true);
                     return true;
                 } else {
                     return false;
@@ -170,6 +190,8 @@ public class HelpScene extends BaseScene {
                     helpText.setVisible(true);
                     helpText.setPosition(camera.getCenterX(), upperY);
                     helpText.setText("THIS SIGN SHOWS THAT THERE ARE MIRROR STONES IN THIS LEVEL AND THAT IT IS POSSIBLE TO KILL YOURSELF WITH A CANNONBALL.");
+                    chosen.setPosition(firstX+distance, lowerY);
+                    chosen.setVisible(true);
                     return true;
                 } else {
                     return false;
@@ -184,6 +206,8 @@ public class HelpScene extends BaseScene {
                     helpText.setVisible(true);
                     helpText.setPosition(camera.getCenterX(), upperY);
                     helpText.setText("THIS SIGN MEANS THAT YOU CAN DESTROY CRACKY STONES WITH YOUR PLAYER.");
+                    chosen.setPosition(firstX+2*distance, lowerY);
+                    chosen.setVisible(true);
                     return true;
                 } else {
                     return false;
@@ -198,6 +222,8 @@ public class HelpScene extends BaseScene {
                     helpText.setVisible(true);
                     helpText.setPosition(camera.getCenterX(), upperY);
                     helpText.setText("THIS SIGN MEANS THAT YOU CONTROL LAMPORGHINA WITH THE LEFT SCREEN HALF.");
+                    chosen.setPosition(firstX+3*distance, lowerY);
+                    chosen.setVisible(true);
                     return true;
                 } else {
                     return false;
@@ -261,30 +287,33 @@ public class HelpScene extends BaseScene {
         backRect.dispose();
         helpText.detachSelf();
         helpText.dispose();
+        chosen.detachSelf();
+        chosen.dispose();
     }
 
     private void addInfo() {
-        worldText = new Text(sideLength*6, sideLength*6, resourcesManager.smallFont, "CURRENT WORLD: 1234567890", vbom);
+        float infoX = sideLength*4.5f;
+        worldText = new Text(infoX, sideLength*6, resourcesManager.smallFont, "CURRENT WORLD: 1234567890", vbom);
         worldText.setText("CURRENT WORLD: " + String.valueOf(activity.getCurrentWorld()));
         worldText.setColor(Color.BLACK);
         secondLayer.attachChild(worldText);
 
-        highscoreText = new Text(sideLength*6, sideLength*5, resourcesManager.smallFont, "HIGHSCORE: 1234567890", vbom);
+        highscoreText = new Text(infoX, sideLength*5, resourcesManager.smallFont, "HIGHSCORE: 1234567890", vbom);
         highscoreText.setText("HIGHSCORE: " + String.valueOf(activity.getCurrentHighscore()));
         highscoreText.setColor(Color.BLACK);
         secondLayer.attachChild(highscoreText);
 
-        soundText = new Text(sideLength*6, sideLength*4, resourcesManager.smallFont, "SOUND: ONOFF", vbom);
+        soundText = new Text(infoX, sideLength*4, resourcesManager.smallFont, "SOUND: ONOFF", vbom);
         soundText.setText("SOUND: " + (activity.isLoudVisible() ? "ON" : "OFF"));
         soundText.setColor(Color.BLACK);
         secondLayer.attachChild(soundText);
 
-        coinText = new Text(sideLength*6, sideLength*3, resourcesManager.smallFont, "COINS: 1234567890", vbom);
+        coinText = new Text(infoX, sideLength*3, resourcesManager.smallFont, "COINS: 1234567890", vbom);
         coinText.setText("COINS: " + String.valueOf(activity.getCurrentBeersos()));
         coinText.setColor(Color.BLACK);
         secondLayer.attachChild(coinText);
 
-        playerText = new Text(sideLength*6, sideLength*2, resourcesManager.smallFont, "PLAYER: LUMELAMPORGHINAGRUME", vbom);
+        playerText = new Text(infoX, sideLength*2, resourcesManager.smallFont, "PLAYER: LUMELAMPORGHINAGRUME", vbom);
         String player;
         switch (activity.getCurrentPlayer()) {
             case 0:
@@ -301,6 +330,48 @@ public class HelpScene extends BaseScene {
         playerText.setText("PLAYER: " + player);
         playerText.setColor(Color.BLACK);
         secondLayer.attachChild(playerText);
+
+        float installX = sideLength*13;
+        installText = new Text(installX, camera.getHeight()-2*sideLength, resourcesManager.smallFont,
+                "INSTALL ALSO", vbom);
+        secondLayer.attachChild(installText);
+        ballFall = new Sprite(installX, sideLength*4.5f, sideLength*2f, sideLength*2f,
+                resourcesManager.ball_fall, vbom) {
+            public boolean onAreaTouched(TouchEvent touchEvent, float x, float y) {
+                if (touchEvent.isActionDown()) {
+                    final String ballBallId = "com.trishader.ballFall"; // getPackageName() from Context or Activity object
+                    try {
+                        activity.startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=" + ballBallId)));
+                    } catch (android.content.ActivityNotFoundException anfe) {
+                        activity.startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/details?id=" + ballBallId)));
+                    }
+                    return true;
+                } else {
+                    return false;
+                }
+            }
+        };
+        military = new Sprite(installX, sideLength*1.5f, sideLength*2f, sideLength*2f,
+                resourcesManager.military, vbom) {
+            public boolean onAreaTouched(TouchEvent touchEvent, float x, float y) {
+                if (touchEvent.isActionDown()) {
+                    final String militaryId = "com.IliasInc.MilitaryWars"; // getPackageName() from Context or Activity object
+                    try {
+                        activity.startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=" + militaryId)));
+                    } catch (android.content.ActivityNotFoundException anfe) {
+                        activity.startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/details?id=" + militaryId)));
+                    }
+                    return true;
+                } else {
+                    return false;
+                }
+            }
+        };
+
+        secondLayer.attachChild(ballFall);
+        secondLayer.attachChild(military);
+        registerTouchArea(ballFall);
+        registerTouchArea(military);
     }
 
     private void removeInfo() {
@@ -318,6 +389,13 @@ public class HelpScene extends BaseScene {
 
         soundText.detachSelf();
         soundText.dispose();
+
+        installText.detachSelf();
+        installText.dispose();
+        ballFall.detachSelf();
+        ballFall.dispose();
+        military.detachSelf();
+        military.dispose();
     }
 
     private void createTouchRectsRight() {
@@ -370,6 +448,11 @@ public class HelpScene extends BaseScene {
 
     @Override
     public void onBackKeyPressed() {
+        if (helpVisible) {
+            removeHelpSigns();
+        } else {
+            removeInfo();
+        }
         SceneManager.getInstance().loadMenuScene(engine);
     }
 

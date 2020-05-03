@@ -408,6 +408,8 @@ public class ResourcesManager {
             lamporghina_sign_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(infoTextureAtlas, activity, "lamporghina_sign.png");
             chosen_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(infoTextureAtlas, activity, "chosen.png");
             helmet_sign_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(infoTextureAtlas, activity, "helmet_sign.png");
+            ball_fall = BitmapTextureAtlasTextureRegionFactory.createFromAsset(infoTextureAtlas, activity, "ball_fall.png");
+            military = BitmapTextureAtlasTextureRegionFactory.createFromAsset(infoTextureAtlas, activity, "military.png");
             try {
                 this.infoTextureAtlas.build(new BlackPawnTextureAtlasBuilder<IBitmapTextureAtlasSource, BitmapTextureAtlas>(0, 1, 0));
                 this.infoTextureAtlas.load();

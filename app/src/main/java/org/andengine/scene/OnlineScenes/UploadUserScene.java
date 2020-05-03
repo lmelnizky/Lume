@@ -28,8 +28,11 @@ import static org.andengine.GameActivity.CAMERA_WIDTH;
 
 public class UploadUserScene extends BaseScene implements ButtonSprite.OnClickListener {
     //variables
+    private float sideLength;
+
     private InputText userNameInputText;
-    private ButtonSprite confirmButton;
+    private ButtonSprite confirmButton, noButton;
+    private Text title;
     private Text confirmButtonHelpText;
     private Text usernameText;
     private String username;
@@ -57,7 +60,7 @@ public class UploadUserScene extends BaseScene implements ButtonSprite.OnClickLi
             }
         };
         userNameInputText.setSize(CAMERA_WIDTH/4, ResourcesManager.getInstance().standardFont.getLineHeight());
-        confirmButton = new ButtonSprite(CAMERA_WIDTH/2, CAMERA_HEIGHT/4, ResourcesManager.getInstance().confirm_region, vbom, this);
+        confirmButton = new ButtonSprite(CAMERA_WIDTH/2-sideLength*3, CAMERA_HEIGHT/4, ResourcesManager.getInstance().confirm_region, vbom, this);
         confirmButton.setSize(CAMERA_WIDTH/5,CAMERA_WIDTH/10);
         confirmButton.setEnabled(false);
         confirmButtonHelpText = new Text(confirmButton.getWidth()/2, confirmButton.getHeight()/2, ResourcesManager.getInstance().standardFont, "CONFIRM", vbom);
@@ -67,6 +70,8 @@ public class UploadUserScene extends BaseScene implements ButtonSprite.OnClickLi
         confirmButton.attachChild(confirmButtonHelpText);
         this.attachChild(userNameInputText);    this.attachChild(confirmButton);    this.attachChild(usernameText);
         this.registerTouchArea(confirmButton);  this.registerTouchArea(userNameInputText);
+
+        //noButton = new ButtonSprite()
     }
     private void setUpULM(){
         uLM = new UsernameLoaderManager() {
@@ -97,6 +102,7 @@ public class UploadUserScene extends BaseScene implements ButtonSprite.OnClickLi
     //override Methods from superclass
     @Override
     public void createScene() {
+        sideLength = resourcesManager.sideLength;
         SpriteBackground spriteBackground = new SpriteBackground(new Sprite(camera.getCenterX(), camera.getCenterY(),
                 camera.getWidth(), camera.getHeight(), resourcesManager.upload_background_region, vbom));
         this.setBackground(spriteBackground);

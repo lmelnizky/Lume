@@ -71,7 +71,7 @@ public class LumeGameActions implements GameActions {
 
     @Override
     public void loadCanon(CannonCreator creator) {
-        scene.attachChild(creator.createSprite());
+        creator.createSprite();
     }
 
     @Override
