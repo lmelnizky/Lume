@@ -1,90 +1,323 @@
 package org.andengine.scene;
 
 import org.andengine.base.BaseScene;
+import org.andengine.engine.handler.timer.ITimerCallback;
+import org.andengine.engine.handler.timer.TimerHandler;
+import org.andengine.entity.Entity;
+import org.andengine.entity.IEntity;
 import org.andengine.entity.primitive.Rectangle;
-import org.andengine.entity.scene.CameraScene;
-import org.andengine.entity.scene.Scene;
 import org.andengine.entity.scene.background.Background;
-import org.andengine.entity.scene.background.SpriteBackground;
 import org.andengine.entity.sprite.Sprite;
+import org.andengine.entity.text.AutoWrap;
+import org.andengine.entity.text.Text;
+import org.andengine.entity.text.TextOptions;
 import org.andengine.input.touch.TouchEvent;
 import org.andengine.manager.SceneManager;
 import org.andengine.manager.SceneType;
+import org.andengine.util.adt.align.HorizontalAlign;
 import org.andengine.util.adt.color.Color;
 
 public class HelpScene extends BaseScene {
+    float sideLength = resourcesManager.sideLength;
+
+    private static final int FIRST_LAYER = 0;
+    private static final int SECOND_LAYER = 1;
+    private static final int THIRD_LAYER = 2;
+
+    private IEntity firstLayer, secondLayer, thirdLayer;
+
     private boolean helpVisible = true;
 
     private Sprite help, info;
 
+    //help
+    private Sprite kimmelnitzSprite, moveNormalSprite, moveDiagonalSprite,  shootNormalSprite, shootDiagonalSprite;
+    private Sprite mirrorSprite, lamporghinaSprite, helmetSprite;
+    private Rectangle backRect;
+    private Text helpText;
+
+    //
+    private Text worldText, highscoreText, coinText, soundText, playerText;
+
     @Override
     public void createScene() {
+        createLayers();
         createBackground();
         createTouchRectsRight();
         createTouchRectLeft();
+        engine.registerUpdateHandler(new TimerHandler(0.5f, new ITimerCallback() {
+            public void onTimePassed(final TimerHandler pTimerHandler) {
+                engine.unregisterUpdateHandler(pTimerHandler);
+                addHelpSigns();
+            }
+        }));
+    }
+
+    private void createLayers() {
+        this.attachChild(new Entity()); // First Layer
+        this.attachChild(new Entity()); // Second Layer
+        this.attachChild(new Entity()); // Third Layer
+        firstLayer = this.getChildByIndex(FIRST_LAYER);
+        secondLayer = this.getChildByIndex(SECOND_LAYER);
+        thirdLayer = this.getChildByIndex(THIRD_LAYER);
     }
 
     private void createBackground() {
-        Color colorC = new Color(30/255, 177/255, 225/255);
-        Background background = new Background(colorC);
         help = new Sprite(camera.getCenterX(), camera.getCenterY(), camera.getWidth(), camera.getHeight(),
                 resourcesManager.help_shop_region, vbom);
-        this.attachChild(help);
+        firstLayer.attachChild(help);
         info = new Sprite(camera.getCenterX(), camera.getCenterY(), camera.getWidth(), camera.getHeight(),
                 resourcesManager.info_shop_region, vbom);
-        this.attachChild(info);
+        firstLayer.attachChild(info);
         help.setVisible(true);
         info.setVisible(false);
     }
 
-    private void addSigns() {
-        float sideLength = resourcesManager.sideLength;
+    private void addHelpSigns() {
         float firstX;
         float lowerY, upperY;
         float distance = camera.getWidth()/4;
         firstX = sideLength*2;
         lowerY = sideLength*2;
-        upperY = sideLength*2;
-        Sprite kimmelnitzSprite = new Sprite(firstX, upperY, sideLength*3, sideLength*3, resourcesManager.kimmelnitz_region, vbom) {
+        upperY = sideLength*6;
+        backRect = new Rectangle(camera.getCenterX(), sideLength*2, camera.getWidth(), sideLength*4, vbom);
+        backRect.setColor(0.8f, 0.8f, 0.8f, 0.9f);
+        backRect.setVisible(false);
+        thirdLayer.attachChild(backRect);
+        helpText = new Text(camera.getCenterX(), sideLength*2, resourcesManager.smallFont,
+                " ABCDEFGHIJKLMNOPQRSTUVWXYZ:,.!  ABCDEFGHIJKLMNOPQRSTUVWXYZ:,.!  ABCDEFGHIJKLMNOPQRSTUVWXYZ:,.!  ABCDEFGHIJKLMNOPQRSTUVWXYZ:,.!  ABCDEFGHIJKLMNOPQRSTUVWXYZ:,.!" +
+                        " ABCDEFGHIJKLMNOPQRSTUVWXYZ:,.!  ABCDEFGHIJKLMNOPQRSTUVWXYZ:,.!  ABCDEFGHIJKLMNOPQRSTUVWXYZ:,.!  ABCDEFGHIJKLMNOPQRSTUVWXYZ:,.!",
+                new TextOptions(AutoWrap.WORDS, sideLength*15f, HorizontalAlign.CENTER), vbom);
+        thirdLayer.attachChild(helpText);
+        helpText.setColor(Color.BLACK);
+        helpText.setText("");
+        helpText.setVisible(false);
+        kimmelnitzSprite = new Sprite(firstX, upperY, sideLength*3, sideLength*3, resourcesManager.kimmelnitz_region, vbom) {
             public boolean onAreaTouched(TouchEvent touchEvent, float x, float y) {
                 if (touchEvent.isActionDown()) {
-
+                    backRect.setVisible(true);
+                    backRect.setPosition(camera.getCenterX(), sideLength*2);
+                    helpText.setVisible(true);
+                    helpText.setPosition(camera.getCenterX(), sideLength*2);
+                    helpText.setText("THIS IS DR. KIMMELNITZ. HE IS VERY INTELLIGENT, SO BETTER LISTEN TO HIM!");
                     return true;
                 } else {
                     return false;
                 }
             }
         };
-        Sprite moveNormalSprite = new Sprite(firstX, upperY, sideLength*3, sideLength*3, resourcesManager.move_normal_sign_region, vbom){
-
+        moveNormalSprite = new Sprite(firstX+distance, upperY, sideLength*3, sideLength*3, resourcesManager.move_normal_sign_region, vbom){
+            public boolean onAreaTouched(TouchEvent touchEvent, float x, float y) {
+                if (touchEvent.isActionDown()) {
+                    backRect.setVisible(true);
+                    backRect.setPosition(camera.getCenterX(), sideLength*2);
+                    helpText.setVisible(true);
+                    helpText.setPosition(camera.getCenterX(), sideLength*2);
+                    helpText.setText("THIS SIGN MEANS THAT YOU CAN MOVE IN ONE OF THE FOUR DIRECTIONS BY SWIPING ON THE RIGHT HALF OF THE SCREEN IN ANY GAME.");
+                    return true;
+                } else {
+                    return false;
+                }
+            }
         };
-        Sprite shootNormalSprite = new Sprite(firstX, upperY, sideLength*3, sideLength*3, resourcesManager.shoot_normal_region, vbom){
-
+        shootNormalSprite = new Sprite(firstX+2*distance, upperY, sideLength*3, sideLength*3, resourcesManager.shoot_normal_region, vbom){
+            public boolean onAreaTouched(TouchEvent touchEvent, float x, float y) {
+                if (touchEvent.isActionDown()) {
+                    backRect.setVisible(true);
+                    backRect.setPosition(camera.getCenterX(), sideLength*2);
+                    helpText.setVisible(true);
+                    helpText.setPosition(camera.getCenterX(), sideLength*2);
+                    helpText.setText("THIS SIGN MEANS THAT YOU CAN SHOOT IN ONE OF THE FOUR DIRECTIONS BY SWIPING ON THE LEFT HALF OF THE SCREEN IN ANY GAME.");
+                    return true;
+                } else {
+                    return false;
+                }
+            }
         };
-        Sprite moveDiagonalSprite = new Sprite(firstX, upperY, sideLength*3, sideLength*3, resourcesManager.move_diagonal_sign_region, vbom){
-
+        moveDiagonalSprite = new Sprite(firstX+3*distance, upperY, sideLength*3, sideLength*3, resourcesManager.move_diagonal_sign_region, vbom){
+            public boolean onAreaTouched(TouchEvent touchEvent, float x, float y) {
+                if (touchEvent.isActionDown()) {
+                    backRect.setVisible(true);
+                    backRect.setPosition(camera.getCenterX(), sideLength*2);
+                    helpText.setVisible(true);
+                    helpText.setPosition(camera.getCenterX(), sideLength*2);
+                    helpText.setText("THIS SIGN MEANS THAT YOU CAN MOVE IN ONE OF EIGHT DIRECTIONS, SO DIAGONAL MOVING IS ALSO POSSIBLE.");
+                    return true;
+                } else {
+                    return false;
+                }
+            }
         };
-        Sprite shootDiagonalSprite = new Sprite(firstX, upperY, sideLength*3, sideLength*3, resourcesManager.shoot_diagonal_sign_region, vbom){
-
+        shootDiagonalSprite = new Sprite(firstX, lowerY, sideLength*3, sideLength*3, resourcesManager.shoot_diagonal_sign_region, vbom){
+            public boolean onAreaTouched(TouchEvent touchEvent, float x, float y) {
+                if (touchEvent.isActionDown()) {
+                    backRect.setVisible(true);
+                    backRect.setPosition(camera.getCenterX(), upperY);
+                    helpText.setVisible(true);
+                    helpText.setPosition(camera.getCenterX(), upperY);
+                    helpText.setText("THIS SIGN MEANS THAT YOU CAN SHOOT IN ALL DIRECTIONS, SO BETTER AIM ACCURATELY.");
+                    return true;
+                } else {
+                    return false;
+                }
+            }
         };
-        Sprite mirrorSprite = new Sprite(firstX, upperY, sideLength*3, sideLength*3, resourcesManager.cracky_mirror_sign_region, vbom){
-
+        mirrorSprite = new Sprite(firstX+distance, lowerY, sideLength*3, sideLength*2.6f, resourcesManager.cracky_mirror_sign_region, vbom){
+            public boolean onAreaTouched(TouchEvent touchEvent, float x, float y) {
+                if (touchEvent.isActionDown()) {
+                    backRect.setVisible(true);
+                    backRect.setPosition(camera.getCenterX(), upperY);
+                    helpText.setVisible(true);
+                    helpText.setPosition(camera.getCenterX(), upperY);
+                    helpText.setText("THIS SIGN SHOWS THAT THERE ARE MIRROR STONES IN THIS LEVEL AND THAT IT IS POSSIBLE TO KILL YOURSELF WITH A CANNONBALL.");
+                    return true;
+                } else {
+                    return false;
+                }
+            }
         };
-        Sprite helmetSprite = new Sprite(firstX, upperY, sideLength*3, sideLength*3, resourcesManager.helmet_sign_region, vbom){
-
+        helmetSprite = new Sprite(firstX+2*distance, lowerY, sideLength*3, sideLength*3, resourcesManager.helmet_sign_region, vbom){
+            public boolean onAreaTouched(TouchEvent touchEvent, float x, float y) {
+                if (touchEvent.isActionDown()) {
+                    backRect.setVisible(true);
+                    backRect.setPosition(camera.getCenterX(), upperY);
+                    helpText.setVisible(true);
+                    helpText.setPosition(camera.getCenterX(), upperY);
+                    helpText.setText("THIS SIGN MEANS THAT YOU CAN DESTROY CRACKY STONES WITH YOUR PLAYER.");
+                    return true;
+                } else {
+                    return false;
+                }
+            }
         };
-        Sprite lamporghinaSprite = new Sprite(firstX, upperY, sideLength*3, sideLength*3, resourcesManager.lamporghina_sign_region, vbom){
-
+        lamporghinaSprite = new Sprite(firstX+3*distance, lowerY, sideLength*3, sideLength*3, resourcesManager.lamporghina_sign_region, vbom){
+            public boolean onAreaTouched(TouchEvent touchEvent, float x, float y) {
+                if (touchEvent.isActionDown()) {
+                    backRect.setVisible(true);
+                    backRect.setPosition(camera.getCenterX(), upperY);
+                    helpText.setVisible(true);
+                    helpText.setPosition(camera.getCenterX(), upperY);
+                    helpText.setText("THIS SIGN MEANS THAT YOU CONTROL LAMPORGHINA WITH THE LEFT SCREEN HALF.");
+                    return true;
+                } else {
+                    return false;
+                }
+            }
         };
 
+        secondLayer.attachChild(kimmelnitzSprite);
+        secondLayer.attachChild(moveNormalSprite);
+        secondLayer.attachChild(shootNormalSprite);
+        secondLayer.attachChild(moveDiagonalSprite);
+        secondLayer.attachChild(shootDiagonalSprite);
+        secondLayer.attachChild(mirrorSprite);
+        secondLayer.attachChild(lamporghinaSprite);
+        secondLayer.attachChild(helmetSprite);
+
+        registerTouchArea(kimmelnitzSprite);
+        registerTouchArea(moveNormalSprite);
+        registerTouchArea(shootNormalSprite);
+        registerTouchArea(moveDiagonalSprite);
+        registerTouchArea(shootDiagonalSprite);
+        registerTouchArea(mirrorSprite);
+        registerTouchArea(lamporghinaSprite);
+        registerTouchArea(helmetSprite);
     }
 
-    private void removeSigns() {
+    private void removeHelpSigns() {
+        unregisterTouchArea(kimmelnitzSprite);
+        kimmelnitzSprite.detachSelf();
+        kimmelnitzSprite.dispose();
 
+        unregisterTouchArea(moveNormalSprite);
+        moveNormalSprite.detachSelf();
+        moveNormalSprite.dispose();
+
+        unregisterTouchArea(shootNormalSprite);
+        shootNormalSprite.detachSelf();
+        shootNormalSprite.dispose();
+
+        unregisterTouchArea(moveDiagonalSprite);
+        moveDiagonalSprite.detachSelf();
+        moveDiagonalSprite.dispose();
+
+        unregisterTouchArea(shootDiagonalSprite);
+        shootDiagonalSprite.detachSelf();
+        shootDiagonalSprite.dispose();
+
+        unregisterTouchArea(mirrorSprite);
+        mirrorSprite.detachSelf();
+        mirrorSprite.dispose();
+
+        unregisterTouchArea(lamporghinaSprite);
+        lamporghinaSprite.detachSelf();
+        lamporghinaSprite.dispose();
+
+        unregisterTouchArea(helmetSprite);
+        helmetSprite.detachSelf();
+        helmetSprite.dispose();
+
+        backRect.detachSelf();
+        backRect.dispose();
+        helpText.detachSelf();
+        helpText.dispose();
     }
 
-    private void showText() {
+    private void addInfo() {
+        worldText = new Text(sideLength*6, sideLength*6, resourcesManager.smallFont, "CURRENT WORLD: 1234567890", vbom);
+        worldText.setText("CURRENT WORLD: " + String.valueOf(activity.getCurrentWorld()));
+        worldText.setColor(Color.BLACK);
+        secondLayer.attachChild(worldText);
 
+        highscoreText = new Text(sideLength*6, sideLength*5, resourcesManager.smallFont, "HIGHSCORE: 1234567890", vbom);
+        highscoreText.setText("HIGHSCORE: " + String.valueOf(activity.getCurrentHighscore()));
+        highscoreText.setColor(Color.BLACK);
+        secondLayer.attachChild(highscoreText);
+
+        soundText = new Text(sideLength*6, sideLength*4, resourcesManager.smallFont, "SOUND: ONOFF", vbom);
+        soundText.setText("SOUND: " + (activity.isLoudVisible() ? "ON" : "OFF"));
+        soundText.setColor(Color.BLACK);
+        secondLayer.attachChild(soundText);
+
+        coinText = new Text(sideLength*6, sideLength*3, resourcesManager.smallFont, "COINS: 1234567890", vbom);
+        coinText.setText("COINS: " + String.valueOf(activity.getCurrentBeersos()));
+        coinText.setColor(Color.BLACK);
+        secondLayer.attachChild(coinText);
+
+        playerText = new Text(sideLength*6, sideLength*2, resourcesManager.smallFont, "PLAYER: LUMELAMPORGHINAGRUME", vbom);
+        String player;
+        switch (activity.getCurrentPlayer()) {
+            case 0:
+                player = "LUME";
+                break;
+            case 1:
+                player = "LAMPORGHINA";
+                break;
+            case 2:
+                player = "GRUME";
+                break;
+            default: player = "LUME";
+        }
+        playerText.setText("PLAYER: " + player);
+        playerText.setColor(Color.BLACK);
+        secondLayer.attachChild(playerText);
+    }
+
+    private void removeInfo() {
+        worldText.detachSelf();
+        worldText.dispose();
+
+        highscoreText.detachSelf();
+        highscoreText.dispose();
+
+        playerText.detachSelf();
+        playerText.dispose();
+
+        coinText.detachSelf();
+        coinText.dispose();
+
+        soundText.detachSelf();
+        soundText.dispose();
     }
 
     private void createTouchRectsRight() {
@@ -93,7 +326,9 @@ public class HelpScene extends BaseScene {
             public boolean onAreaTouched(TouchEvent touchEvent, float x, float y) {
                 if (touchEvent.isActionDown()) {
                     helpVisible = false;
+                    removeHelpSigns();
                     setHelpVisible(helpVisible);
+                    addInfo();
                     return true;
                 } else {
                     return false;
@@ -101,7 +336,7 @@ public class HelpScene extends BaseScene {
             }
         };
 
-        attachChild(infoTouch);
+        firstLayer.attachChild(infoTouch);
         registerTouchArea(infoTouch);
         infoTouch.setAlpha(0f);
     }
@@ -112,7 +347,9 @@ public class HelpScene extends BaseScene {
             public boolean onAreaTouched(TouchEvent touchEvent, float x, float y) {
                 if (touchEvent.isActionDown()) {
                     helpVisible = true;
+                    removeInfo();
                     setHelpVisible(helpVisible);
+                    addHelpSigns();
                     return true;
                 } else {
                     return false;
@@ -120,7 +357,7 @@ public class HelpScene extends BaseScene {
             }
         };
 
-        attachChild(helpTouch);
+        firstLayer.attachChild(helpTouch);
         registerTouchArea(helpTouch);
         helpTouch.setAlpha(0f);
     }

@@ -179,7 +179,7 @@ public class MultiScene extends BaseScene {
             createBoard();
             createPlayer();
             createHalves();
-            destroyHUD();
+            disposeHUD();
             createHUD();
         }
         revenge = false;
@@ -300,6 +300,7 @@ public class MultiScene extends BaseScene {
     public void onBackKeyPressed() {
         ResourcesManager.getInstance().backgroundMusic.stop();
         ResourcesManager.getInstance().backgroundMusic.pause();
+        disposeHUD();
         SceneManager.getInstance().loadMenuScene(engine);
     }
 
@@ -792,7 +793,26 @@ public class MultiScene extends BaseScene {
         camera.setHUD(gameHUD);
     }
 
-    private void destroyHUD() {
+    private void disposeHUD() {
+        lumeHeart1.detachSelf();
+        lumeHeart1.dispose();
+        lumeHeart2.detachSelf();
+        lumeHeart2.dispose();
+        lumeHeart3.detachSelf();
+        lumeHeart3.dispose();
+
+        grumeHeart1.detachSelf();
+        grumeHeart1.dispose();
+        grumeHeart2.detachSelf();
+        grumeHeart2.dispose();
+        grumeHeart3.detachSelf();
+        grumeHeart3.dispose();
+
+        lumeBomb.detachSelf();
+        lumeBomb.dispose();
+        grumeBomb.detachSelf();
+        grumeBomb.dispose();
+
         gameHUD.detachChildren();
         gameHUD.detachSelf();
         gameHUD.dispose();
@@ -1312,6 +1332,7 @@ public class MultiScene extends BaseScene {
                     setIgnoreUpdate(false);
                     gameOverDisplayed = false;
                     registerUpdateHandler(physicsWorld);
+                    disposeHUD();
                     SceneManager.getInstance().loadMenuScene(engine);
                 }
                 return true;

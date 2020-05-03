@@ -686,6 +686,7 @@ public abstract class SkillScene extends BaseScene {
             }
             if (stone.getX() < -sideLength || stone.getY() < -sideLength ||
                     stone.getX() > camera.getWidth() + sideLength || stone.getY() > camera.getWidth() + sideLength) {
+                if (score > 0) addToScore(-1);
                 stonesToRemove.add(stone);
                 if (!thorny) crackyStonesToRemove.add(stone);
 

@@ -396,7 +396,7 @@ public class ResourcesManager {
     public void loadInfoResources() {
         if (infoTextureAtlas == null) {
             BitmapTextureAtlasTextureRegionFactory.setAssetBasePath("gfx/game/");
-            infoTextureAtlas = new BuildableBitmapTextureAtlas(activity.getTextureManager(), 1024, 1024, TextureOptions.BILINEAR);
+            infoTextureAtlas = new BuildableBitmapTextureAtlas(activity.getTextureManager(), 4096, 4096, TextureOptions.BILINEAR);
             help_shop_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(infoTextureAtlas, activity, "help.png");
             info_shop_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(infoTextureAtlas, activity, "info.png");
             kimmelnitz_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(infoTextureAtlas, activity, "kimmelnitz.png");
@@ -406,6 +406,7 @@ public class ResourcesManager {
             shoot_diagonal_sign_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(infoTextureAtlas, activity, "shoot_diagonal_sign.png");
             cracky_mirror_sign_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(infoTextureAtlas, activity, "cracky_mirror_sign.png");
             lamporghina_sign_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(infoTextureAtlas, activity, "lamporghina_sign.png");
+            chosen_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(infoTextureAtlas, activity, "chosen.png");
             helmet_sign_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(infoTextureAtlas, activity, "helmet_sign.png");
             try {
                 this.infoTextureAtlas.build(new BlackPawnTextureAtlasBuilder<IBitmapTextureAtlasSource, BitmapTextureAtlas>(0, 1, 0));
@@ -416,6 +417,12 @@ public class ResourcesManager {
         } else {
             infoTextureAtlas.load();
         }
+    }
+
+    public void unloadInfoResources() {
+        if (infoTextureAtlas != null) infoTextureAtlas.unload();
+        if (infoTextureAtlas != null) infoTextureAtlas.clearTextureAtlasSources();
+        infoTextureAtlas = null;
     }
 
     public void loadSkillMenuResources() {
@@ -977,6 +984,9 @@ public class ResourcesManager {
                 break;
             case SCENE_SKILLMENU:
                 this.unloadSkillMenuResources();
+                break;
+            case SCENE_HELP:
+                this.unloadInfoResources();
                 break;
             case SCENE_SPLASH:
                 this.unloadSplashScreen();

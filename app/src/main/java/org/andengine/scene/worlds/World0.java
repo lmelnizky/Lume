@@ -296,12 +296,12 @@ public class World0 extends BaseScene {
                     setIgnoreUpdate(false);
                     gameOverDisplayed = false;
                     registerUpdateHandler(physicsWorld);
+                    disposeHUD();
                     if (cameFromLevelsScene) {
                         SceneManager.getInstance().loadWorld1Scene(engine, level);
                     } else {
                         SceneManager.getInstance().loadWorld1Scene(engine, 0);
                     }
-                    disposeHUD();
                     return true;
                 } else {
                     return false;
@@ -324,12 +324,12 @@ public class World0 extends BaseScene {
                     setIgnoreUpdate(false);
                     gameOverDisplayed = false;
                     registerUpdateHandler(physicsWorld);
+                    disposeHUD();
                     if (cameFromLevelsScene) {
                         SceneManager.getInstance().loadWorlds1to4Scene(engine);
                     } else {
                         SceneManager.getInstance().loadMenuScene(engine);
                     }
-                    disposeHUD();
                     return true;
                 } else {
                     return false;
@@ -481,6 +481,7 @@ public class World0 extends BaseScene {
                                 activity.unlockWorld(1);
                                 tooEasyText.detachSelf();
                                 tooEasyText.dispose();
+                                disposeHUD();
                                 SceneManager.getInstance().loadMenuScene(engine);
                             }
                         }));
