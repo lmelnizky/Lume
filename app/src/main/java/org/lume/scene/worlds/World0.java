@@ -622,7 +622,7 @@ public class World0 extends BaseScene {
     }
 
     private void showText4() {
-        String tvText4 = "COMPLETE 4 LEVELS IN A ROW TO UNLOCK A NEW WORLD. YOU CAN TRAIN THE LEVELS IN THE WORLDS MENU, ALSO IN HIGHSCOREMODE.";
+        String tvText4 = "COMPLETE 4 LEVELS IN A ROW TO UNLOCK A NEW WORLD. YOU CAN TRAIN ALL LEVELS IN THE WORLDS MENU. THERE YOU CAN ALSO PLAY IN SLOWMOTION";
 //        +
 //                "You also have a gun to destroy the cracky stones. You cannot destroy the red ones. " +
 //                "Shoot on the right half of the screen. " +

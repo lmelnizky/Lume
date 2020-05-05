@@ -406,7 +406,7 @@ public class Skill22 extends SkillScene {
     @Override
     public void showText() {
         createLamporghina();
-        String tvText0 = "Take care aBout your lamporghina! Rescue her through all these stones!";
+        String tvText0 = "Take care of your Beautiful lamporghina! Rescue her from all these stones!";
         if (kimmelnitzText == null) {
             //sideLength*6.6f
             kimmelnitzText = new TickerText(sideLength*6.6f, camera.getHeight() / 6, resourcesManager.smallFont, tvText0,

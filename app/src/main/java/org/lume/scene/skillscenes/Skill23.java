@@ -349,7 +349,7 @@ public class Skill23 extends SkillScene {
 
     @Override
     public void showText() {
-        String tvText0 = "Never stay at one place for too long time! Stones will shoot you!";
+        String tvText0 = "Never stay at one place for too long! Otherwise Stones will shoot you!";
         if (kimmelnitzText == null) {
             //sideLength*6.6f
             kimmelnitzText = new TickerText(sideLength*6.6f, camera.getHeight() / 6, resourcesManager.smallFont, tvText0,
