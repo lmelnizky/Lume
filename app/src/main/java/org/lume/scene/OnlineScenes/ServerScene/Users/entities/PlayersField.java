@@ -18,18 +18,18 @@ public class PlayersField extends Sprite {
     private Text nameText, inviteText;
     private ButtonSprite inviteButton;
     public PlayersField(Player player) {
-        super(CAMERA_WIDTH/2, 0,CAMERA_WIDTH,CAMERA_HEIGHT/10, ResourcesManager.getInstance().inputtext_region, ResourcesManager.getInstance().vbom);
+        super(CAMERA_WIDTH/2, 0,CAMERA_WIDTH,CAMERA_HEIGHT/10, ResourcesManager.getInstance().inputtext_online_region, ResourcesManager.getInstance().vbom);
         super.setY(CAMERA_HEIGHT-(CAMERA_HEIGHT/10*scene.getPlayers().indexOf(player))-CAMERA_HEIGHT/20);
         this.player = player;
         create();
     }
     private void create(){
-        inviteButton = new ButtonSprite(0,0,ResourcesManager.getInstance().inputtext_region, ResourcesManager.getInstance().vbom, scene);
-        inviteButton.setSize(super.getHeight()/1.25f, super.getHeight()/1.5f);
+        inviteButton = new ButtonSprite(0,0,ResourcesManager.getInstance().inputtext_online_region, ResourcesManager.getInstance().vbom, scene);
+        inviteButton.setSize(super.getHeight()*3.25f, super.getHeight()/1.5f);
         inviteButton.setPosition(super.getWidth()-inviteButton.getWidth()/1.25f, super.getHeight()/2);
-        nameText = new Text(0,0, ResourcesManager.getInstance().smallFont, player.getUsername(), ResourcesManager.getInstance().vbom);
-        nameText.setPosition(nameText.getLineAlignmentWidth()/2, this.getHeight()/2);
-        inviteText = new Text(inviteButton.getWidth()/2, inviteButton.getHeight()/2, ResourcesManager.getInstance().smallFont, "INVITE", ResourcesManager.getInstance().vbom);
+        nameText = new Text(0,0, ResourcesManager.getInstance().standardFont, player.getUsername(), ResourcesManager.getInstance().vbom);
+        nameText.setPosition(nameText.getLineAlignmentWidth()/2 + 30, this.getHeight()/2);
+        inviteText = new Text(inviteButton.getWidth()/2, inviteButton.getHeight()/2, ResourcesManager.getInstance().standardFont, "INVITE", ResourcesManager.getInstance().vbom);
         inviteButton.attachChild(inviteText);
         this.attachChild(nameText);
         this.attachChild(inviteButton);

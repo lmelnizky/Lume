@@ -25,7 +25,7 @@ public class RequestPopUp extends Sprite{
     private String room;
     //constructor
     public RequestPopUp(Player requestFrom, String room) {
-        super(CAMERA_WIDTH/2, CAMERA_HEIGHT/2, ResourcesManager.getInstance().inputtext_region, ResourcesManager.getInstance().vbom); //TODO set the textureRegion to a grey texture
+        super(CAMERA_WIDTH/2, CAMERA_HEIGHT/2, ResourcesManager.getInstance().inputtext_online_region, ResourcesManager.getInstance().vbom); //TODO set the textureRegion to a grey texture
         //super.setAlpha(200/255);
         this.room = room;
         super.setSize(CAMERA_WIDTH/2, CAMERA_HEIGHT/2);
@@ -33,13 +33,13 @@ public class RequestPopUp extends Sprite{
         create();
     }
     private void create(){
-        questionText = new Text(getWidth()/2,getHeight()/4*3, ResourcesManager.getInstance().smallFont, requestFrom.getUsername() + " möchte mit dir spielen", ResourcesManager.getInstance().vbom);
-        yes = new ButtonSprite(getWidth()/4, getHeight()/4, ResourcesManager.getInstance().inputtext_region,ResourcesManager.getInstance().vbom, scene);
-        no = new ButtonSprite(getWidth()/4*3,getHeight()/4, ResourcesManager.getInstance().inputtext_region, ResourcesManager.getInstance().vbom, scene);
+        questionText = new Text(getWidth()/2,getHeight()/4*3, ResourcesManager.getInstance().standardFont, requestFrom.getUsername() + " wants to play with you", ResourcesManager.getInstance().vbom);
+        yes = new ButtonSprite(getWidth()/4, getHeight()/4, ResourcesManager.getInstance().inputtext_online_region,ResourcesManager.getInstance().vbom, scene);
+        no = new ButtonSprite(getWidth()/4*3,getHeight()/4, ResourcesManager.getInstance().inputtext_online_region, ResourcesManager.getInstance().vbom, scene);
         yes.setSize(getWidth()/10,getHeight()/10);
         no.setSize(getWidth()/10, getHeight()/10);
-        yesText = new Text(yes.getWidth()/2,yes.getHeight()/2,ResourcesManager.getInstance().smallFont,"YES", ResourcesManager.getInstance().vbom);
-        noText = new Text(no.getWidth()/2,no.getHeight()/2, ResourcesManager.getInstance().smallFont,"NO", ResourcesManager.getInstance().vbom);
+        yesText = new Text(yes.getWidth()/2,yes.getHeight()/2,ResourcesManager.getInstance().standardFont,"ACCEPT", ResourcesManager.getInstance().vbom);
+        noText = new Text(no.getWidth()/2,no.getHeight()/2, ResourcesManager.getInstance().standardFont,"FA** YOU", ResourcesManager.getInstance().vbom);
         this.attachChild(questionText);
         yes.attachChild(yesText);
         no.attachChild(noText);

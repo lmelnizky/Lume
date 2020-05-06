@@ -8,6 +8,7 @@ import org.lume.entity.scene.ITouchArea;
 import org.lume.entity.scene.background.Background;
 import org.lume.entity.sprite.ButtonSprite;
 import org.lume.manager.ResourcesManager;
+import org.lume.manager.SceneManager;
 import org.lume.manager.SceneType;
 import org.lume.scene.OnlineScenes.ServerScene.Game.LumeGameActions;
 import org.lume.scene.OnlineScenes.ServerScene.Player;
@@ -48,7 +49,7 @@ public class MultiplayerUsersScene extends BaseScene implements ButtonSprite.OnC
         server = new Server(new LumeGameActions(), new LumeUserActions(), activity.getUserName());
         createChildren();
         manageChildren();
-        this.setBackground(new Background(Color.BLUE));
+        this.setBackground(new Background(30/255, 178/255, 266/255));
     }
     private void createChildren(){
         Log.i("MultiPlayerUserScene", "createChildren");
@@ -69,7 +70,7 @@ public class MultiplayerUsersScene extends BaseScene implements ButtonSprite.OnC
     //override methods from superclass
     @Override
     public void onBackKeyPressed() {
-
+        SceneManager.getInstance().loadMenuScene(engine);
     }
 
     @Override

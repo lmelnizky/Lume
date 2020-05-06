@@ -95,6 +95,7 @@ public class ResourcesManager {
     public BuildableBitmapTextureAtlas playerTextureAtlas = null;
     public BuildableBitmapTextureAtlas chooseLevelTextureAtlas = null;
     public BuildableBitmapTextureAtlas multiTextureAtlas = null;
+    public BuildableBitmapTextureAtlas onlineUserTextureAtlas = null;
     public BuildableBitmapTextureAtlas menuTextureAtlas = null;
     public BuildableBitmapTextureAtlas shopTextureAtlas = null;
     public BuildableBitmapTextureAtlas infoTextureAtlas = null;
@@ -222,6 +223,9 @@ public class ResourcesManager {
     public ITextureRegion no_region;
     public ITextureRegion inputtext_region;
 
+    //Online User Graphics
+    public ITextureRegion inputtext_online_region;
+
     //Shop Graphics
     public ITextureRegion background_shop_region;
     public ITextureRegion shop_overlay_region;
@@ -235,6 +239,7 @@ public class ResourcesManager {
     //Info Graphics
     public ITextureRegion help_shop_region;
     public ITextureRegion info_shop_region;
+    public ITextureRegion chosen_help_region;
 
     //Bluetooth and Multiplayer
     public BluetoothSocket bluetoothSocket;
@@ -280,6 +285,26 @@ public class ResourcesManager {
         loadWorldGraphics(0);
         loadMultiGraphics();
         loadGameAudio();
+    }
+
+    public void loadOnlineUserResources() {
+        if (onlineUserTextureAtlas == null) {
+            BitmapTextureAtlasTextureRegionFactory.setAssetBasePath("gfx/menu/");
+            onlineUserTextureAtlas = new BuildableBitmapTextureAtlas(activity.getTextureManager(), 512, 512, TextureOptions.BILINEAR);
+            inputtext_online_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(onlineUserTextureAtlas, activity, "inputtext.png");
+            try {
+                this.onlineUserTextureAtlas.build(new BlackPawnTextureAtlasBuilder<IBitmapTextureAtlasSource, BitmapTextureAtlas>(0, 1, 0));
+                this.onlineUserTextureAtlas.load();
+            } catch (final ITextureAtlasBuilder.TextureAtlasBuilderException e) {
+                Debug.e(e);
+            }
+        }
+    }
+
+    public void unloadOnlineUserResources() {
+        if (onlineUserTextureAtlas != null) onlineUserTextureAtlas.unload();
+        if (onlineUserTextureAtlas != null) onlineUserTextureAtlas.clearTextureAtlasSources();
+        onlineUserTextureAtlas = null;
     }
 
     public void loadLevelResources(int worlds) {
@@ -339,7 +364,6 @@ public class ResourcesManager {
             inputtext_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(menuTextureAtlas, activity, "inputtext.png");
             finger_tiled = BitmapTextureAtlasTextureRegionFactory.createTiledFromAsset(menuTextureAtlas, activity, "finger_tiled.png", 5, 3);
 
-
             try {
                 this.menuTextureAtlas.build(new BlackPawnTextureAtlasBuilder<IBitmapTextureAtlasSource, BitmapTextureAtlas>(0, 1, 0));
                 this.menuTextureAtlas.load();
@@ -373,7 +397,7 @@ public class ResourcesManager {
     public void loadShopResources() {
         if (shopTextureAtlas == null) {
             BitmapTextureAtlasTextureRegionFactory.setAssetBasePath("gfx/game/");
-            shopTextureAtlas = new BuildableBitmapTextureAtlas(activity.getTextureManager(), 1024, 1024, TextureOptions.BILINEAR);
+            shopTextureAtlas = new BuildableBitmapTextureAtlas(activity.getTextureManager(), 2048, 2048, TextureOptions.BILINEAR);
             background_shop_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(shopTextureAtlas, activity, "background_shop.png");
             shop_overlay_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(shopTextureAtlas, activity, "shop_overlay.png");
             chosen_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(shopTextureAtlas, activity, "chosen.png");
@@ -408,7 +432,7 @@ public class ResourcesManager {
             shoot_diagonal_sign_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(infoTextureAtlas, activity, "shoot_diagonal_sign.png");
             cracky_mirror_sign_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(infoTextureAtlas, activity, "cracky_mirror_sign.png");
             lamporghina_sign_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(infoTextureAtlas, activity, "lamporghina_sign.png");
-            chosen_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(infoTextureAtlas, activity, "chosen.png");
+            chosen_help_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(infoTextureAtlas, activity, "chosen.png");
             helmet_sign_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(infoTextureAtlas, activity, "helmet_sign.png");
             ball_fall = BitmapTextureAtlasTextureRegionFactory.createFromAsset(infoTextureAtlas, activity, "ball_fall.png");
             military = BitmapTextureAtlasTextureRegionFactory.createFromAsset(infoTextureAtlas, activity, "military.png");
@@ -506,12 +530,16 @@ public class ResourcesManager {
 
     private void loadFonts() {
         FontFactory.setAssetBasePath("font/");
+
         final ITexture mainFontTexture = new BitmapTextureAtlas(activity.getTextureManager(), 512, 512, TextureOptions.BILINEAR_PREMULTIPLYALPHA);
+        final ITexture standardFontTexture = new BitmapTextureAtlas(activity.getTextureManager(), 1024, 1024, TextureOptions.BILINEAR_PREMULTIPLYALPHA);
         final ITexture bigFontTexture = new BitmapTextureAtlas(activity.getTextureManager(), 1024, 1024, TextureOptions.BILINEAR_PREMULTIPLYALPHA);
         final ITexture veryBigFontTexture = new BitmapTextureAtlas(activity.getTextureManager(), 1024, 1024, TextureOptions.BILINEAR_PREMULTIPLYALPHA);
 
-        standardFont = FontFactory.create(engine.getFontManager(), engine.getTextureManager(), 256, 256,
-                Typeface.create(Typeface.DEFAULT, Typeface.NORMAL),  32f, true, org.lume.util.adt.color.Color.BLACK_ABGR_PACKED_INT);
+//        standardFont = FontFactory.create(engine.getFontManager(), engine.getTextureManager(), 256, 256,
+//                Typeface.create(Typeface.DEFAULT, Typeface.NORMAL),  32f, true, org.lume.util.adt.color.Color.BLACK_ABGR_PACKED_INT);
+//        standardFont.load();
+        standardFont = FontFactory.createStrokeFromAsset(activity.getFontManager(), standardFontTexture, activity.getAssets(), "LSANS.TTF", 32, true, Color.BLACK, 2, Color.BLACK);
         standardFont.load();
 
         smallFont = FontFactory.createStrokeFromAsset(activity.getFontManager(), mainFontTexture, activity.getAssets(), "lumefont.otf", 55, true, Color.WHITE, 2, Color.BLACK);
@@ -1001,6 +1029,9 @@ public class ResourcesManager {
                 this.unloadWorldGraphics(0);
                 this.unloadMultiGraphics();
                 this.unloadGameAudio();
+                break;
+            case SCENE_ONLINEUSERS:
+                this.unloadOnlineUserResources();
                 break;
             case SCENE_WORLD0:
                 this.unloadGameTextures();

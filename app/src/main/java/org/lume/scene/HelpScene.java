@@ -90,7 +90,7 @@ public class HelpScene extends BaseScene {
         backRect.setVisible(false);
         thirdLayer.attachChild(backRect);
         chosen = new Sprite(camera.getWidth()/4, sideLength*6, sideLength*4, sideLength*4,
-                resourcesManager.chosen_region, vbom);
+                resourcesManager.chosen_help_region, vbom);
         chosen.setVisible(false);
         thirdLayer.attachChild(chosen);
         helpText = new Text(camera.getCenterX(), sideLength*2, resourcesManager.smallFont,
@@ -288,6 +288,7 @@ public class HelpScene extends BaseScene {
         helpText.dispose();
         chosen.detachSelf();
         chosen.dispose();
+        chosen = null; //test
     }
 
     private void addInfo() {

@@ -138,7 +138,7 @@ public class UploadUserScene extends BaseScene implements ButtonSprite.OnClickLi
             Log.i("CONFIRMED", "CONFIRMED");
             username = userNameInputText.getText();
 
-            User newUser = User.createUser(new GameState((activity.getCurrentWorld()-1)*40,
+            User newUser = User.createUser(new GameState((activity.getCurrentHighscore()),
                     World.getWorld(activity.getCurrentWorld()), username));
             activity.setUserID(newUser.getiD());
             activity.setNameOnline(true);
