@@ -527,6 +527,7 @@ public class GameActivity extends BaseGameActivity implements RewardedVideoAdLis
                         SceneManager.getInstance().getCurrentScene() == SceneManager.getInstance().helpScene ||
                         SceneManager.getInstance().getCurrentScene() == SceneManager.getInstance().multiScene ||
                         SceneManager.getInstance().getCurrentScene() == SceneManager.getInstance().highscoreScene ||
+                        SceneManager.getInstance().getCurrentScene() == SceneManager.getInstance().onlineGameScene ||
                         SceneManager.getInstance().getCurrentScene() == SceneManager.getInstance().skillGameScene) {
                     adView.setVisibility(View.GONE);
                 } else {

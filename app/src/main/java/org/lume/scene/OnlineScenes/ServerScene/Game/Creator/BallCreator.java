@@ -62,7 +62,9 @@ public class BallCreator extends Creator {
         Ball ball;
         PhysicsWorld physicsWorld = gameScene.physicsWorld;
 
+        float speedFactor = sideLength/15;
         speed = (direction%2 == 0) ? ResourcesManager.getInstance().screenRatio : 1f;
+        speed *= speedFactor;
 
         switch (direction) {
             case 1:
@@ -97,10 +99,10 @@ public class BallCreator extends Creator {
                         gameScene.localPlayer.getSprite().getWidth() / 2);
                 stoneCircle = new Circle(this.getX(), this.getY(), this.getWidth() / 2);
 
-                if (stoneCircle.collision(lumeCircle) && !gameScene.gameOverDisplayed) {
-                    gameScene.displayGameOverScene();
+                if (stoneCircle.collision(lumeCircle) && !gameScene.gameOverDisplayed && !gameScene.lumeIndestructible) {
+                    gameScene.multiplayer.getServer().emit(new LoseLifeCreator(gameScene.multiplayer.getRoom(), gameScene.getMultiplayer().getServer().id));
+                    //gameScene.displayGameOverScene();
                 }
-
 
                 if (this.getX() < -3*sideLength || this.getY() < -3*sideLength ||
                         this.getX() > camera.getWidth() + 3*sideLength || this.getY() > camera.getWidth() + 3*sideLength) {
@@ -131,6 +133,8 @@ public class BallCreator extends Creator {
         } else {
             crackyStones.add(stone);
         }
+        //animate cannon
+        gameScene.animateCannon(direction, position);
         body.setLinearVelocity(xVel, yVel);
         physicsWorld.registerPhysicsConnector(new PhysicsConnector(stone, body, true, false));
         ball = new Ball(direction, null, body, stone, thorny, false, speed);

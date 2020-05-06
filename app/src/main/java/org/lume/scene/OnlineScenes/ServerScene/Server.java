@@ -4,6 +4,7 @@ import org.lume.scene.OnlineScenes.ServerScene.Game.Creator.BallCreator;
 import org.lume.scene.OnlineScenes.ServerScene.Game.Creator.CannonCreator;
 import org.lume.scene.OnlineScenes.ServerScene.Game.Creator.CoinCreator;
 import org.lume.scene.OnlineScenes.ServerScene.Game.Creator.Creator;
+import org.lume.scene.OnlineScenes.ServerScene.Game.Creator.LoseLifeCreator;
 import org.lume.scene.OnlineScenes.ServerScene.Game.Creator.MoveCreator;
 import org.lume.scene.OnlineScenes.ServerScene.Game.GameActions;
 import org.lume.scene.OnlineScenes.ServerScene.Users.UserActions;
@@ -92,7 +93,7 @@ public class Server {
         }).on(loadCannon, args ->{
             gameActions.loadCanon(CannonCreator.getCreatorFromJSON((JSONObject) args[0]));
         }).on(loseLife, args ->{
-            gameActions.lostLife(ServerDataFactory.getLostLifeIDFromData(args));
+            gameActions.lostLife(LoseLifeCreator.getPlayerIdFromJSON((JSONObject) args[0]));
         }).on(userDisconnected, args ->{
             gameActions.opponentDisconnected();//TODO
             userActions.userDisconnected(ServerDataFactory.getIdFromData(args));
@@ -114,6 +115,7 @@ public class Server {
         if(creator instanceof MoveCreator)  socket.emit(playerMoved, creator.getJSON());
         if(creator instanceof BallCreator)  socket.emit(loadBall, creator.getJSON());
         if(creator instanceof CannonCreator)socket.emit(loadCannon,creator.getJSON());
+        if(creator instanceof LoseLifeCreator)socket.emit(loseLife,creator.getJSON());
     }
     public void loseLifeEmit(String ID){
         try {socket.emit(loseLife, new JSONObject("{\"ID\":" + "\"" +  ID + "\"" + "}"));}

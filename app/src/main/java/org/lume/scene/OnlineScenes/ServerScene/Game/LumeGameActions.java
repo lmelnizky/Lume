@@ -69,7 +69,7 @@ public class LumeGameActions implements GameActions {
 
     @Override
     public void lostLife(String playerID) {
-
+        scene.loseLife(playerID);
     }
 
     @Override

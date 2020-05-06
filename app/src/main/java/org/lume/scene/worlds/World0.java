@@ -640,7 +640,7 @@ public class World0 extends BaseScene {
 
     private void showText5() {
         String tvText5 = "" +
-                "YOU CAN ALSO PLAY IN HIGHSCORE MODE OR LEARN SPECIAL SKILLS IN THE SKILL GYM. IF YOU NEED HELP, ASK ME IN HELP MENU";
+                "COLLECT COINS AND REACH THE HIGHEST SCORE IN HIGHSCORE MODE OR LEARN SPECIAL SKILLS IN THE SKILL GYM. IF YOU NEED HELP, ASK ME IN HELP MENU";
 //        +
 //                "You also have a gun to destroy the cracky stones. You cannot destroy the red ones. " +
 //                "Shoot on the right half of the screen. " +

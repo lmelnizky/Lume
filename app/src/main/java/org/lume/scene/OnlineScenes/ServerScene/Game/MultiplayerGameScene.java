@@ -1,5 +1,10 @@
 package org.lume.scene.OnlineScenes.ServerScene.Game;
 
+import android.content.Context;
+import android.os.Build;
+import android.os.VibrationEffect;
+import android.os.Vibrator;
+
 import com.badlogic.gdx.math.Vector2;
 
 import org.lume.base.BaseScene;
@@ -48,6 +53,9 @@ public class MultiplayerGameScene extends BaseScene {
 
     //primitives
     public boolean gameOverDisplayed = false, waitingForStonesToDisappear, gameFinished, firstStonesInLevel;
+    public boolean localCanShoot = true;
+    public boolean lumeIndestructible;
+    public boolean grumeIndestructible;
     public float sideLength;
     public float shootX1, shootX2, shootY1, shootY2;
     public float swipeX1, swipeX2, swipeY1, swipeY2;
@@ -57,6 +65,10 @@ public class MultiplayerGameScene extends BaseScene {
     public int xPosOpponent, yPosOpponent;
     public int xPosCoin, yPosCoin;
     public int xPosBomb, yPosBomb;
+    public int lumeLives = 3;
+    public int grumeLives = 3;
+    public int stoneScoreLume, stoneScoreGrume;
+    public int bombScoreLume, bombScoreGrume;
     public int time;
     public int variant;
 
@@ -80,7 +92,7 @@ public class MultiplayerGameScene extends BaseScene {
 
 
     //objects
-    private Multiplayer multiplayer;
+    public Multiplayer multiplayer;
     public Random randomGenerator = new Random();
 
     //public attributes
@@ -179,17 +191,17 @@ public class MultiplayerGameScene extends BaseScene {
                         if (Math.abs(deltaX) > Math.abs(deltaY)) { //horizontal swipe
                             if (deltaX > 0) { //left to right
                                 //createCannonball(4);
-                                multiplayer.getServer().emit(new CannonCreator(multiplayer.getRoom(), 4, multiplayer.getServer().id));
+                                if (localCanShoot) multiplayer.getServer().emit(new CannonCreator(multiplayer.getRoom(), 4, multiplayer.getServer().id)); disableShootOnTime();
                             } else { //right to left
                                 //createCannonball(2);
-                                multiplayer.getServer().emit(new CannonCreator(multiplayer.getRoom(), 2, multiplayer.getServer().id));
+                                if (localCanShoot) multiplayer.getServer().emit(new CannonCreator(multiplayer.getRoom(), 2, multiplayer.getServer().id)); disableShootOnTime();
                             }
                         } else { //vertical swipe
                             if (deltaY > 0) { //up to down
                                 //createCannonball(3);
-                                multiplayer.getServer().emit(new CannonCreator(multiplayer.getRoom(), 3, multiplayer.getServer().id));
+                                if (localCanShoot) multiplayer.getServer().emit(new CannonCreator(multiplayer.getRoom(), 3, multiplayer.getServer().id)); disableShootOnTime();
                             } else { //down to up
-                                multiplayer.getServer().emit(new CannonCreator(multiplayer.getRoom(), 1, multiplayer.getServer().id));
+                                if (localCanShoot) multiplayer.getServer().emit(new CannonCreator(multiplayer.getRoom(), 1, multiplayer.getServer().id)); disableShootOnTime();
                                 //createCannonball(1);
                             }
                         }
@@ -355,7 +367,7 @@ public class MultiplayerGameScene extends BaseScene {
         }
     }
 
-    private void animateCannon(int direction, int position) {
+    public void animateCannon(int direction, int position) {
         switch (direction){
             case 1:
                 cannonN[position].setVisible(false);
@@ -408,6 +420,15 @@ public class MultiplayerGameScene extends BaseScene {
         }));
     }
 
+    public void disableShootOnTime() {
+        localCanShoot = false;
+        engine.registerUpdateHandler(new TimerHandler(0.5f, new ITimerCallback() {
+            public void onTimePassed(final TimerHandler pTimerHandler) {
+                localCanShoot = true;
+            }
+        }));
+    }
+
     private void createPlayer() {
         String[] array = new String[2];
         array[0] = multiplayer.getPlayers().get(0).getId();
@@ -433,8 +454,7 @@ public class MultiplayerGameScene extends BaseScene {
             multiplayer.getPlayers().get(0).updatePosition(new Vector2(xPosLocal, yPosLocal));
             multiplayer.getPlayers().get(1).setSprite(grumeSprite);
             multiplayer.getPlayers().get(1).updatePosition(new Vector2(xPosOpponent, yPosOpponent));
-        }
-        else{
+        } else {
             localPlayer = multiplayer.getPlayers().get(1);
             multiplayer.getPlayers().get(0).setSprite(grumeSprite);
             multiplayer.getPlayers().get(0).updatePosition(new Vector2(xPosOpponent, yPosOpponent));
@@ -589,6 +609,83 @@ public class MultiplayerGameScene extends BaseScene {
         };
         gameOverScene.registerTouchArea(finishSprite);
         gameOverScene.attachChild(finishSprite);
+    }
+
+    public void loseLife(String playerId) {
+        if (playerId.equals(localPlayer.getId())) {
+            lumeLives--;
+
+            Vibrator v = (Vibrator) activity.getSystemService(Context.VIBRATOR_SERVICE);
+            // Vibrate for 500 milliseconds on local device
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                v.vibrate(VibrationEffect.createOneShot(50,VibrationEffect.DEFAULT_AMPLITUDE));
+            }else{
+                //deprecated in API 26
+                v.vibrate(50);
+            }
+
+            if (lumeLives == 0) {
+                lumeHeart3.detachSelf();
+                lumeHeart3.dispose();
+                displayGameOverScene();
+            } else if (lumeLives == 1){ //lume has one life left
+                lumeIndestructible = true;
+                lumeSprite.setAlpha(0.3f);
+                registerUpdateHandler(new TimerHandler(2f, false, new ITimerCallback() {
+                    @Override
+                    public void onTimePassed(TimerHandler pTimerHandler) {
+                        lumeSprite.setAlpha(1f);
+                        lumeIndestructible = false;
+                    }
+                }));
+                lumeHeart2.detachSelf();
+                lumeHeart2.dispose();
+            } else if (lumeLives == 2) { //lume has two lives left
+                lumeIndestructible = true;
+                lumeSprite.setAlpha(0.3f);
+                registerUpdateHandler(new TimerHandler(2f, false, new ITimerCallback() {
+                    @Override
+                    public void onTimePassed(TimerHandler pTimerHandler) {
+                        lumeSprite.setAlpha(1f);
+                        lumeIndestructible = false;
+                    }
+                }));
+                lumeHeart1.detachSelf();
+                lumeHeart1.dispose();
+            }
+        } else {
+            grumeLives--;
+
+            if (grumeLives == 0) {
+                grumeHeart3.detachSelf();
+                grumeHeart3.dispose();
+                displayGameOverScene();
+            } else if (grumeLives == 1){ //lume has one life left
+                grumeIndestructible = true;
+                grumeSprite.setAlpha(0.3f);
+                registerUpdateHandler(new TimerHandler(2f, false, new ITimerCallback() {
+                    @Override
+                    public void onTimePassed(TimerHandler pTimerHandler) {
+                        grumeSprite.setAlpha(1f);
+                        grumeIndestructible = false;
+                    }
+                }));
+                grumeHeart2.detachSelf();
+                grumeHeart2.dispose();
+            } else if (grumeLives == 2) { //lume has two lives left
+                grumeIndestructible = true;
+                grumeSprite.setAlpha(0.3f);
+                registerUpdateHandler(new TimerHandler(2f, false, new ITimerCallback() {
+                    @Override
+                    public void onTimePassed(TimerHandler pTimerHandler) {
+                        grumeSprite.setAlpha(1f);
+                        grumeIndestructible = false;
+                    }
+                }));
+                grumeHeart1.detachSelf();
+                grumeHeart1.dispose();
+            }
+        }
     }
 
     //getter
