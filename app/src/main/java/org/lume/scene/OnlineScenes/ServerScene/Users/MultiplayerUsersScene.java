@@ -32,6 +32,8 @@ public class MultiplayerUsersScene extends BaseScene implements ButtonSprite.OnC
     private LinkedList<ITouchArea> touchAreas = new LinkedList<>();
     private LinkedList<Player> players;
     private Server server;
+
+    private SpriteBackground background;
     //createScene method
     @Override
     public void createScene() {/*don't write code here, because the method is calling in the super constructor.. so in other classes, the getInstance() method will not work!!!(NullPointerException!)*/}
@@ -51,7 +53,7 @@ public class MultiplayerUsersScene extends BaseScene implements ButtonSprite.OnC
         server = new Server(new LumeGameActions(), new LumeUserActions(), activity.getUserName());
         createChildren();
         manageChildren();
-        SpriteBackground background = new SpriteBackground(new Sprite(camera.getCenterX(), camera.getCenterY(),
+        background = new SpriteBackground(new Sprite(camera.getCenterX(), camera.getCenterY(),
                 camera.getWidth(), camera.getHeight(), resourcesManager.online_background_region, vbom));
         this.setBackground(background);
     }

@@ -36,8 +36,8 @@ public class RequestPopUp extends Sprite{
         questionText = new Text(getWidth()/2,getHeight()/4*3, ResourcesManager.getInstance().standardFont, requestFrom.getUsername() + " wants to play with you", ResourcesManager.getInstance().vbom);
         yes = new ButtonSprite(getWidth()/4, getHeight()/4, ResourcesManager.getInstance().inputtext_online_region,ResourcesManager.getInstance().vbom, scene);
         no = new ButtonSprite(getWidth()/4*3,getHeight()/4, ResourcesManager.getInstance().inputtext_online_region, ResourcesManager.getInstance().vbom, scene);
-        yes.setSize(getWidth()/6,getHeight()/10);
-        no.setSize(getWidth()/6, getHeight()/10);
+        yes.setSize(getWidth()/4,getHeight()/10);
+        no.setSize(getWidth()/4, getHeight()/10);
         yesText = new Text(yes.getWidth()/2,yes.getHeight()/2,ResourcesManager.getInstance().standardFont,"ACCEPT", ResourcesManager.getInstance().vbom);
         noText = new Text(no.getWidth()/2,no.getHeight()/2, ResourcesManager.getInstance().standardFont,"FA** YOU", ResourcesManager.getInstance().vbom);
         this.attachChild(questionText);

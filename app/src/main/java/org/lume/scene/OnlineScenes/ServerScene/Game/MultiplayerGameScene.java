@@ -86,7 +86,7 @@ public class MultiplayerGameScene extends BaseScene {
     public Sprite[] cannonNU, cannonEU, cannonSU, cannonWU;
     public Sprite luserSprite, finishSprite, replaySprite;
     public Text gameOverText;
-    public Player localPlayer;
+    public Player localPlayer, opponentPlayer;
 
     public Referee referee;
 
@@ -235,18 +235,26 @@ public class MultiplayerGameScene extends BaseScene {
                         if (Math.abs(deltaX) > Math.abs(deltaY)) { //horizontal
                             if (deltaX > 0) { //left to right
                                 //movePlayer('R');
-                                if (localPlayer.getCurrentPosition().x < 3) multiplayer.getServer().emit(new MoveCreator(multiplayer.getRoom(), 'R', getMultiplayer().getServer().id));
+                                if (localPlayer.getCurrentPosition().x < 3 && (localPlayer.getCurrentPosition().x+1 != opponentPlayer.getCurrentPosition().x || localPlayer.getCurrentPosition().y != opponentPlayer.getCurrentPosition().y)) {
+                                    multiplayer.getServer().emit(new MoveCreator(multiplayer.getRoom(), 'R', getMultiplayer().getServer().id));
+                                }
                             } else { //right to left
                                 //movePlayer('L');
-                                if (localPlayer.getCurrentPosition().x  > 1) multiplayer.getServer().emit(new MoveCreator(multiplayer.getRoom(), 'L', getMultiplayer().getServer().id));
+                                if (localPlayer.getCurrentPosition().x  > 1 && (localPlayer.getCurrentPosition().x-1 != opponentPlayer.getCurrentPosition().x || localPlayer.getCurrentPosition().y != opponentPlayer.getCurrentPosition().y)) {
+                                    multiplayer.getServer().emit(new MoveCreator(multiplayer.getRoom(), 'L', getMultiplayer().getServer().id));
+                                }
                             }
                         } else { //vertical
                             if (deltaY > 0) { //up to down
                                 //movePlayer('U');
-                                if (localPlayer.getCurrentPosition().y < 3) multiplayer.getServer().emit(new MoveCreator(multiplayer.getRoom(), 'U', getMultiplayer().getServer().id));
+                                if (localPlayer.getCurrentPosition().y < 3 && (localPlayer.getCurrentPosition().x != opponentPlayer.getCurrentPosition().x || localPlayer.getCurrentPosition().y+1 != opponentPlayer.getCurrentPosition().y)) {
+                                    multiplayer.getServer().emit(new MoveCreator(multiplayer.getRoom(), 'U', getMultiplayer().getServer().id));
+                                }
                             } else { //down to up
                                 //movePlayer('D');
-                                if (localPlayer.getCurrentPosition().y > 1) multiplayer.getServer().emit(new MoveCreator(multiplayer.getRoom(), 'D', getMultiplayer().getServer().id));
+                                if (localPlayer.getCurrentPosition().y > 1 && (localPlayer.getCurrentPosition().x != opponentPlayer.getCurrentPosition().x || localPlayer.getCurrentPosition().y-1 != opponentPlayer.getCurrentPosition().y)) {
+                                    multiplayer.getServer().emit(new MoveCreator(multiplayer.getRoom(), 'D', getMultiplayer().getServer().id));
+                                }
                             }
                         }
                     } else { //TAP - show slowMotion
@@ -450,12 +458,14 @@ public class MultiplayerGameScene extends BaseScene {
         if (multiplayer.getPlayers().get(0).getId().equals(multiplayer.getServer().id)){
 
             localPlayer = multiplayer.getPlayers().get(0);
+            opponentPlayer = multiplayer.getPlayers().get(1);
             multiplayer.getPlayers().get(0).setSprite(lumeSprite);
             multiplayer.getPlayers().get(0).updatePosition(new Vector2(xPosLocal, yPosLocal));
             multiplayer.getPlayers().get(1).setSprite(grumeSprite);
             multiplayer.getPlayers().get(1).updatePosition(new Vector2(xPosOpponent, yPosOpponent));
         } else {
             localPlayer = multiplayer.getPlayers().get(1);
+            opponentPlayer = multiplayer.getPlayers().get(0);
             multiplayer.getPlayers().get(0).setSprite(grumeSprite);
             multiplayer.getPlayers().get(0).updatePosition(new Vector2(xPosOpponent, yPosOpponent));
             multiplayer.getPlayers().get(1).setSprite(lumeSprite);

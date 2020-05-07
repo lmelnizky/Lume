@@ -291,7 +291,7 @@ public class ResourcesManager {
     public void loadOnlineUserResources() {
         if (onlineUserTextureAtlas == null) {
             BitmapTextureAtlasTextureRegionFactory.setAssetBasePath("gfx/menu/");
-            onlineUserTextureAtlas = new BuildableBitmapTextureAtlas(activity.getTextureManager(), 1024, 1024, TextureOptions.BILINEAR);
+            onlineUserTextureAtlas = new BuildableBitmapTextureAtlas(activity.getTextureManager(), 2048, 2048, TextureOptions.BILINEAR);
             inputtext_online_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(onlineUserTextureAtlas, activity, "inputtext.png");
             online_background_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(onlineUserTextureAtlas, activity, "upload_background.png");
             try {
@@ -1034,6 +1034,12 @@ public class ResourcesManager {
                 break;
             case SCENE_ONLINEUSERS:
                 this.unloadOnlineUserResources();
+                break;
+            case SCENE_ONLINEMULTI:
+                this.unloadGameTextures();
+                this.unloadWorldGraphics(0);
+                this.unloadMultiGraphics();
+                this.unloadGameAudio();
                 break;
             case SCENE_WORLD0:
                 this.unloadGameTextures();

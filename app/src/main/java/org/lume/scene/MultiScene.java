@@ -794,19 +794,19 @@ public class MultiScene extends BaseScene {
     }
 
     private void disposeHUD() {
-        lumeHeart1.detachSelf();
-        lumeHeart1.dispose();
-        lumeHeart2.detachSelf();
-        lumeHeart2.dispose();
-        lumeHeart3.detachSelf();
-        lumeHeart3.dispose();
+        if (!lumeHeart1.isDisposed()) lumeHeart1.detachSelf();
+        if (!lumeHeart1.isDisposed()) lumeHeart1.dispose();
+        if (!lumeHeart2.isDisposed()) lumeHeart2.detachSelf();
+        if (!lumeHeart2.isDisposed()) lumeHeart2.dispose();
+        if (!lumeHeart3.isDisposed()) lumeHeart3.detachSelf();
+        if (!lumeHeart3.isDisposed()) lumeHeart3.dispose();
 
-        grumeHeart1.detachSelf();
-        grumeHeart1.dispose();
-        grumeHeart2.detachSelf();
-        grumeHeart2.dispose();
-        grumeHeart3.detachSelf();
-        grumeHeart3.dispose();
+        if (!grumeHeart1.isDisposed()) grumeHeart1.detachSelf();
+        if (!grumeHeart1.isDisposed()) grumeHeart1.dispose();
+        if (!grumeHeart2.isDisposed()) grumeHeart2.detachSelf();
+        if (!grumeHeart2.isDisposed()) grumeHeart2.dispose();
+        if (!grumeHeart3.isDisposed()) grumeHeart3.detachSelf();
+        if (!grumeHeart3.isDisposed()) grumeHeart3.dispose();
 
         lumeBomb.detachSelf();
         lumeBomb.dispose();

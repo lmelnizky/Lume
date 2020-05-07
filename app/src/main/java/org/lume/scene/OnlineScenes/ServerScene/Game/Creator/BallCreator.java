@@ -100,6 +100,7 @@ public class BallCreator extends Creator {
                 stoneCircle = new Circle(this.getX(), this.getY(), this.getWidth() / 2);
 
                 if (stoneCircle.collision(lumeCircle) && !gameScene.gameOverDisplayed && !gameScene.lumeIndestructible) {
+                    gameScene.lumeIndestructible = true; //after emit would take too long!!!
                     gameScene.multiplayer.getServer().emit(new LoseLifeCreator(gameScene.multiplayer.getRoom(), gameScene.getMultiplayer().getServer().id));
                     //gameScene.displayGameOverScene();
                 }
