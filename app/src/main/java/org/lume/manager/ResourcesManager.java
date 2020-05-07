@@ -225,6 +225,7 @@ public class ResourcesManager {
 
     //Online User Graphics
     public ITextureRegion inputtext_online_region;
+    public ITextureRegion online_background_region;
 
     //Shop Graphics
     public ITextureRegion background_shop_region;
@@ -290,8 +291,9 @@ public class ResourcesManager {
     public void loadOnlineUserResources() {
         if (onlineUserTextureAtlas == null) {
             BitmapTextureAtlasTextureRegionFactory.setAssetBasePath("gfx/menu/");
-            onlineUserTextureAtlas = new BuildableBitmapTextureAtlas(activity.getTextureManager(), 512, 512, TextureOptions.BILINEAR);
+            onlineUserTextureAtlas = new BuildableBitmapTextureAtlas(activity.getTextureManager(), 1024, 1024, TextureOptions.BILINEAR);
             inputtext_online_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(onlineUserTextureAtlas, activity, "inputtext.png");
+            online_background_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(onlineUserTextureAtlas, activity, "upload_background.png");
             try {
                 this.onlineUserTextureAtlas.build(new BlackPawnTextureAtlasBuilder<IBitmapTextureAtlasSource, BitmapTextureAtlas>(0, 1, 0));
                 this.onlineUserTextureAtlas.load();

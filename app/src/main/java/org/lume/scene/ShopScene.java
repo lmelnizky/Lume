@@ -120,7 +120,7 @@ public class ShopScene extends BaseScene {
                                          final float pTouchAreaLocalY) {
                 if (pSceneTouchEvent.isActionDown()) {
                     if (activity.getCurrentBeersos() >= 1000) {
-                        activity.showCoinHint(0, 1000, ShopScene.this);
+                        activity.showCoinHint(2, 1000, ShopScene.this);
                     } else {
                         activity.toastOnUiThread("Not enough coins, man!");
                     }

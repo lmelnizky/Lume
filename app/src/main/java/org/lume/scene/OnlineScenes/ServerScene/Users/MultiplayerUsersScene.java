@@ -6,7 +6,9 @@ import org.lume.base.BaseScene;
 import org.lume.entity.Entity;
 import org.lume.entity.scene.ITouchArea;
 import org.lume.entity.scene.background.Background;
+import org.lume.entity.scene.background.SpriteBackground;
 import org.lume.entity.sprite.ButtonSprite;
+import org.lume.entity.sprite.Sprite;
 import org.lume.manager.ResourcesManager;
 import org.lume.manager.SceneManager;
 import org.lume.manager.SceneType;
@@ -49,7 +51,9 @@ public class MultiplayerUsersScene extends BaseScene implements ButtonSprite.OnC
         server = new Server(new LumeGameActions(), new LumeUserActions(), activity.getUserName());
         createChildren();
         manageChildren();
-        this.setBackground(new Background(30/255, 178/255, 266/255));
+        SpriteBackground background = new SpriteBackground(new Sprite(camera.getCenterX(), camera.getCenterY(),
+                camera.getWidth(), camera.getHeight(), resourcesManager.online_background_region, vbom));
+        this.setBackground(background);
     }
     private void createChildren(){
         Log.i("MultiPlayerUserScene", "createChildren");
