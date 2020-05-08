@@ -119,6 +119,7 @@ public class MultiScene extends BaseScene {
 
     private HUD gameHUD;
     private Text lumeScoreText, myLivesText, timeText, grumeScoreText, opponentLivesText;
+    private Text lumeText, grumeText;
     private Text gameOverText, winnerText, luserText;
     private Text tutorialText;
     private Text startText;
@@ -257,7 +258,7 @@ public class MultiScene extends BaseScene {
     }
 
     private void showTutorialText() {
-        String tvText1 = "Swipe to move. tap to lay a BOMB after collecting 3 coins. " +
+        String tvText1 = "Swipe to move. tap to take a BOMB, swipe to lay it where you wish. You have to collect 3 coins to BOMB." +
                 "Take a cannonBall to shoot. Have fun!";
         if (tutorialText == null) {
             tutorialText = new TickerText(sideLength*6.6f, camera.getHeight() / 6, resourcesManager.smallFont, tvText1,
@@ -324,7 +325,7 @@ public class MultiScene extends BaseScene {
 
     private void createBackground() {
         SpriteBackground spriteBackground = new SpriteBackground(new Sprite(camera.getCenterX(), camera.getCenterY(),
-                camera.getWidth(), camera.getHeight(), resourcesManager.background_world0_region, vbom));
+                camera.getWidth(), camera.getHeight(), resourcesManager.background_multi_region, vbom));
         this.setBackground(spriteBackground);
     }
 
@@ -822,6 +823,12 @@ public class MultiScene extends BaseScene {
         gameHUD.attachChild(lumeHeart2);
         gameHUD.attachChild(lumeHeart3);
 
+        lumeText = new Text(sideLength*6, sideLength*0.5f, resourcesManager.smallFont, "LUME", vbom);
+        gameHUD.attachChild(lumeText);
+
+        grumeText = new Text(camera.getWidth()-sideLength*6, sideLength*0.5f, resourcesManager.smallFont, "GRUME", vbom);
+        gameHUD.attachChild(grumeText);
+
         camera.setHUD(gameHUD);
     }
 
@@ -844,6 +851,12 @@ public class MultiScene extends BaseScene {
         if (!lumeBomb.isDisposed()) lumeBomb.dispose();
         if (!grumeBomb.isDisposed()) grumeBomb.detachSelf();
         if (!grumeBomb.isDisposed()) grumeBomb.dispose();
+
+        if (!lumeText.isDisposed()) lumeText.detachSelf();
+        if (!lumeText.isDisposed()) lumeText.dispose();
+
+        if (!grumeText.isDisposed()) grumeText.detachSelf();
+        if (!grumeText.isDisposed()) grumeText.dispose();
 
         gameHUD.detachChildren();
         gameHUD.detachSelf();
