@@ -293,7 +293,7 @@ public class ResourcesManager {
             BitmapTextureAtlasTextureRegionFactory.setAssetBasePath("gfx/menu/");
             onlineUserTextureAtlas = new BuildableBitmapTextureAtlas(activity.getTextureManager(), 2048, 2048, TextureOptions.BILINEAR);
             inputtext_online_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(onlineUserTextureAtlas, activity, "inputtext.png");
-            online_background_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(onlineUserTextureAtlas, activity, "upload_background.png");
+            online_background_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(onlineUserTextureAtlas, activity, "online_back.png");
             try {
                 this.onlineUserTextureAtlas.build(new BlackPawnTextureAtlasBuilder<IBitmapTextureAtlasSource, BitmapTextureAtlas>(0, 1, 0));
                 this.onlineUserTextureAtlas.load();

@@ -429,10 +429,10 @@ public class World0 extends BaseScene {
             secondLayer.attachChild(kimmelnitzSprite);
             registerKimmelnitzTouchOnTime(kimmelnitzSprite);
             if (level == 3) {
-                finger1 = new Sprite(shootSign.getX(), shootSign.getY()-sideLength, sideLength*0.7f, sideLength*0.7f,
+                finger1 = new Sprite(shootSign.getX(), shootSign.getY()-sideLength, sideLength*0.7f*0.8f, sideLength*0.7f,
                         resourcesManager.finger_middle, vbom);
                 secondLayer.attachChild(finger1);
-                finger2 = new Sprite(moveSign.getX(), moveSign.getY()-sideLength, sideLength*0.7f, sideLength*0.7f,
+                finger2 = new Sprite(moveSign.getX(), moveSign.getY()-sideLength, sideLength*0.7f*0.8f, sideLength*0.7f,
                         resourcesManager.finger_middle, vbom);
                 secondLayer.attachChild(finger2);
             }
