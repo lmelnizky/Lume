@@ -65,7 +65,7 @@ public class LumeGameActions implements GameActions {
     @Override
     public void loadCoin(CoinCreator creator) {
         Log.i("LumaGameActions", "loadCoin");
-        scene.attachChild(creator.createSprite());
+        creator.createSprite();
         //is called when the referee uploaded a new Coin
     }
 
@@ -76,7 +76,43 @@ public class LumeGameActions implements GameActions {
 
     @Override
     public void lostLife(String playerID) {
-
+        Log.i("LoseLife", "LoseLife");
+        for (Player p : scene.getMultiplayer().getPlayers()) if (p.getId().equals(playerID)) {
+            if(p.getId().equals(scene.localPlayer.getId())) {
+                scene.lumeLives--;
+                switch (scene.lumeLives) {
+                    case 0:
+                        //TODO Game ends!
+                        break;
+                    case 1:
+                        scene.lumeHeart3.setVisible(false); scene.lumeHeart2.setVisible(false); scene.lumeHeart1.setVisible(true);
+                        break;
+                    case 2:
+                        scene.lumeHeart3.setVisible(false); scene.lumeHeart2.setVisible(true); scene.lumeHeart1.setVisible(true);
+                        break;
+                    case 3:
+                        scene.lumeHeart3.setVisible(true); scene.lumeHeart2.setVisible(true); scene.lumeHeart1.setVisible(true);
+                        break;
+                }
+            }
+            else{
+                scene.grumeLives--;
+                switch (scene.grumeLives) {
+                    case 0:
+                        //TODO Game ends!
+                        break;
+                    case 1:
+                        scene.grumeHeart3.setVisible(false); scene.grumeHeart2.setVisible(false); scene.grumeHeart1.setVisible(true);
+                        break;
+                    case 2:
+                        scene.grumeHeart3.setVisible(false); scene.grumeHeart2.setVisible(true); scene.grumeHeart1.setVisible(true);
+                        break;
+                    case 3:
+                        scene.grumeHeart3.setVisible(true); scene.grumeHeart2.setVisible(true); scene.grumeHeart1.setVisible(true);
+                        break;
+                }
+            }
+        }
     }
 
     @Override

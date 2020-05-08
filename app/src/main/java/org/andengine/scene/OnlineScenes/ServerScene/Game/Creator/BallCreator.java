@@ -14,6 +14,7 @@ import org.andengine.object.Ball;
 import org.andengine.object.Circle;
 import org.andengine.opengl.texture.region.ITextureRegion;
 import org.andengine.scene.OnlineScenes.ServerScene.Game.MultiplayerGameScene;
+import org.andengine.scene.OnlineScenes.ServerScene.Player;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -92,32 +93,25 @@ public class BallCreator extends Creator {
                 textureRegion, ResourcesManager.getInstance().vbom) {
             @Override
             protected void onManagedUpdate(float pSecondsElapsed) {
-                final Circle lumeCircle, stoneCircle;
-                lumeCircle = new Circle(gameScene.localPlayer.getSprite().getX(), gameScene.localPlayer.getSprite().getY(),
-                        gameScene.localPlayer.getSprite().getWidth() / 2);
+                Circle stoneCircle;
                 stoneCircle = new Circle(this.getX(), this.getY(), this.getWidth() / 2);
-
-                if (stoneCircle.collision(lumeCircle) && !gameScene.gameOverDisplayed) {
-                    gameScene.displayGameOverScene();
+                if(gameScene.referee != null)for(Player p: gameScene.getMultiplayer().getPlayers()){
+                    Circle circle = new Circle(p.getSprite().getX(), p.getSprite().getY(), p.getSprite().getWidth()/2);
+                    if(stoneCircle.collision(circle) && !gameScene.gameOverDisplayed) gameScene.getMultiplayer().getServer().loseLifeEmit(p.getId());
                 }
-
 
                 if (this.getX() < -3*sideLength || this.getY() < -3*sideLength ||
                         this.getX() > camera.getWidth() + 3*sideLength || this.getY() > camera.getWidth() + 3*sideLength) {
                     gameScene.stonesToRemove.add(this);
                     if (!thorny) gameScene.crackyStonesToRemove.add(this);
 
-                    ResourcesManager.getInstance().engine.runOnUpdateThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            for (Sprite sprite : gameScene.stonesToRemove) {
-                                sprite.detachSelf();
-                                sprite.dispose();
-                            }
-                            gameScene.crackyStonesToRemove.clear();
-                            gameScene.stonesToRemove.clear();
+                    ResourcesManager.getInstance().engine.runOnUpdateThread(() -> {
+                        for (Sprite sprite : gameScene.stonesToRemove) {
+                            sprite.detachSelf();
+                            sprite.dispose();
                         }
-
+                        gameScene.crackyStonesToRemove.clear();
+                        gameScene.stonesToRemove.clear();
                     });
                 }
 

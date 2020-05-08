@@ -59,6 +59,11 @@ public class MultiplayerGameScene extends BaseScene {
     public int xPosBomb, yPosBomb;
     public int time;
     public int variant;
+    public int lumeScore = 0;
+    public int grumeScore = 0;
+    public int lumeLives = 3;
+    public int grumeLives = 3;
+    public int coinsTotal = 0;
 
     //andengine variables
     public Scene gameOverScene;
@@ -179,17 +184,33 @@ public class MultiplayerGameScene extends BaseScene {
                         if (Math.abs(deltaX) > Math.abs(deltaY)) { //horizontal swipe
                             if (deltaX > 0) { //left to right
                                 //createCannonball(4);
-                                multiplayer.getServer().emit(new CannonCreator(multiplayer.getRoom(), 4, multiplayer.getServer().id));
+                                boolean bool = true;
+                                for(Player p: multiplayer.getPlayers()) if(p != localPlayer)
+                                    if(p.getCurrentPosition().x == localPlayer.getCurrentPosition().x+1 && p.getCurrentPosition().y == localPlayer.getCurrentPosition().y)
+                                        bool = false;
+                                if(bool)multiplayer.getServer().emit(new CannonCreator(multiplayer.getRoom(), 4, multiplayer.getServer().id));
                             } else { //right to left
                                 //createCannonball(2);
-                                multiplayer.getServer().emit(new CannonCreator(multiplayer.getRoom(), 2, multiplayer.getServer().id));
+                                boolean bool = true;
+                                for(Player p: multiplayer.getPlayers()) if(p != localPlayer)
+                                    if(p.getCurrentPosition().x == localPlayer.getCurrentPosition().x-1 && p.getCurrentPosition().y == localPlayer.getCurrentPosition().y)
+                                        bool = false;
+                                if(bool)multiplayer.getServer().emit(new CannonCreator(multiplayer.getRoom(), 2, multiplayer.getServer().id));
                             }
                         } else { //vertical swipe
                             if (deltaY > 0) { //up to down
                                 //createCannonball(3);
-                                multiplayer.getServer().emit(new CannonCreator(multiplayer.getRoom(), 3, multiplayer.getServer().id));
+                                boolean bool = true;
+                                for(Player p: multiplayer.getPlayers()) if(p != localPlayer)
+                                    if(p.getCurrentPosition().x == localPlayer.getCurrentPosition().x && p.getCurrentPosition().y == localPlayer.getCurrentPosition().y-1)
+                                        bool = false;
+                                if(bool)multiplayer.getServer().emit(new CannonCreator(multiplayer.getRoom(), 3, multiplayer.getServer().id));
                             } else { //down to up
-                                multiplayer.getServer().emit(new CannonCreator(multiplayer.getRoom(), 1, multiplayer.getServer().id));
+                                boolean bool = true;
+                                for(Player p: multiplayer.getPlayers()) if(p != localPlayer)
+                                    if(p.getCurrentPosition().x == localPlayer.getCurrentPosition().x && p.getCurrentPosition().y == localPlayer.getCurrentPosition().y+1)
+                                        bool = false;
+                                if(bool)multiplayer.getServer().emit(new CannonCreator(multiplayer.getRoom(), 1, multiplayer.getServer().id));
                                 //createCannonball(1);
                             }
                         }

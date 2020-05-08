@@ -14,6 +14,8 @@ import android.widget.FrameLayout;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
+import androidx.lifecycle.Lifecycle;
+
 import com.google.android.gms.ads.AdListener;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdSize;
@@ -23,6 +25,9 @@ import com.google.android.gms.ads.MobileAds;
 import com.google.android.gms.ads.reward.RewardItem;
 import com.google.android.gms.ads.reward.RewardedVideoAd;
 import com.google.android.gms.ads.reward.RewardedVideoAdListener;
+import com.mapbox.mapboxsdk.location.modes.CameraMode;
+import com.mapbox.mapboxsdk.location.modes.RenderMode;
+import com.mapbox.mapboxsdk.plugins.locationlayer.LocationLayerPlugin;
 //import com.tappx.sdk.android.Tappx;
 //import com.tappx.sdk.android.TappxAdError;
 //import com.tappx.sdk.android.TappxInterstitial;
@@ -327,11 +332,9 @@ public class GameActivity extends BaseGameActivity implements RewardedVideoAdLis
         this.firstSlowMoMenu = firstSlowMoMenu;
     }
 
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
 //        //Tappx ADS
         //Tappx ADS
 
@@ -767,6 +770,16 @@ public class GameActivity extends BaseGameActivity implements RewardedVideoAdLis
         mCoinsAd.destroy(this);
         //if (tappxInterstitial != null) tappxInterstitial.destroy();
         super.onDestroy();
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
     }
 
     @Override

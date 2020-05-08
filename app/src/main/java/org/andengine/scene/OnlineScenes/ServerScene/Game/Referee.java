@@ -34,7 +34,7 @@ public class Referee {
 
     public void createStones() {
         long age;
-        long interval = 4000;
+        long interval = 8000;
         age = (new Date()).getTime() - scene.stoneTime;
         if (scene.firstStonesInLevel) interval = 1500;
         if (age >= interval) {

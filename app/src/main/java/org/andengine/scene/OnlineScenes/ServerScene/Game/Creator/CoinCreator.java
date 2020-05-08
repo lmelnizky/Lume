@@ -41,6 +41,7 @@ public class CoinCreator extends Creator {
             coinSprite = new Sprite(camera.getCenterX() - sideLength + ((xPosCoin - 1) * sideLength),
                     camera.getCenterY() - sideLength + ((yPosCoin - 1) * sideLength),
                     sideLength * 7 / 8, sideLength * 7 / 8, ResourcesManager.getInstance().coin_region, vbom);
+            MultiplayerGameScene.getInstance().attachChild(coinSprite);
         } else {
             coinSprite.registerEntityModifier(new ScaleModifier(0.2f,0.7f,1f));
             coinSprite.setPosition(camera.getCenterX() - sideLength + ((xPosCoin - 1) * sideLength), camera.getCenterY() - sideLength + ((yPosCoin - 1) * sideLength));
