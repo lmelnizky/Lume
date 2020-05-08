@@ -304,8 +304,8 @@ public class ResourcesManager {
     }
 
     public void unloadOnlineUserResources() {
-        if (onlineUserTextureAtlas != null) onlineUserTextureAtlas.unload();
-        if (onlineUserTextureAtlas != null) onlineUserTextureAtlas.clearTextureAtlasSources();
+        //if (onlineUserTextureAtlas != null) onlineUserTextureAtlas.unload();
+        //if (onlineUserTextureAtlas != null) onlineUserTextureAtlas.clearTextureAtlasSources();
         onlineUserTextureAtlas = null;
     }
 

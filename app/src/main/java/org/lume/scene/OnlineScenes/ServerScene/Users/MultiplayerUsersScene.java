@@ -30,7 +30,7 @@ public class MultiplayerUsersScene extends BaseScene implements ButtonSprite.OnC
     private LinkedList<Entity> entities = new LinkedList<>();
     private LinkedList<Entity> playerEntities = new LinkedList<>();
     private LinkedList<ITouchArea> touchAreas = new LinkedList<>();
-    private LinkedList<Player> players;
+    private LinkedList<Player> players = new LinkedList<Player>();
     private Server server;
 
     private SpriteBackground background;
@@ -39,7 +39,7 @@ public class MultiplayerUsersScene extends BaseScene implements ButtonSprite.OnC
     public void createScene() {/*don't write code here, because the method is calling in the super constructor.. so in other classes, the getInstance() method will not work!!!(NullPointerException!)*/}
     //static methods
     public static MultiplayerUsersScene getInstance(){
-        if(INSTANCE == null){ResourcesManager.getInstance().loadMenuTextures(); INSTANCE = new MultiplayerUsersScene();    INSTANCE.create();}
+        if(INSTANCE == null){INSTANCE = new MultiplayerUsersScene();    INSTANCE.create();}
         return INSTANCE;
     }
     public static void destroyInstance(){

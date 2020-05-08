@@ -28,7 +28,9 @@ import org.lume.manager.ResourcesManager;
 import org.lume.manager.SceneManager;
 import org.lume.manager.SceneType;
 import org.lume.scene.OnlineScenes.ServerScene.Game.Creator.CannonCreator;
+import org.lume.scene.OnlineScenes.ServerScene.Game.Creator.LoseLifeCreator;
 import org.lume.scene.OnlineScenes.ServerScene.Game.Creator.MoveCreator;
+import org.lume.scene.OnlineScenes.ServerScene.Game.Creator.PutBombCreator;
 import org.lume.scene.OnlineScenes.ServerScene.Multiplayer;
 import org.lume.scene.OnlineScenes.ServerScene.Player;
 import org.lume.scene.OnlineScenes.ServerScene.Server;
@@ -56,6 +58,11 @@ public class MultiplayerGameScene extends BaseScene {
     public boolean localCanShoot = true;
     public boolean lumeIndestructible;
     public boolean grumeIndestructible;
+    public boolean lumeCanBomb = true, grumeCanBomb = true;
+    public boolean lumeCanStone, grumeCanStone;
+    public boolean bombing = false;
+    public boolean bombLaid = false;
+    public boolean stoneLaid = false;
     public float sideLength;
     public float shootX1, shootX2, shootY1, shootY2;
     public float swipeX1, swipeX2, swipeY1, swipeY2;
@@ -65,6 +72,7 @@ public class MultiplayerGameScene extends BaseScene {
     public int xPosOpponent, yPosOpponent;
     public int xPosCoin, yPosCoin;
     public int xPosBomb, yPosBomb;
+    public int xPosStone, yPosStone;
     public int lumeLives = 3;
     public int grumeLives = 3;
     public int stoneScoreLume, stoneScoreGrume;
@@ -81,6 +89,8 @@ public class MultiplayerGameScene extends BaseScene {
     public Sprite lumeHeart1, lumeHeart2, lumeHeart3;
     public Sprite grumeHeart1, grumeHeart2, grumeHeart3;
     public Sprite coinSprite;
+    public Sprite bombSprite, stoneSprite, redBombSprite;
+    public Sprite fireBeamHorizontal, fireBeamVertical;
     public Sprite[] cannonN, cannonE, cannonS, cannonW;
     public Sprite[] cannonNS, cannonES, cannonSS, cannonWS;
     public Sprite[] cannonNU, cannonEU, cannonSU, cannonWU;
@@ -142,7 +152,8 @@ public class MultiplayerGameScene extends BaseScene {
     //override methods from superclass
     @Override
     public void onBackKeyPressed() {
-
+        disposeHUD();
+        SceneManager.getInstance().loadMenuScene(engine);
     }
     @Override
     public SceneType getSceneType() {return SceneType.SCENE_ONLINEMULTI;}
@@ -205,6 +216,8 @@ public class MultiplayerGameScene extends BaseScene {
                                 //createCannonball(1);
                             }
                         }
+                    } else { //TAP
+
                     }
 
 
@@ -235,30 +248,56 @@ public class MultiplayerGameScene extends BaseScene {
                         if (Math.abs(deltaX) > Math.abs(deltaY)) { //horizontal
                             if (deltaX > 0) { //left to right
                                 //movePlayer('R');
-                                if (localPlayer.getCurrentPosition().x < 3 && (localPlayer.getCurrentPosition().x+1 != opponentPlayer.getCurrentPosition().x || localPlayer.getCurrentPosition().y != opponentPlayer.getCurrentPosition().y)) {
-                                    multiplayer.getServer().emit(new MoveCreator(multiplayer.getRoom(), 'R', getMultiplayer().getServer().id));
+                                if (bombLaid) {
+                                    if (xPosLocal < 3) multiplayer.getServer().emit(new PutBombCreator(multiplayer.getRoom(), (int) localPlayer.getCurrentPosition().x+1, (int) localPlayer.getCurrentPosition().y, localPlayer.getId()));
+                                } else {
+                                    if (localPlayer.getCurrentPosition().x < 3 &&
+                                            (localPlayer.getCurrentPosition().x + 1 != opponentPlayer.getCurrentPosition().x || localPlayer.getCurrentPosition().y != opponentPlayer.getCurrentPosition().y) &&
+                                            (localPlayer.getCurrentPosition().x + 1 != xPosBomb || localPlayer.getCurrentPosition().y != yPosBomb)) {
+                                        multiplayer.getServer().emit(new MoveCreator(multiplayer.getRoom(), 'R', getMultiplayer().getServer().id));
+                                    }
                                 }
                             } else { //right to left
                                 //movePlayer('L');
-                                if (localPlayer.getCurrentPosition().x  > 1 && (localPlayer.getCurrentPosition().x-1 != opponentPlayer.getCurrentPosition().x || localPlayer.getCurrentPosition().y != opponentPlayer.getCurrentPosition().y)) {
-                                    multiplayer.getServer().emit(new MoveCreator(multiplayer.getRoom(), 'L', getMultiplayer().getServer().id));
+                                if (bombLaid) {
+                                    if (xPosLocal > 1) multiplayer.getServer().emit(new PutBombCreator(multiplayer.getRoom(), (int) localPlayer.getCurrentPosition().x-1, (int) localPlayer.getCurrentPosition().y, localPlayer.getId()));
+                                } else {
+                                    if (localPlayer.getCurrentPosition().x > 1 &&
+                                            (localPlayer.getCurrentPosition().x - 1 != opponentPlayer.getCurrentPosition().x || localPlayer.getCurrentPosition().y != opponentPlayer.getCurrentPosition().y) &&
+                                            (localPlayer.getCurrentPosition().x - 1 != xPosBomb || localPlayer.getCurrentPosition().y != yPosBomb)) {
+                                        multiplayer.getServer().emit(new MoveCreator(multiplayer.getRoom(), 'L', getMultiplayer().getServer().id));
+                                    }
                                 }
                             }
                         } else { //vertical
                             if (deltaY > 0) { //up to down
                                 //movePlayer('U');
-                                if (localPlayer.getCurrentPosition().y < 3 && (localPlayer.getCurrentPosition().x != opponentPlayer.getCurrentPosition().x || localPlayer.getCurrentPosition().y+1 != opponentPlayer.getCurrentPosition().y)) {
-                                    multiplayer.getServer().emit(new MoveCreator(multiplayer.getRoom(), 'U', getMultiplayer().getServer().id));
+                                if (bombLaid) {
+                                    if (yPosLocal < 3) multiplayer.getServer().emit(new PutBombCreator(multiplayer.getRoom(), (int) localPlayer.getCurrentPosition().x, (int) localPlayer.getCurrentPosition().y+1, localPlayer.getId()));
+                                } else {
+                                    if (localPlayer.getCurrentPosition().y < 3 &&
+                                            (localPlayer.getCurrentPosition().x != opponentPlayer.getCurrentPosition().x || localPlayer.getCurrentPosition().y + 1 != opponentPlayer.getCurrentPosition().y) &&
+                                            (localPlayer.getCurrentPosition().x != xPosBomb || localPlayer.getCurrentPosition().y + 1 != yPosBomb)) {
+                                        multiplayer.getServer().emit(new MoveCreator(multiplayer.getRoom(), 'U', getMultiplayer().getServer().id));
+                                    }
                                 }
                             } else { //down to up
                                 //movePlayer('D');
-                                if (localPlayer.getCurrentPosition().y > 1 && (localPlayer.getCurrentPosition().x != opponentPlayer.getCurrentPosition().x || localPlayer.getCurrentPosition().y-1 != opponentPlayer.getCurrentPosition().y)) {
-                                    multiplayer.getServer().emit(new MoveCreator(multiplayer.getRoom(), 'D', getMultiplayer().getServer().id));
+                                if (bombLaid) {
+                                    if (yPosLocal > 1) multiplayer.getServer().emit(new PutBombCreator(multiplayer.getRoom(), (int) localPlayer.getCurrentPosition().x, (int) localPlayer.getCurrentPosition().y-1, localPlayer.getId()));
+                                } else {
+                                    if (localPlayer.getCurrentPosition().y > 1 &&
+                                            (localPlayer.getCurrentPosition().x != opponentPlayer.getCurrentPosition().x || localPlayer.getCurrentPosition().y - 1 != opponentPlayer.getCurrentPosition().y) &&
+                                            (localPlayer.getCurrentPosition().x != xPosBomb || localPlayer.getCurrentPosition().y - 1 != yPosBomb)) {
+                                        multiplayer.getServer().emit(new MoveCreator(multiplayer.getRoom(), 'D', getMultiplayer().getServer().id));
+                                    }
                                 }
                             }
                         }
-                    } else { //TAP - show slowMotion
-
+                    } else { //TAP
+                        if (lumeCanBomb && !bombing && !bombLaid) {
+                            multiplayer.getServer().emit(new PutBombCreator(multiplayer.getRoom(),(int) localPlayer.getCurrentPosition().x,(int) localPlayer.getCurrentPosition().y, localPlayer.getId()));
+                        }
                     }
 
                     return true;
@@ -276,6 +315,18 @@ public class MultiplayerGameScene extends BaseScene {
         this.registerTouchArea(swipeRight);
         secondLayer.attachChild(shootLeft);
         secondLayer.attachChild(swipeRight);
+    }
+
+    public void removeLumeBomb() {
+        lumeBomb.detachSelf();
+        gameHUD.detachChild(lumeBomb);
+        if (!grumeBomb.isDisposed()) grumeBomb.dispose();
+    }
+
+    public void removeGrumeBomb() {
+        grumeBomb.detachSelf();
+        gameHUD.detachChild(grumeBomb);
+        if (!grumeBomb.isDisposed()) grumeBomb.dispose();
     }
 
     private void playerMoved() {
@@ -428,9 +479,62 @@ public class MultiplayerGameScene extends BaseScene {
         }));
     }
 
+    public void createRedBomb(final int xPos, final int yPos) {
+        redBombSprite = new Sprite(camera.getCenterX() - sideLength + ((xPos - 1) * sideLength), camera.getCenterY() - sideLength + ((yPos - 1) * sideLength),
+                sideLength * 3/4, sideLength * 3/4, resourcesManager.bomb_red_region, vbom);
+        this.attachChild(redBombSprite);
+        registerUpdateHandler(new TimerHandler(0.5f, false, new ITimerCallback() {
+            @Override
+            public void onTimePassed(TimerHandler pTimerHandler) {
+                redBombSprite.detachSelf();
+                redBombSprite.dispose();
+                redBombSprite = null;
+                explode(xPos, yPos);
+            }
+        }));
+    }
+
+    public void explode(int xPos, int yPos) {
+        fireBeamHorizontal = new Sprite(camera.getCenterX(), camera.getCenterY() - sideLength + (yPos-1)*sideLength,
+                sideLength*3, sideLength*3/4, resourcesManager.firebeam_horizontal, vbom);
+        fireBeamVertical = new Sprite(camera.getCenterX() - sideLength + (xPos-1)*sideLength, camera.getCenterY(),
+                sideLength*3/4, sideLength*3, resourcesManager.firebeam_vertical, vbom);
+        this.attachChild(fireBeamHorizontal);
+        this.attachChild(fireBeamVertical);
+        if (referee != null) killCheck();
+        registerUpdateHandler(new TimerHandler(0.2f, false, new ITimerCallback() {
+            @Override
+            public void onTimePassed(TimerHandler pTimerHandler) {
+                if (referee != null) killCheck();
+                fireBeamHorizontal.detachSelf();
+                fireBeamHorizontal.dispose();
+                fireBeamHorizontal = null;
+                fireBeamVertical.detachSelf();
+                fireBeamVertical.dispose();
+                fireBeamVertical = null;
+                bombing = false;
+                xPosBomb = 0;
+                yPosBomb = 0;
+            }
+        }));
+    }
+
+    public void killCheck() {
+        if ((localPlayer.getCurrentPosition().x == xPosBomb || localPlayer.getCurrentPosition().y == yPosBomb) &&
+                !lumeIndestructible && !gameOverDisplayed) {
+            lumeIndestructible = true; //after emit would take too long!!!
+            multiplayer.getServer().emit(new LoseLifeCreator(multiplayer.getRoom(), localPlayer.getId()));
+        }
+        if ((opponentPlayer.getCurrentPosition().x == xPosBomb || opponentPlayer.getCurrentPosition().y == yPosBomb) &&
+                !grumeIndestructible && !gameOverDisplayed) {
+            grumeIndestructible = true; //after emit would take too long!!!
+            multiplayer.getServer().emit(new LoseLifeCreator(multiplayer.getRoom(), opponentPlayer.getId()));
+        }
+    }
+
     public void disableShootOnTime() {
         localCanShoot = false;
-        engine.registerUpdateHandler(new TimerHandler(0.5f, new ITimerCallback() {
+        engine.registerUpdateHandler(new TimerHandler(0.3f, new ITimerCallback() {
             public void onTimePassed(final TimerHandler pTimerHandler) {
                 localCanShoot = true;
             }
@@ -609,8 +713,8 @@ public class MultiplayerGameScene extends BaseScene {
                     setIgnoreUpdate(false);
                     gameOverDisplayed = false;
                     registerUpdateHandler(physicsWorld);
-                    SceneManager.getInstance().loadMenuScene(engine);
                     disposeHUD();
+                    SceneManager.getInstance().loadMenuScene(engine);
                     return true;
                 } else {
                     return false;

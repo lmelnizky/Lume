@@ -16,6 +16,7 @@ import org.lume.opengl.texture.region.ITextureRegion;
 import org.lume.scene.OnlineScenes.ServerScene.Game.MultiplayerGameScene;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.lume.scene.OnlineScenes.ServerScene.Player;
 
 import java.util.ArrayList;
 
@@ -94,17 +95,36 @@ public class BallCreator extends Creator {
                 textureRegion, ResourcesManager.getInstance().vbom) {
             @Override
             protected void onManagedUpdate(float pSecondsElapsed) {
-                final Circle lumeCircle, stoneCircle;
-                lumeCircle = new Circle(gameScene.localPlayer.getSprite().getX(), gameScene.localPlayer.getSprite().getY(),
-                        gameScene.localPlayer.getSprite().getWidth() / 2);
+                final Circle stoneCircle, lumeCircle, grumeCircle;
                 stoneCircle = new Circle(this.getX(), this.getY(), this.getWidth() / 2);
-
+                /*for(Player p: gameScene.getMultiplayer().getPlayers()) {
+                    Circle playerCircle = new Circle(p.getSprite().getX(), p.getSprite().getY(),
+                            p.getSprite().getWidth() / 2);
+                    if(p.getId().equals(gameScene.localPlayer.getId())){
+                    if (stoneCircle.collision(playerCircle) && !gameScene.gameOverDisplayed && !gameScene.lumeIndestructible && gameScene.referee != null) {
+                        gameScene.lumeIndestructible = true; //after emit would take too long!!!
+                        gameScene.multiplayer.getServer().emit(new LoseLifeCreator(gameScene.multiplayer.getRoom(), p.getId()));
+                        //gameScene.displayGameOverScene();
+                    }
+                    }
+                    else{
+                        gameScene.grumeIndestructible = true; //after emit would take too long!!!
+                        gameScene.multiplayer.getServer().emit(new LoseLifeCreator(gameScene.multiplayer.getRoom(), p.getId()));
+                        //gameScene.displayGameOverScene();
+                    }
+                }*/
+                lumeCircle = new Circle(gameScene.localPlayer.getSprite().getX(), gameScene.localPlayer.getSprite().getY(), gameScene.localPlayer.getSprite().getWidth()/2);
+                grumeCircle = new Circle(gameScene.opponentPlayer.getSprite().getX(), gameScene.opponentPlayer.getSprite().getY(), gameScene.opponentPlayer.getSprite().getWidth()/2);
                 if (stoneCircle.collision(lumeCircle) && !gameScene.gameOverDisplayed && !gameScene.lumeIndestructible) {
                     gameScene.lumeIndestructible = true; //after emit would take too long!!!
-                    gameScene.multiplayer.getServer().emit(new LoseLifeCreator(gameScene.multiplayer.getRoom(), gameScene.getMultiplayer().getServer().id));
+                    gameScene.multiplayer.getServer().emit(new LoseLifeCreator(gameScene.multiplayer.getRoom(), gameScene.localPlayer.getId()));
                     //gameScene.displayGameOverScene();
                 }
-
+                if (stoneCircle.collision(grumeCircle) && !gameScene.gameOverDisplayed && !gameScene.grumeIndestructible) {
+                    gameScene.grumeIndestructible = true; //after emit would take too long!!!
+                    gameScene.multiplayer.getServer().emit(new LoseLifeCreator(gameScene.multiplayer.getRoom(), gameScene.opponentPlayer.getId()));
+                    //gameScene.displayGameOverScene();
+                }
                 if (this.getX() < -3*sideLength || this.getY() < -3*sideLength ||
                         this.getX() > camera.getWidth() + 3*sideLength || this.getY() > camera.getWidth() + 3*sideLength) {
                     gameScene.stonesToRemove.add(this);

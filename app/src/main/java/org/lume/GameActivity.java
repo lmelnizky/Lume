@@ -468,7 +468,7 @@ public class GameActivity extends BaseGameActivity implements RewardedVideoAdLis
             AdRequest adRequest = new AdRequest.Builder()
                     .addTestDevice("E8F7D3C5F811FFE1D5AEB61BB219CECC")
                     .build();
-            adView.loadAd(adRequest);
+            //adView.loadAd(adRequest);
             adView.setAdListener(new AdListener() {
                 @Override
                 public void onAdOpened() {

@@ -2,10 +2,13 @@ package org.lume.scene.OnlineScenes.ServerScene.Game;
 
 import android.util.Log;
 
+import org.lume.entity.sprite.Sprite;
 import org.lume.scene.OnlineScenes.ServerScene.Game.Creator.BallCreator;
 import org.lume.scene.OnlineScenes.ServerScene.Game.Creator.CannonCreator;
 import org.lume.scene.OnlineScenes.ServerScene.Game.Creator.CoinCreator;
 import org.lume.scene.OnlineScenes.ServerScene.Game.Creator.MoveCreator;
+import org.lume.scene.OnlineScenes.ServerScene.Game.Creator.PutBombCreator;
+import org.lume.scene.OnlineScenes.ServerScene.Game.Creator.PutStoneCreator;
 
 //TODO write methods for server-events!
 //this is the class, where you change the Multiplayer Scene in Runtime with the serverEvents.
@@ -73,6 +76,17 @@ public class LumeGameActions implements GameActions {
     }
 
     @Override
+    public void putBomb(PutBombCreator creator) {
+        Sprite s = creator.createSprite();
+        if(!s.hasParent()) scene.attachChild(s);
+    }
+
+    @Override
+    public void putStone(PutStoneCreator creator) {
+
+    }
+
+    @Override
     public void opponentDisconnected() {
         Log.i("LumaGameActions", "opponent Disconnected from the service");
         //opponent lost connection to the server
@@ -91,8 +105,8 @@ public class LumeGameActions implements GameActions {
         if(referee.equals(scene.getMultiplayer().getServer().id)){ scene.referee = new Referee(); Log.i("LumeGameActions", "I'm a referee");}
     }
     //inner classes
-        //public classes
+    //public classes
 
-        //enums
+    //enums
 
 }

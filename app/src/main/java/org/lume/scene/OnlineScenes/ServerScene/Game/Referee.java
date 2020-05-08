@@ -18,7 +18,7 @@ public class Referee {
         scene.registerUpdateHandler(new IUpdateHandler() {
             @Override
             public void onUpdate(float pSecondsElapsed) {
-                createStones();
+                //createStones();
             }
 
             @Override

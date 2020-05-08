@@ -19,6 +19,7 @@ public class MoveCreator extends Creator {
     private final float sideLength =  ResourcesManager.getInstance().sideLength;
     //returnValue
     private Sprite playerSprite;
+    private MultiplayerGameScene scene = MultiplayerGameScene.getInstance();
     //constructor
     public MoveCreator(String room, char directionToMove, String movedPlayersID) {
         super(room);
@@ -55,6 +56,7 @@ public class MoveCreator extends Creator {
                         playerSprite.setPosition(playerSprite.getX(), playerSprite.getY() + sideLength);
                         break;
                 }
+
                 this.setxPosPlayer(xPosPlayer);
                 this.setyPosPlayer(yPosPlayer);
                 player.updatePosition(new Vector2(xPosPlayer, yPosPlayer));
