@@ -14,11 +14,11 @@
 
 package com.org.andengine.helperclasses;
 
-import org.andengine.entity.Entity;
-import org.andengine.entity.sprite.Sprite;
-import org.andengine.input.touch.TouchEvent;
-import org.andengine.opengl.texture.region.ITextureRegion;
-import org.andengine.opengl.vbo.VertexBufferObjectManager;
+import org.lume.entity.Entity;
+import org.lume.entity.sprite.Sprite;
+import org.lume.input.touch.TouchEvent;
+import org.lume.opengl.texture.region.ITextureRegion;
+import org.lume.opengl.vbo.VertexBufferObjectManager;
 
 public class Slider extends Entity {
 

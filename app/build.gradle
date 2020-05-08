@@ -4,11 +4,11 @@ android {
     compileSdkVersion 29
     useLibrary 'org.apache.http.legacy'
     defaultConfig {
-        applicationId "org.andengine"
+        applicationId "org.lume"
         minSdkVersion 19
         targetSdkVersion 29
-        versionCode 15
-        versionName "2.5"
+        versionCode 16
+        versionName "2.6"
         multiDexEnabled true
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
@@ -58,7 +58,6 @@ dependencies {
     testImplementation 'junit:junit:4.12'
     implementation files('libs/YouTubeAndroidPlayerApi.jar')
     implementation "io.socket:socket.io-client:0.6.2"
-    implementation 'com.mapbox.mapboxsdk:mapbox-android-plugin-locationlayer:0.11.0'
 }
 
 apply plugin: 'com.google.gms.google-services'
