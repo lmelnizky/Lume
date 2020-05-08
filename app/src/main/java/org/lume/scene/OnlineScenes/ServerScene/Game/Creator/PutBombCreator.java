@@ -1,5 +1,10 @@
 package org.lume.scene.OnlineScenes.ServerScene.Game.Creator;
 
+
+
+import com.google.gson.JsonObject;
+
+import org.json.JSONException;
 import org.json.JSONObject;
 import org.lume.entity.sprite.Sprite;
 
@@ -22,6 +27,25 @@ public class PutBombCreator extends Creator {
 
     @Override
     public JSONObject getJSON() {
-        return null;
+        JSONObject o = new JSONObject();
+        try{o.put("room", room);
+        o.put("ID", playerId);
+        o.put("xBomb", xPosBomb);
+        o.put("yBomb",yPosBomb);}
+        catch (JSONException e){e.printStackTrace();}
+        return o;
+    }
+    public static PutBombCreator getCreatorFromJson(JSONObject o){
+        PutBombCreator c = null;
+        try{
+            new PutBombCreator(
+                    o.getString("room"),
+                    o.getInt("xBomb"),
+                    o.getInt("yBomb"),
+                    o.getString("ID")
+                    );
+        }catch (JSONException e){e.printStackTrace();}
+
+        return c;
     }
 }

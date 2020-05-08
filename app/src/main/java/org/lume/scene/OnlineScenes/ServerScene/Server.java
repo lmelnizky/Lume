@@ -6,6 +6,8 @@ import org.lume.scene.OnlineScenes.ServerScene.Game.Creator.CoinCreator;
 import org.lume.scene.OnlineScenes.ServerScene.Game.Creator.Creator;
 import org.lume.scene.OnlineScenes.ServerScene.Game.Creator.LoseLifeCreator;
 import org.lume.scene.OnlineScenes.ServerScene.Game.Creator.MoveCreator;
+import org.lume.scene.OnlineScenes.ServerScene.Game.Creator.PutBombCreator;
+import org.lume.scene.OnlineScenes.ServerScene.Game.Creator.PutStoneCreator;
 import org.lume.scene.OnlineScenes.ServerScene.Game.GameActions;
 import org.lume.scene.OnlineScenes.ServerScene.Users.UserActions;
 import org.json.JSONException;
@@ -44,6 +46,8 @@ public class Server {
     protected final String loadCoin = "AddCoin";
     protected final String loadCannon = "AddCannon";
     protected final String loseLife = "loseLife";
+    protected final String loadStone = "putStone";
+    protected final String loadBomb = "putBomb";
     //constructor
     public Server(GameActions gameActions, UserActions userActions, String username) {
         //initialize variables
@@ -92,6 +96,10 @@ public class Server {
             gameActions.loadCoin(CoinCreator.getCreatorFromJson((JSONObject) args[0]));
         }).on(loadCannon, args ->{
             gameActions.loadCanon(CannonCreator.getCreatorFromJSON((JSONObject) args[0]));
+        }).on(loadStone, args ->{
+            gameActions.putStone(PutStoneCreator.getCreatorFromJson((JSONObject) args[0]));
+        }).on(loadBomb, args ->{
+            gameActions.putBomb(PutBombCreator.getCreatorFromJson((JSONObject) args[0]));
         }).on(loseLife, args ->{
             gameActions.lostLife(LoseLifeCreator.getPlayerIdFromJSON((JSONObject) args[0]));
         }).on(userDisconnected, args ->{

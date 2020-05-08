@@ -4,6 +4,8 @@ import org.lume.scene.OnlineScenes.ServerScene.Game.Creator.BallCreator;
 import org.lume.scene.OnlineScenes.ServerScene.Game.Creator.CannonCreator;
 import org.lume.scene.OnlineScenes.ServerScene.Game.Creator.CoinCreator;
 import org.lume.scene.OnlineScenes.ServerScene.Game.Creator.MoveCreator;
+import org.lume.scene.OnlineScenes.ServerScene.Game.Creator.PutBombCreator;
+import org.lume.scene.OnlineScenes.ServerScene.Game.Creator.PutStoneCreator;
 
 public interface GameActions {
     void createdGame(String[] opponentsID, String refereeID);
@@ -12,6 +14,8 @@ public interface GameActions {
     void loadCoin(CoinCreator coinCreator);
     void loadCanon(CannonCreator creator);
     void lostLife(String playerID);
+    void putBomb(PutBombCreator creator);
+    void putStone(PutStoneCreator creator);
     //TODO is there any class for coin?
     void opponentDisconnected();
     void youDisconnected();
