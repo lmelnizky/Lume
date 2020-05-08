@@ -486,7 +486,7 @@ public class MainMenuScene extends BaseScene implements IOnMenuItemClickListener
 //        helpMultiMenuItem = new ScaleMenuItemDecorator(new SpriteMenuItem(MENU_HELP, 60, 60, resourcesManager.help_region, vbom), 1.2f, 1);
 //        knowMultiMenuItem = new ScaleMenuItemDecorator(new SpriteMenuItem(MENU_HELP, 60, 60, resourcesManager.know_region, vbom), 1.2f, 1);
         final IMenuItem multiMenuItem = new ScaleMenuItemDecorator(new SpriteMenuItem(MENU_MULTI, sideLength*factorRight, sideLength*factorRight, resourcesManager.play_multi_region, vbom), 1.2f, 1);
-        final IMenuItem testMultiItem = new ScaleMenuItemDecorator(new SpriteMenuItem(MENU_ONLINE_MULTI, sideLength*factorRight, sideLength*factorRight, resourcesManager.test_multi_region, vbom), 1.2f, 1);
+        final IMenuItem testMultiItem = new ScaleMenuItemDecorator(new SpriteMenuItem(MENU_ONLINE_MULTI, sideLength*factorRight*0.9f, sideLength*factorRight, resourcesManager.test_multi_region, vbom), 1.2f, 1);
 
         menuChildScene.addMenuItem(highMenuItem);
         menuChildScene.addMenuItem(playMenuItem);

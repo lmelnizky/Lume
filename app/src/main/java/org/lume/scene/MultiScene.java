@@ -26,6 +26,7 @@ import org.lume.entity.sprite.Sprite;
 import org.lume.entity.text.AutoWrap;
 import org.lume.entity.text.Text;
 import org.lume.entity.text.TextOptions;
+import org.lume.entity.text.TickerText;
 import org.lume.extension.physics.box2d.FixedStepPhysicsWorld;
 import org.lume.extension.physics.box2d.PhysicsConnector;
 import org.lume.extension.physics.box2d.PhysicsFactory;
@@ -51,6 +52,7 @@ public class MultiScene extends BaseScene {
     private boolean lumeCanShoot = false;
     private boolean grumeCanShoot = false;
     private boolean bombing = false;
+    private boolean bombLaid = false;
     private boolean firstStonesInLevel = true;
     private boolean gameOverDisplayed = false;
     private boolean gameStarted = false;
@@ -127,6 +129,8 @@ public class MultiScene extends BaseScene {
     public void createScene() {
         sideLength = (int) resourcesManager.screenHeight / 9;
         randomGenerator = new Random();
+        xPosBomb = 0;
+        yPosBomb = 0;
         crackyStones = new ArrayList<Sprite>();
         crackyStonesToRemove = new ArrayList<Sprite>();
         cannonBallsToRemove = new ArrayList<Sprite>();
@@ -201,7 +205,7 @@ public class MultiScene extends BaseScene {
 
                 @Override
                 public boolean onAreaTouched(TouchEvent touchEvent, float x, float y) {
-                    if (touchEvent.isActionDown() && !activity.isShowText() && tutorialShowing) {
+                    if (touchEvent.isActionDown() && tutorialShowing) {
                         tutorialShowing = false;
                         kimmelnitzKOSprite = new Sprite(14.5f*sideLength, 1.5f*sideLength,
                                 3*sideLength, 3*sideLength, resourcesManager.kimmelnitz_ko_region, vbom);
@@ -256,12 +260,11 @@ public class MultiScene extends BaseScene {
         String tvText1 = "Swipe to move. tap to lay a BOMB after collecting 3 coins. " +
                 "Take a cannonBall to shoot. Have fun!";
         if (tutorialText == null) {
-            tutorialText = new Text(sideLength * 6.6f, camera.getHeight() / 6.5f, ResourcesManager.getInstance().smallFont,
-                    tvText1, new TextOptions(AutoWrap.WORDS, 13 * sideLength, HorizontalAlign.CENTER),
-                    ResourcesManager.getInstance().vbom);
+            tutorialText = new TickerText(sideLength*6.6f, camera.getHeight() / 6, resourcesManager.smallFont, tvText1,
+                    new TickerText.TickerTextOptions(AutoWrap.WORDS, sideLength*13.2f, HorizontalAlign.CENTER,60), resourcesManager.vbom);
             secondLayer.attachChild(tutorialText);
             tutorialText.setAlpha(0.7f);
-            activity.createTypingText(tvText1, tutorialText, false);
+            //activity.createTypingText(tvText1, tutorialText, false);
         }
     }
 
@@ -387,13 +390,17 @@ public class MultiScene extends BaseScene {
                         if (Math.abs(deltaX) > Math.abs(deltaY)) { //horizontal swipe
                             if (deltaX > 0) { //left to right
                                 if ((lumeCanShoot == true)) {
-                                    cannonBallShot('L', 4); //TODO take numbers
+                                    cannonBallShot('L', 4);
+                                } else if (bombLaid == true) {
+                                    if (xPosLume < 3) createBomb(xPosLume+1, yPosLume);
                                 } else {
                                     moveLume('R');
                                 }
                             } else { //right to left
                                 if ((lumeCanShoot == true)) {
                                     cannonBallShot('L', 2);
+                                } else if (bombLaid == true) {
+                                    if (xPosLume > 1) createBomb(xPosLume-1, yPosLume);
                                 } else {
                                     moveLume('L');
                                 }
@@ -402,20 +409,24 @@ public class MultiScene extends BaseScene {
                             if (deltaY > 0) { //up to down
                                 if ((lumeCanShoot == true)) {
                                     cannonBallShot('L', 3);
+                                } else if (bombLaid == true) {
+                                    if (yPosLume < 3) createBomb(xPosLume, yPosLume+1);
                                 } else {
                                     moveLume('U');
                                 }
                             } else { //down to up
                                 if ((lumeCanShoot == true)) {
                                     cannonBallShot('L', 1);
+                                } else if (bombLaid == true) {
+                                    if (yPosLume > 1) createBomb(xPosLume, yPosLume-1);
                                 } else {
                                     moveLume('D');
                                 }
                             }
                         }
                     } else { //TAP
-                        if (lumeCanBomb && !bombing) {
-                            createBomb(xPosLume, yPosLume, 'L');
+                        if (lumeCanBomb && !bombing && !bombLaid) {
+                            layBomb(xPosLume, yPosLume, 'L');
                         }
                     }
 
@@ -449,12 +460,16 @@ public class MultiScene extends BaseScene {
                             if (deltaX > 0) { //left to right
                                 if ((grumeCanShoot == true)) {
                                     cannonBallShot('G', 4);
+                                } else if (bombLaid == true) {
+                                    if (xPosGrume < 3) createBomb(xPosGrume+1, yPosGrume);
                                 } else {
                                     moveGrume('R');
                                 }
                             } else { //right to left
                                 if ((grumeCanShoot == true)) {
                                     cannonBallShot('G', 2);
+                                } else if (bombLaid == true) {
+                                    if (xPosGrume > 1) createBomb(xPosGrume-1, yPosGrume);
                                 } else {
                                     moveGrume('L');
                                 }
@@ -463,12 +478,16 @@ public class MultiScene extends BaseScene {
                             if (deltaY > 0) { //up to down
                                 if ((grumeCanShoot == true)) {
                                     cannonBallShot('G', 3);
+                                } else if (bombLaid == true) {
+                                    if (yPosGrume < 3) createBomb(xPosGrume, yPosGrume+1);
                                 } else {
                                     moveGrume('U');
                                 }
                             } else { //down to up
                                 if ((grumeCanShoot == true)) {
                                     cannonBallShot('G', 1);
+                                } else if (bombLaid == true) {
+                                    if (yPosGrume > 1) createBomb(xPosGrume, yPosGrume-1);
                                 } else {
                                     moveGrume('D');
                                 }
@@ -476,7 +495,7 @@ public class MultiScene extends BaseScene {
                         }
                     } else { //TAP
                         if (grumeCanBomb && !bombing) {
-                            createBomb(xPosGrume, yPosGrume, 'G');
+                            layBomb(xPosGrume, yPosGrume, 'G');
                         }
                     }
                     return true;
@@ -567,8 +586,8 @@ public class MultiScene extends BaseScene {
         }
     }
 
-    private void createBomb(int xPos, int yPos, char player) {
-        bombing = true;
+    private void layBomb(int xPos, int yPos, char player) {
+        bombLaid = true;
         if (player == 'L') {
             lumeCanBomb = false;
             lumeScore = 0;
@@ -597,6 +616,17 @@ public class MultiScene extends BaseScene {
         bombSprite = new Sprite(camera.getCenterX() - sideLength + ((xPos - 1) * sideLength), camera.getCenterY() - sideLength + ((yPos - 1) * sideLength),
                 sideLength * 3/4, sideLength * 3/4, resourcesManager.bomb_normal_region, vbom);
         this.attachChild(bombSprite);
+
+        xPosBomb = xPos;
+        yPosBomb = yPos;
+    }
+
+    private void createBomb(int xPos, int yPos) {
+        bombLaid = false;
+        bombing = true;
+        bombSprite.setPosition(camera.getCenterX() - sideLength + ((xPos - 1) * sideLength),
+                camera.getCenterY() - sideLength + ((yPos - 1) * sideLength));
+
         registerUpdateHandler(new TimerHandler(0.5f, false, new ITimerCallback() {
             @Override
             public void onTimePassed(TimerHandler pTimerHandler) {
@@ -644,6 +674,8 @@ public class MultiScene extends BaseScene {
                 fireBeamVertical.dispose();
                 fireBeamVertical = null;
                 bombing = false;
+                xPosBomb = 0;
+                yPosBomb = 0;
             }
         }));
     }
@@ -808,10 +840,10 @@ public class MultiScene extends BaseScene {
         if (!grumeHeart3.isDisposed()) grumeHeart3.detachSelf();
         if (!grumeHeart3.isDisposed()) grumeHeart3.dispose();
 
-        lumeBomb.detachSelf();
-        lumeBomb.dispose();
-        grumeBomb.detachSelf();
-        grumeBomb.dispose();
+        if (!lumeBomb.isDisposed()) lumeBomb.detachSelf();
+        if (!lumeBomb.isDisposed()) lumeBomb.dispose();
+        if (!grumeBomb.isDisposed()) grumeBomb.detachSelf();
+        if (!grumeBomb.isDisposed()) grumeBomb.dispose();
 
         gameHUD.detachChildren();
         gameHUD.detachSelf();
@@ -884,7 +916,8 @@ public class MultiScene extends BaseScene {
         switch (direction) {
             case 'R':
                 if (xPosLume < 3) {
-                    if (xPosLume+1 != xPosGrume || yPosLume != yPosGrume) {
+                    if ((xPosLume+1 != xPosGrume || yPosLume != yPosGrume) &&
+                            (xPosLume+1 != xPosBomb || yPosLume != yPosBomb)) {
                         xPosLume++;
                         lumeSprite.setPosition(lumeSprite.getX() + sideLength, lumeSprite.getY());
                     }
@@ -892,7 +925,8 @@ public class MultiScene extends BaseScene {
                 break;
             case 'L':
                 if (xPosLume > 1) {
-                    if (xPosLume-1 != xPosGrume || yPosLume != yPosGrume) {
+                    if ((xPosLume-1 != xPosGrume || yPosLume != yPosGrume) &&
+                            (xPosLume-1 != xPosBomb || yPosLume != yPosBomb)) {
                         xPosLume--;
                         lumeSprite.setPosition(lumeSprite.getX() - sideLength, lumeSprite.getY());
                     }
@@ -900,7 +934,8 @@ public class MultiScene extends BaseScene {
                 break;
             case 'D':
                 if (yPosLume > 1) {
-                    if (xPosLume != xPosGrume || yPosLume-1 != yPosGrume) {
+                    if ((xPosLume != xPosGrume || yPosLume-1 != yPosGrume) &&
+                            (xPosLume != xPosBomb || yPosLume-1 != yPosBomb)) {
                         yPosLume--;
                         lumeSprite.setPosition(lumeSprite.getX(), lumeSprite.getY() - sideLength);
                     }
@@ -908,7 +943,8 @@ public class MultiScene extends BaseScene {
                 break;
             case 'U':
                 if (yPosLume < 3) {
-                    if (xPosLume != xPosGrume || yPosLume+1 != yPosGrume) {
+                    if ((xPosLume != xPosGrume || yPosLume+1 != yPosGrume) &&
+                            (xPosLume != xPosBomb || yPosLume+1 != yPosBomb)) {
                         yPosLume++;
                         lumeSprite.setPosition(lumeSprite.getX(), lumeSprite.getY() + sideLength);
                     }
@@ -923,7 +959,8 @@ public class MultiScene extends BaseScene {
         switch (direction) {
             case 'R':
                 if (xPosGrume < 3) {
-                    if (xPosLume != xPosGrume+1 || yPosLume != yPosGrume) {
+                    if ((xPosLume != xPosGrume+1 || yPosLume != yPosGrume) &&
+                            (xPosBomb != xPosGrume+1 || yPosBomb != yPosGrume)) {
                         xPosGrume++;
                         grumeSprite.setPosition(grumeSprite.getX() + sideLength, grumeSprite.getY());
                     }
@@ -931,7 +968,8 @@ public class MultiScene extends BaseScene {
                 break;
             case 'L':
                 if (xPosGrume > 1) {
-                    if (xPosLume != xPosGrume-1 || yPosLume != yPosGrume) {
+                    if ((xPosLume != xPosGrume-1 || yPosLume != yPosGrume) &&
+                            (xPosBomb != xPosGrume-1 || yPosBomb != yPosGrume)) {
                         xPosGrume--;
                         grumeSprite.setPosition(grumeSprite.getX() - sideLength, grumeSprite.getY());
                     }
@@ -939,7 +977,8 @@ public class MultiScene extends BaseScene {
                 break;
             case 'D':
                 if (yPosGrume > 1) {
-                    if (xPosLume != xPosGrume || yPosLume != yPosGrume-1) {
+                    if ((xPosLume != xPosGrume || yPosLume != yPosGrume-1) &&
+                            (xPosBomb != xPosGrume || yPosBomb != yPosGrume-1)) {
                         yPosGrume--;
                         grumeSprite.setPosition(grumeSprite.getX(), grumeSprite.getY() - sideLength);
                     }
@@ -947,7 +986,8 @@ public class MultiScene extends BaseScene {
                 break;
             case 'U':
                 if (yPosGrume < 3) {
-                    if (xPosLume != xPosGrume || yPosLume != yPosGrume+1) {
+                    if ((xPosLume != xPosGrume || yPosLume != yPosGrume+1) &&
+                            (xPosBomb != xPosGrume || yPosBomb != yPosGrume+1)) {
                         yPosGrume++;
                         grumeSprite.setPosition(grumeSprite.getX(), grumeSprite.getY() + sideLength);
                     }
@@ -988,7 +1028,7 @@ public class MultiScene extends BaseScene {
         int direction = randomGenerator.nextInt(4) + 1;
         int randomRow = randomGenerator.nextInt(3) + 1; //values 0 to 2
         long[] age = new long[4]; //is used to prevent screen from showing too many stones
-        long interval = (long) 6000;
+        long interval = (long) 7000;
         if (firstStonesInLevel) interval = 1500;
         age[direction - 1] = (new Date()).getTime() - stoneTimes[direction - 1];
         if (age[direction - 1] >= interval) {
