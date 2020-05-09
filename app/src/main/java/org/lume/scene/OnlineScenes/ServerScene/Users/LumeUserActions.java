@@ -1,6 +1,7 @@
 package org.lume.scene.OnlineScenes.ServerScene.Users;
 
 import android.util.Log;
+import android.widget.Toast;
 
 import org.lume.entity.Entity;
 import org.lume.manager.ResourcesManager;
@@ -49,6 +50,7 @@ public class LumeUserActions implements UserActions {
     @Override
     public void disconnect() {
         Log.i("LumeUserActions", "disconnect");
+        ResourcesManager.getInstance().activity.toastOnUiThread("Lost Connection!", Toast.LENGTH_LONG);
     }
     @Override
     public void getAnswerRequest(boolean angenommen, String fromID, String room) {
