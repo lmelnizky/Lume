@@ -154,7 +154,10 @@ public class MultiplayerGameScene extends BaseScene {
     @Override
     public void onBackKeyPressed() {
         disposeHUD();
-        multiplayer.getServer().getSocket().disconnect();
+        resourcesManager.server.deleteMe();
+        resourcesManager.entities.removeAll(resourcesManager.entities);
+        resourcesManager.playerEntities.removeAll(resourcesManager.playerEntities);
+        resourcesManager.players.removeAll(resourcesManager.players);
         SceneManager.getInstance().loadMenuScene(engine);
     }
     @Override
@@ -569,6 +572,8 @@ public class MultiplayerGameScene extends BaseScene {
             bombScoreGrume++;
             if (bombScoreGrume == 2) grumeCanBomb = true;
         }
+        activity.toastOnUiThread("My bombscore: " + String.valueOf(bombScoreLume));
+        activity.toastOnUiThread("Opp bombscore: " + String.valueOf(bombScoreGrume));
     }
 
     public void disableShootOnTime() {
@@ -761,7 +766,10 @@ public class MultiplayerGameScene extends BaseScene {
                     gameOverDisplayed = false;
                     registerUpdateHandler(physicsWorld);
                     disposeHUD();
-                    multiplayer.getServer().getSocket().disconnect();
+                    resourcesManager.server.deleteMe();
+                    resourcesManager.entities.removeAll(resourcesManager.entities);
+                    resourcesManager.playerEntities.removeAll(resourcesManager.playerEntities);
+                    resourcesManager.players.removeAll(resourcesManager.players);
                     SceneManager.getInstance().loadMenuScene(engine);
                     return true;
                 } else {

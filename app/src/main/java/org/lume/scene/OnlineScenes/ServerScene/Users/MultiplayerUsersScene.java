@@ -112,6 +112,9 @@ public class MultiplayerUsersScene extends BaseScene implements ButtonSprite.OnC
 //        }
 //        resourcesManager.touchAreas = null;
 //        resourcesManager.players = null;
+        resourcesManager.entities.removeAll(resourcesManager.entities);
+        resourcesManager.playerEntities.removeAll(resourcesManager.playerEntities);
+        resourcesManager.players.removeAll(resourcesManager.players);
         SceneManager.getInstance().loadMenuScene(engine);
     }
 
