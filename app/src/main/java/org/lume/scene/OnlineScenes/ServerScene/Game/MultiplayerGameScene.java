@@ -204,17 +204,29 @@ public class MultiplayerGameScene extends BaseScene {
                         if (Math.abs(deltaX) > Math.abs(deltaY)) { //horizontal swipe
                             if (deltaX > 0) { //left to right
                                 //createCannonball(4);
-                                if (localCanShoot) multiplayer.getServer().emit(new CannonCreator(multiplayer.getRoom(), 4, multiplayer.getServer().id)); disableShootOnTime();
+                                if (localCanShoot) {
+                                    disableShootOnTime();
+                                    multiplayer.getServer().emit(new CannonCreator(multiplayer.getRoom(), 4, multiplayer.getServer().id));
+                                }
                             } else { //right to left
                                 //createCannonball(2);
-                                if (localCanShoot) multiplayer.getServer().emit(new CannonCreator(multiplayer.getRoom(), 2, multiplayer.getServer().id)); disableShootOnTime();
+                                if (localCanShoot) {
+                                    disableShootOnTime();
+                                    multiplayer.getServer().emit(new CannonCreator(multiplayer.getRoom(), 2, multiplayer.getServer().id));
+                                }
                             }
                         } else { //vertical swipe
                             if (deltaY > 0) { //up to down
                                 //createCannonball(3);
-                                if (localCanShoot) multiplayer.getServer().emit(new CannonCreator(multiplayer.getRoom(), 3, multiplayer.getServer().id)); disableShootOnTime();
+                                if (localCanShoot) {
+                                    disableShootOnTime();
+                                    multiplayer.getServer().emit(new CannonCreator(multiplayer.getRoom(), 3, multiplayer.getServer().id));
+                                }
                             } else { //down to up
-                                if (localCanShoot) multiplayer.getServer().emit(new CannonCreator(multiplayer.getRoom(), 1, multiplayer.getServer().id)); disableShootOnTime();
+                                if (localCanShoot) {
+                                    disableShootOnTime();
+                                    multiplayer.getServer().emit(new CannonCreator(multiplayer.getRoom(), 1, multiplayer.getServer().id));
+                                }
                                 //createCannonball(1);
                             }
                         }
