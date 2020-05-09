@@ -199,7 +199,7 @@ public class World0 extends BaseScene {
 
     @Override
     public void onBackKeyPressed() {
-        if (!ResourcesManager.getInstance().backgroundMusic.isReleased()) ResourcesManager.getInstance().backgroundMusic.stop();
+        if (ResourcesManager.getInstance().backgroundMusic != null) ResourcesManager.getInstance().backgroundMusic.stop();
         if (cameFromLevelsScene) {
             disposeHUD();
             SceneManager.getInstance().loadWorlds1to4Scene(engine);

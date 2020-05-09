@@ -239,7 +239,7 @@ public class HighscoreScene extends BaseScene {
 
     @Override
     public void onBackKeyPressed() {
-        ResourcesManager.getInstance().backgroundMusic.stop();
+        if (ResourcesManager.getInstance().backgroundMusic != null) ResourcesManager.getInstance().backgroundMusic.stop();
         disposeHUD();
         SceneManager.getInstance().loadMenuScene(engine);
     }

@@ -594,8 +594,6 @@ public class MultiplayerGameScene extends BaseScene {
             bombScoreGrume++;
             if (bombScoreGrume == 2) grumeCanBomb = true;
         }
-        activity.toastOnUiThread("My bombscore: " + String.valueOf(bombScoreLume));
-        activity.toastOnUiThread("Opp bombscore: " + String.valueOf(bombScoreGrume));
     }
 
     public void disableShootOnTime() {

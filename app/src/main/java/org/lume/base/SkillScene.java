@@ -107,8 +107,8 @@ public abstract class SkillScene extends BaseScene {
 
     //inherited
     public void onBackKeyPressed() {
-        ResourcesManager.getInstance().backgroundMusic.stop();
-        ResourcesManager.getInstance().backgroundMusic.pause();
+        if (ResourcesManager.getInstance().backgroundMusic != null) ResourcesManager.getInstance().backgroundMusic.stop();
+        if (ResourcesManager.getInstance().backgroundMusic != null) ResourcesManager.getInstance().backgroundMusic.pause();
         disposeHUD();
         SceneManager.getInstance().loadSkillMenuScene(engine);
     }
