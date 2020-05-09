@@ -325,7 +325,7 @@ public class MultiScene extends BaseScene {
 
     private void createBackground() {
         SpriteBackground spriteBackground = new SpriteBackground(new Sprite(camera.getCenterX(), camera.getCenterY(),
-                camera.getWidth(), camera.getHeight(), resourcesManager.background_multi_region, vbom));
+                camera.getWidth(), camera.getHeight(), resourcesManager.background_world0_region, vbom));
         this.setBackground(spriteBackground);
     }
 
@@ -345,7 +345,7 @@ public class MultiScene extends BaseScene {
         xPosGrume = 3;
         yPosGrume = 3;
         lumeSprite = new Sprite(camera.getCenterX() - sideLength, camera.getCenterY() - sideLength,
-                sideLength * 3 / 4, sideLength * 3 / 4, resourcesManager.player_region, vbom);
+                sideLength * 3 / 4, sideLength * 3 / 4, resourcesManager.lume_region, vbom);
         secondLayer.attachChild(lumeSprite);
         lumeSprite.setRotation(90);
         grumeSprite = new Sprite(camera.getCenterX() + sideLength, camera.getCenterY() + sideLength,
@@ -392,7 +392,7 @@ public class MultiScene extends BaseScene {
                             if (deltaX > 0) { //left to right
                                 if ((lumeCanShoot == true)) {
                                     cannonBallShot('L', 4);
-                                } else if (bombLaid == true) {
+                                } else if (bombLaid == true && lumeCanBomb) {
                                     if (xPosLume < 3) createBomb(xPosLume+1, yPosLume);
                                 } else {
                                     moveLume('R');
@@ -400,7 +400,7 @@ public class MultiScene extends BaseScene {
                             } else { //right to left
                                 if ((lumeCanShoot == true)) {
                                     cannonBallShot('L', 2);
-                                } else if (bombLaid == true) {
+                                } else if (bombLaid == true && lumeCanBomb) {
                                     if (xPosLume > 1) createBomb(xPosLume-1, yPosLume);
                                 } else {
                                     moveLume('L');
@@ -410,7 +410,7 @@ public class MultiScene extends BaseScene {
                             if (deltaY > 0) { //up to down
                                 if ((lumeCanShoot == true)) {
                                     cannonBallShot('L', 3);
-                                } else if (bombLaid == true) {
+                                } else if (bombLaid == true && lumeCanBomb) {
                                     if (yPosLume < 3) createBomb(xPosLume, yPosLume+1);
                                 } else {
                                     moveLume('U');
@@ -418,7 +418,7 @@ public class MultiScene extends BaseScene {
                             } else { //down to up
                                 if ((lumeCanShoot == true)) {
                                     cannonBallShot('L', 1);
-                                } else if (bombLaid == true) {
+                                } else if (bombLaid == true && lumeCanBomb) {
                                     if (yPosLume > 1) createBomb(xPosLume, yPosLume-1);
                                 } else {
                                     moveLume('D');
@@ -461,7 +461,7 @@ public class MultiScene extends BaseScene {
                             if (deltaX > 0) { //left to right
                                 if ((grumeCanShoot == true)) {
                                     cannonBallShot('G', 4);
-                                } else if (bombLaid == true) {
+                                } else if (bombLaid == true && grumeCanBomb) {
                                     if (xPosGrume < 3) createBomb(xPosGrume+1, yPosGrume);
                                 } else {
                                     moveGrume('R');
@@ -469,7 +469,7 @@ public class MultiScene extends BaseScene {
                             } else { //right to left
                                 if ((grumeCanShoot == true)) {
                                     cannonBallShot('G', 2);
-                                } else if (bombLaid == true) {
+                                } else if (bombLaid == true && grumeCanBomb) {
                                     if (xPosGrume > 1) createBomb(xPosGrume-1, yPosGrume);
                                 } else {
                                     moveGrume('L');
@@ -479,7 +479,7 @@ public class MultiScene extends BaseScene {
                             if (deltaY > 0) { //up to down
                                 if ((grumeCanShoot == true)) {
                                     cannonBallShot('G', 3);
-                                } else if (bombLaid == true) {
+                                } else if (bombLaid == true && grumeCanBomb) {
                                     if (yPosGrume < 3) createBomb(xPosGrume, yPosGrume+1);
                                 } else {
                                     moveGrume('U');
@@ -487,7 +487,7 @@ public class MultiScene extends BaseScene {
                             } else { //down to up
                                 if ((grumeCanShoot == true)) {
                                     cannonBallShot('G', 1);
-                                } else if (bombLaid == true) {
+                                } else if (bombLaid == true && grumeCanBomb) {
                                     if (yPosGrume > 1) createBomb(xPosGrume, yPosGrume-1);
                                 } else {
                                     moveGrume('D');
@@ -590,7 +590,6 @@ public class MultiScene extends BaseScene {
     private void layBomb(int xPos, int yPos, char player) {
         bombLaid = true;
         if (player == 'L') {
-            lumeCanBomb = false;
             lumeScore = 0;
             lumeBomb = new Sprite(camera.getCenterX()-sideLength*3, camera.getHeight() - sideLength/2,
                     sideLength*3/4, sideLength*3/4, resourcesManager.bomb_sign00_region, vbom);
@@ -602,7 +601,6 @@ public class MultiScene extends BaseScene {
                 }
             });
         } else {
-            grumeCanBomb = false;
             grumeScore = 0;
             grumeBomb = new Sprite(camera.getCenterX() + sideLength*3, camera.getHeight() - sideLength/2,
                     sideLength*3/4, sideLength*3/4, resourcesManager.bomb_sign00_region, vbom);
@@ -624,6 +622,8 @@ public class MultiScene extends BaseScene {
 
     private void createBomb(int xPos, int yPos) {
         bombLaid = false;
+        lumeCanBomb = false;
+        grumeCanBomb = false;
         bombing = true;
         bombSprite.setPosition(camera.getCenterX() - sideLength + ((xPos - 1) * sideLength),
                 camera.getCenterY() - sideLength + ((yPos - 1) * sideLength));

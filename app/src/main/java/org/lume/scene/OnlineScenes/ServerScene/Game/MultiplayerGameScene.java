@@ -265,7 +265,7 @@ public class MultiplayerGameScene extends BaseScene {
                         if (Math.abs(deltaX) > Math.abs(deltaY)) { //horizontal
                             if (deltaX > 0) { //left to right
                                 //movePlayer('R');
-                                if (bombLaid) {
+                                if (bombLaid && lumeCanBomb) {
                                     if (xPosLocal < 3) multiplayer.getServer().emit(new PutBombCreator(multiplayer.getRoom(), (int) localPlayer.getCurrentPosition().x+1, (int) localPlayer.getCurrentPosition().y, localPlayer.getId()));
                                 } else {
                                     if (localPlayer.getCurrentPosition().x < 3 &&
@@ -276,7 +276,7 @@ public class MultiplayerGameScene extends BaseScene {
                                 }
                             } else { //right to left
                                 //movePlayer('L');
-                                if (bombLaid) {
+                                if (bombLaid && lumeCanBomb) {
                                     if (xPosLocal > 1) multiplayer.getServer().emit(new PutBombCreator(multiplayer.getRoom(), (int) localPlayer.getCurrentPosition().x-1, (int) localPlayer.getCurrentPosition().y, localPlayer.getId()));
                                 } else {
                                     if (localPlayer.getCurrentPosition().x > 1 &&
@@ -289,7 +289,7 @@ public class MultiplayerGameScene extends BaseScene {
                         } else { //vertical
                             if (deltaY > 0) { //up to down
                                 //movePlayer('U');
-                                if (bombLaid) {
+                                if (bombLaid && lumeCanBomb) {
                                     if (yPosLocal < 3) multiplayer.getServer().emit(new PutBombCreator(multiplayer.getRoom(), (int) localPlayer.getCurrentPosition().x, (int) localPlayer.getCurrentPosition().y+1, localPlayer.getId()));
                                 } else {
                                     if (localPlayer.getCurrentPosition().y < 3 &&
@@ -300,7 +300,7 @@ public class MultiplayerGameScene extends BaseScene {
                                 }
                             } else { //down to up
                                 //movePlayer('D');
-                                if (bombLaid) {
+                                if (bombLaid && lumeCanBomb) {
                                     if (yPosLocal > 1) multiplayer.getServer().emit(new PutBombCreator(multiplayer.getRoom(), (int) localPlayer.getCurrentPosition().x, (int) localPlayer.getCurrentPosition().y-1, localPlayer.getId()));
                                 } else {
                                     if (localPlayer.getCurrentPosition().y > 1 &&
@@ -335,9 +335,9 @@ public class MultiplayerGameScene extends BaseScene {
     }
 
     public void removeLumeBomb() {
-        lumeBomb.detachSelf();
-        gameHUD.detachChild(lumeBomb);
-        if (!grumeBomb.isDisposed()) grumeBomb.dispose();
+//        lumeBomb.detachSelf();
+//        gameHUD.detachChild(lumeBomb);
+//        if (!grumeBomb.isDisposed()) grumeBomb.dispose();
     }
 
     public void removeGrumeBomb() {
@@ -817,8 +817,9 @@ public class MultiplayerGameScene extends BaseScene {
             }
 
             if (lumeLives == 0) {
-                lumeHeart3.detachSelf();
-                lumeHeart3.dispose();
+//                lumeHeart3.detachSelf();
+//                lumeHeart3.dispose();
+                lumeHeart3.setVisible(false);
                 displayGameOverScene();
             } else if (lumeLives == 1){ //lume has one life left
                 lumeIndestructible = true;
@@ -830,8 +831,9 @@ public class MultiplayerGameScene extends BaseScene {
                         lumeIndestructible = false;
                     }
                 }));
-                lumeHeart2.detachSelf();
-                lumeHeart2.dispose();
+//                lumeHeart2.detachSelf();
+//                lumeHeart2.dispose();
+                lumeHeart2.setVisible(false);
             } else if (lumeLives == 2) { //lume has two lives left
                 lumeIndestructible = true;
                 lumeSprite.setAlpha(0.3f);
@@ -842,15 +844,17 @@ public class MultiplayerGameScene extends BaseScene {
                         lumeIndestructible = false;
                     }
                 }));
-                lumeHeart1.detachSelf();
-                lumeHeart1.dispose();
+//                lumeHeart1.detachSelf();
+//                lumeHeart1.dispose();
+                lumeHeart1.setVisible(false);
             }
         } else {
             grumeLives--;
 
             if (grumeLives == 0) {
-                grumeHeart3.detachSelf();
-                grumeHeart3.dispose();
+//                grumeHeart3.detachSelf();
+//                grumeHeart3.dispose();
+                grumeHeart3.setVisible(false);
                 displayGameOverScene();
             } else if (grumeLives == 1){ //lume has one life left
                 grumeIndestructible = true;
@@ -862,8 +866,9 @@ public class MultiplayerGameScene extends BaseScene {
                         grumeIndestructible = false;
                     }
                 }));
-                grumeHeart2.detachSelf();
-                grumeHeart2.dispose();
+//                grumeHeart2.detachSelf();
+//                grumeHeart2.dispose();
+                grumeHeart2.setVisible(false);
             } else if (grumeLives == 2) { //lume has two lives left
                 grumeIndestructible = true;
                 grumeSprite.setAlpha(0.3f);
@@ -874,8 +879,9 @@ public class MultiplayerGameScene extends BaseScene {
                         grumeIndestructible = false;
                     }
                 }));
-                grumeHeart1.detachSelf();
-                grumeHeart1.dispose();
+//                grumeHeart1.detachSelf();
+//                grumeHeart1.dispose();
+                grumeHeart1.setVisible(false);
             }
         }
     }

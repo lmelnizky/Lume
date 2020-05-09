@@ -32,6 +32,7 @@ public class PutBombCreator extends Creator {
     public Sprite createSprite() {
         if (scene.bombLaid) { //put bomb on swipe
             scene.bombLaid = false;
+            scene.lumeCanBomb = false;
             scene.bombing = true;
             scene.bombSprite.setPosition(camera.getCenterX() - sideLength + ((xPosBomb - 1) * sideLength),
                     camera.getCenterY() - sideLength + ((yPosBomb - 1) * sideLength));
@@ -51,30 +52,29 @@ public class PutBombCreator extends Creator {
         } else { //lay bomb first time on tap
             if (playerId.equals(scene.localPlayer.getId())) {
                 scene.bombLaid = true;
-                scene.lumeCanBomb = false;
                 scene.bombScoreLume = 0;
-                scene.lumeBomb = new Sprite(camera.getCenterX() - sideLength * 3, camera.getHeight() - sideLength / 2,
-                        sideLength * 3 / 4, sideLength * 3 / 4, resourcesManager.bomb_sign00_region, resourcesManager.vbom);
-                resourcesManager.engine.runOnUpdateThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        scene.removeLumeBomb();
-                        scene.gameHUD.attachChild(scene.lumeBomb);
-                    }
-                });
+                //scene.lumeBomb = new Sprite(camera.getCenterX() - sideLength * 3, camera.getHeight() - sideLength / 2,
+                        //sideLength * 3 / 4, sideLength * 3 / 4, resourcesManager.bomb_sign00_region, resourcesManager.vbom);
+//                resourcesManager.engine.runOnUpdateThread(new Runnable() {
+//                    @Override
+//                    public void run() {
+//                        //scene.removeLumeBomb();
+//                        //scene.gameHUD.attachChild(scene.lumeBomb);
+//                    }
+//                });
             } else {
                 scene.bombLaid = true;
                 scene.grumeCanBomb = false;
                 scene.bombScoreGrume = 0;
-                scene.grumeBomb = new Sprite(camera.getCenterX() - sideLength * 3, camera.getHeight() - sideLength / 2,
-                        sideLength * 3 / 4, sideLength * 3 / 4, resourcesManager.bomb_sign00_region, resourcesManager.vbom);
-                resourcesManager.engine.runOnUpdateThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        scene.removeGrumeBomb();
-                        scene.gameHUD.attachChild(scene.grumeBomb);
-                    }
-                });
+                //scene.grumeBomb = new Sprite(camera.getCenterX() - sideLength * 3, camera.getHeight() - sideLength / 2,
+                        //sideLength * 3 / 4, sideLength * 3 / 4, resourcesManager.bomb_sign00_region, resourcesManager.vbom);
+//                resourcesManager.engine.runOnUpdateThread(new Runnable() {
+//                    @Override
+//                    public void run() {
+//                        //scene.removeGrumeBomb();
+//                        //scene.gameHUD.attachChild(scene.grumeBomb);
+//                    }
+//                });
             }
 
             if (scene.bombSprite == null) {
