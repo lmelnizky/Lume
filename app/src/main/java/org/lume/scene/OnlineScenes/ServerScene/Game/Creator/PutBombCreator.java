@@ -39,9 +39,10 @@ public class PutBombCreator extends Creator {
             scene.registerUpdateHandler(new TimerHandler(0.5f, false, new ITimerCallback() {
                 @Override
                 public void onTimePassed(TimerHandler pTimerHandler) {
-                    scene.bombSprite.detachSelf();
-                    scene.bombSprite.dispose();
-                    scene.bombSprite = null;
+//                    scene.bombSprite.detachSelf();
+//                    scene.bombSprite.dispose();
+//                    scene.bombSprite = null;
+                    scene.bombSprite.setVisible(false);
                     scene.createRedBomb(xPosBomb, yPosBomb);
                 }
             }));
@@ -76,8 +77,15 @@ public class PutBombCreator extends Creator {
                 });
             }
 
-            scene.bombSprite = new Sprite(camera.getCenterX() - sideLength + ((xPosBomb - 1) * sideLength), camera.getCenterY() - sideLength + ((yPosBomb - 1) * sideLength),
-                    sideLength * 3/4, sideLength * 3/4, resourcesManager.bomb_normal_region, resourcesManager.vbom);
+            if (scene.bombSprite == null) {
+                scene.bombSprite = new Sprite(camera.getCenterX() - sideLength + ((xPosBomb - 1) * sideLength), camera.getCenterY() - sideLength + ((yPosBomb - 1) * sideLength),
+                        sideLength * 3/4, sideLength * 3/4, resourcesManager.bomb_normal_region, resourcesManager.vbom);
+                scene.attachChild(scene.bombSprite);
+            } else {
+                scene.bombSprite.setPosition(camera.getCenterX() - sideLength + ((xPosBomb - 1) * sideLength), camera.getCenterY() - sideLength + ((yPosBomb - 1) * sideLength));
+                scene.bombSprite.setVisible(true);
+            }
+
             //scene.attachChild(scene.bombSprite);
 
             scene.xPosBomb = xPosBomb;

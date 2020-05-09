@@ -497,38 +497,60 @@ public class MultiplayerGameScene extends BaseScene {
     }
 
     public void createRedBomb(final int xPos, final int yPos) {
-        redBombSprite = new Sprite(camera.getCenterX() - sideLength + ((xPos - 1) * sideLength), camera.getCenterY() - sideLength + ((yPos - 1) * sideLength),
-                sideLength * 3/4, sideLength * 3/4, resourcesManager.bomb_red_region, vbom);
-        this.attachChild(redBombSprite);
+        if (redBombSprite == null) {
+            redBombSprite = new Sprite(camera.getCenterX() - sideLength + ((xPos - 1) * sideLength), camera.getCenterY() - sideLength + ((yPos - 1) * sideLength),
+                    sideLength * 3/4, sideLength * 3/4, resourcesManager.bomb_red_region, vbom);
+            this.attachChild(redBombSprite);
+        } else {
+            redBombSprite.setPosition(camera.getCenterX() - sideLength + ((xPos - 1) * sideLength), camera.getCenterY() - sideLength + ((yPos - 1) * sideLength));
+            redBombSprite.setVisible(true);
+        }
+
         registerUpdateHandler(new TimerHandler(0.5f, false, new ITimerCallback() {
             @Override
             public void onTimePassed(TimerHandler pTimerHandler) {
-                redBombSprite.detachSelf();
-                redBombSprite.dispose();
-                redBombSprite = null;
+//                redBombSprite.detachSelf();
+//                redBombSprite.dispose();
+//                redBombSprite = null;
+                redBombSprite.setVisible(false);
                 explode(xPos, yPos);
             }
         }));
     }
 
     public void explode(int xPos, int yPos) {
-        fireBeamHorizontal = new Sprite(camera.getCenterX(), camera.getCenterY() - sideLength + (yPos-1)*sideLength,
-                sideLength*3, sideLength*3/4, resourcesManager.firebeam_horizontal, vbom);
-        fireBeamVertical = new Sprite(camera.getCenterX() - sideLength + (xPos-1)*sideLength, camera.getCenterY(),
-                sideLength*3/4, sideLength*3, resourcesManager.firebeam_vertical, vbom);
-        this.attachChild(fireBeamHorizontal);
-        this.attachChild(fireBeamVertical);
+        if (fireBeamHorizontal == null) {
+            fireBeamHorizontal = new Sprite(camera.getCenterX(), camera.getCenterY() - sideLength + (yPos-1)*sideLength,
+                    sideLength*3, sideLength*3/4, resourcesManager.firebeam_horizontal, vbom);
+            this.attachChild(fireBeamHorizontal);
+        } else {
+            fireBeamHorizontal.setPosition(camera.getCenterX(), camera.getCenterY() - sideLength + (yPos-1)*sideLength);
+            fireBeamHorizontal.setVisible(true);
+        }
+
+        if (fireBeamVertical == null) {
+            fireBeamVertical = new Sprite(camera.getCenterX() - sideLength + (xPos-1)*sideLength, camera.getCenterY(),
+                    sideLength*3/4, sideLength*3, resourcesManager.firebeam_vertical, vbom);
+            this.attachChild(fireBeamVertical);
+        } else {
+            fireBeamVertical.setPosition(camera.getCenterX() - sideLength + (xPos-1)*sideLength, camera.getCenterY());
+            fireBeamVertical.setVisible(true);
+        }
+
+
         if (referee != null) killCheck();
         registerUpdateHandler(new TimerHandler(0.2f, false, new ITimerCallback() {
             @Override
             public void onTimePassed(TimerHandler pTimerHandler) {
                 if (referee != null) killCheck();
-                fireBeamHorizontal.detachSelf();
-                fireBeamHorizontal.dispose();
-                fireBeamHorizontal = null;
-                fireBeamVertical.detachSelf();
-                fireBeamVertical.dispose();
-                fireBeamVertical = null;
+//                fireBeamHorizontal.detachSelf();
+//                fireBeamHorizontal.dispose();
+//                fireBeamHorizontal = null;
+//                fireBeamVertical.detachSelf();
+//                fireBeamVertical.dispose();
+//                fireBeamVertical = null;
+                fireBeamHorizontal.setVisible(false);
+                fireBeamVertical.setVisible(false);
                 bombing = false;
                 xPosBomb = 0;
                 yPosBomb = 0;

@@ -80,7 +80,7 @@ public class HighscoreScene extends BaseScene {
     private int time = 100*60; //100 seconds
     private int sideLength;
     private int xPosLume, yPosLume;
-    private int xPosGrume, yPosGrume;
+    private int xPosGrume = -1, yPosGrume = -1;
     private int xPosCoin, yPosCoin;
 
     private int[] playVariants;
