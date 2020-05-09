@@ -2,6 +2,9 @@
 <project version="4">
   <component name="VcsDirectoryMappings">
     <mapping directory="$PROJECT_DIR$" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/lumegameserver" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/server" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/server/LumeServer" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/server/lumegameserver/LumeServer" vcs="Git" />
   </component>
 </project>

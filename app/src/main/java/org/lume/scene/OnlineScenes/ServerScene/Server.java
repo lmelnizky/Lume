@@ -136,6 +136,12 @@ public class Server {
         try {socket.emit(createPlayer, new JSONObject("{\"name\":" + "\"" +  username + "\"" + "}"));}
         catch (JSONException e) {e.printStackTrace();}
     }
+    public void addMe(){
+        socket.emit("addMe");
+    }
+    public void deleteMe(){
+        socket.emit("deleteMe");
+    }
     //getter
     public String getOnlineServerUrl() {return onlineServerUrl;}
     public UserActions getUserActions() {return userActions;}

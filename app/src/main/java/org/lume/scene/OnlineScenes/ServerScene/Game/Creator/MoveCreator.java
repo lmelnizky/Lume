@@ -59,7 +59,9 @@ public class MoveCreator extends Creator {
 
                 this.setxPosPlayer(xPosPlayer);
                 this.setyPosPlayer(yPosPlayer);
+
                 player.updatePosition(new Vector2(xPosPlayer, yPosPlayer));
+                scene.coinCheck();
             }
         }
         return playerSprite;

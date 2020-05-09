@@ -300,11 +300,7 @@ public class World0 extends BaseScene {
                     gameOverDisplayed = false;
                     registerUpdateHandler(physicsWorld);
                     disposeHUD();
-                    if (cameFromLevelsScene) {
-                        SceneManager.getInstance().loadWorld1Scene(engine, level);
-                    } else {
-                        SceneManager.getInstance().loadWorld1Scene(engine, 0);
-                    }
+                    SceneManager.getInstance().loadWorld0Scene(engine, 0);
                     return true;
                 } else {
                     return false;

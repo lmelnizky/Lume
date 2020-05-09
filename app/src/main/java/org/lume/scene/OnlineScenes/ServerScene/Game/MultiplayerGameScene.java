@@ -54,11 +54,11 @@ public class MultiplayerGameScene extends BaseScene {
     private static final int SWIPE_MIN_DISTANCE = 10;
 
     //primitives
-    public boolean gameOverDisplayed = false, waitingForStonesToDisappear, gameFinished, firstStonesInLevel;
+    public boolean gameOverDisplayed = false, waitingForStonesToDisappear, gameFinished, firstStonesInLevel = true;
     public boolean localCanShoot = true;
     public boolean lumeIndestructible;
     public boolean grumeIndestructible;
-    public boolean lumeCanBomb = true, grumeCanBomb = true;
+    public boolean lumeCanBomb = false, grumeCanBomb = false;
     public boolean lumeCanStone, grumeCanStone;
     public boolean bombing = false;
     public boolean bombLaid = false;
@@ -88,6 +88,7 @@ public class MultiplayerGameScene extends BaseScene {
     public Sprite lumeBomb, grumeBomb;
     public Sprite lumeHeart1, lumeHeart2, lumeHeart3;
     public Sprite grumeHeart1, grumeHeart2, grumeHeart3;
+    public Text lumeText, grumeText;
     public Sprite coinSprite;
     public Sprite bombSprite, stoneSprite, redBombSprite;
     public Sprite fireBeamHorizontal, fireBeamVertical;
@@ -153,6 +154,7 @@ public class MultiplayerGameScene extends BaseScene {
     @Override
     public void onBackKeyPressed() {
         disposeHUD();
+        multiplayer.getServer().getSocket().disconnect();
         SceneManager.getInstance().loadMenuScene(engine);
     }
     @Override
@@ -164,7 +166,7 @@ public class MultiplayerGameScene extends BaseScene {
 
     private void createBackground() {
         SpriteBackground spriteBackground = new SpriteBackground(new Sprite(camera.getCenterX(), camera.getCenterY(),
-                camera.getWidth(), camera.getHeight(), resourcesManager.background_world0_region, vbom));
+                camera.getWidth(), camera.getHeight(), resourcesManager.background_multi_region, vbom));
         this.setBackground(spriteBackground);
     }
 
@@ -532,6 +534,31 @@ public class MultiplayerGameScene extends BaseScene {
         }
     }
 
+    public void coinCheck() {
+        if (localPlayer.getCurrentPosition().x == xPosCoin && localPlayer.getCurrentPosition().y == yPosCoin) {
+            addBombScore(localPlayer);
+
+            createCoin();
+        } else if (opponentPlayer.getCurrentPosition().x == xPosCoin && opponentPlayer.getCurrentPosition().y == yPosCoin) {
+            addBombScore(opponentPlayer);
+            createCoin();
+        }
+    }
+
+    public void createCoin() {
+        if (referee != null) multiplayer.getServer().emit(referee.createCoin());
+    }
+
+    public void addBombScore(Player player) {
+        if (player == localPlayer) {
+            bombScoreLume++;
+            if (bombScoreLume == 2) lumeCanBomb = true;
+        } else if (player == opponentPlayer) {
+            bombScoreGrume++;
+            if (bombScoreGrume == 2) grumeCanBomb = true;
+        }
+    }
+
     public void disableShootOnTime() {
         localCanShoot = false;
         engine.registerUpdateHandler(new TimerHandler(0.3f, new ITimerCallback() {
@@ -551,7 +578,7 @@ public class MultiplayerGameScene extends BaseScene {
         xPosOpponent = xPosLocal == 1 ? 3 : 1;
         yPosOpponent = xPosLocal == 1 ? 3 : 1;
         lumeSprite = new Sprite(camera.getCenterX() - sideLength + (xPosLocal-1)*sideLength, camera.getCenterY() - sideLength + (yPosLocal-1)*sideLength,
-                sideLength * 3 / 4, sideLength * 3 / 4, resourcesManager.player_region, vbom);
+                sideLength * 3 / 4, sideLength * 3 / 4, resourcesManager.lume_region, vbom);
         secondLayer.attachChild(lumeSprite);
         lumeSprite.setRotation(90);
         grumeSprite = new Sprite(camera.getCenterX() - sideLength+ (xPosOpponent-1)*sideLength, camera.getCenterY() - sideLength+ (yPosOpponent-1)*sideLength,
@@ -607,6 +634,14 @@ public class MultiplayerGameScene extends BaseScene {
         gameHUD.attachChild(lumeHeart1);
         gameHUD.attachChild(lumeHeart2);
         gameHUD.attachChild(lumeHeart3);
+
+        lumeText = new Text(sideLength*3, sideLength*0.5f, resourcesManager.standardFont, localPlayer.getUsername(), vbom);
+        lumeText.setColor(0.8f, 0.8f, 0.8f);
+        gameHUD.attachChild(lumeText);
+
+        grumeText = new Text(camera.getWidth()-sideLength*3, sideLength*0.5f, resourcesManager.standardFont, opponentPlayer.getUsername(), vbom);
+        grumeText.setColor(0.8f, 0.8f, 0.8f);
+        gameHUD.attachChild(grumeText);
 
         camera.setHUD(gameHUD);
     }
@@ -677,31 +712,31 @@ public class MultiplayerGameScene extends BaseScene {
 
     private void displayGameOverButtons() {
         //add replay Sprite
-        replaySprite = new Sprite(camera.getCenterX() + sideLength,
-                camera.getHeight()*2/9, sideLength, sideLength,
-                ResourcesManager.getInstance().replay_region, vbom) {
-            @Override
-            public boolean onAreaTouched(final TouchEvent pSceneTouchEvent, final float pTouchAreaLocalX,
-                                         final float pTouchAreaLocalY) {
-                if (pSceneTouchEvent.isActionDown()) {
-                    //clear child scenes - game will be resumed
-                    clearChildScene();
-                    setIgnoreUpdate(false);
-                    gameOverDisplayed = false;
-                    registerUpdateHandler(physicsWorld);
-                    SceneManager.getInstance().loadOnlineUsersScene(engine);
-                    disposeHUD();
-                    return true;
-                } else {
-                    return false;
-                }
-            }
-        };
-        gameOverScene.registerTouchArea(replaySprite);
-        gameOverScene.attachChild(replaySprite);
+//        replaySprite = new Sprite(camera.getCenterX() + sideLength,
+//                camera.getHeight()*2/9, sideLength, sideLength,
+//                ResourcesManager.getInstance().replay_region, vbom) {
+//            @Override
+//            public boolean onAreaTouched(final TouchEvent pSceneTouchEvent, final float pTouchAreaLocalX,
+//                                         final float pTouchAreaLocalY) {
+//                if (pSceneTouchEvent.isActionDown()) {
+//                    //clear child scenes - game will be resumed
+//                    clearChildScene();
+//                    setIgnoreUpdate(false);
+//                    gameOverDisplayed = false;
+//                    registerUpdateHandler(physicsWorld);
+//                    SceneManager.getInstance().loadOnlineUsersScene(engine);
+//                    disposeHUD();
+//                    return true;
+//                } else {
+//                    return false;
+//                }
+//            }
+//        };
+//        gameOverScene.registerTouchArea(replaySprite);
+//        gameOverScene.attachChild(replaySprite);
 
         //add finish Sprite
-        finishSprite = new Sprite(camera.getCenterX() - sideLength,
+        finishSprite = new Sprite(camera.getCenterX(),
                 camera.getHeight()*2/9, sideLength, sideLength,
                 ResourcesManager.getInstance().finish_region, vbom) {
             @Override
@@ -714,6 +749,7 @@ public class MultiplayerGameScene extends BaseScene {
                     gameOverDisplayed = false;
                     registerUpdateHandler(physicsWorld);
                     disposeHUD();
+                    multiplayer.getServer().getSocket().disconnect();
                     SceneManager.getInstance().loadMenuScene(engine);
                     return true;
                 } else {

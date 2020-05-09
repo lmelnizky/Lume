@@ -2,6 +2,8 @@ package org.lume.scene.OnlineScenes.ServerScene.Users.entities;
 
 import android.util.Log;
 
+import org.lume.engine.handler.timer.ITimerCallback;
+import org.lume.engine.handler.timer.TimerHandler;
 import org.lume.entity.sprite.ButtonSprite;
 import org.lume.entity.sprite.Sprite;
 import org.lume.entity.text.Text;
@@ -34,6 +36,7 @@ public class PlayersField extends Sprite {
         this.attachChild(nameText);
         this.attachChild(inviteButton);
         scene.attachChild(this);    scene.registerTouchArea(inviteButton);
+        Log.i("PlayersField", "createScene");
     }
     public void onClick(ButtonSprite button){
         Log.i("PlayersField", "OnClick");

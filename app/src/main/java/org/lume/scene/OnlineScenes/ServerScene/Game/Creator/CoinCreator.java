@@ -8,6 +8,7 @@ import org.lume.opengl.vbo.VertexBufferObjectManager;
 import org.lume.scene.OnlineScenes.ServerScene.Game.MultiplayerGameScene;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.lume.scene.OnlineScenes.ServerScene.Multiplayer;
 
 public class CoinCreator extends Creator {
     //variables
@@ -18,6 +19,7 @@ public class CoinCreator extends Creator {
     //base stuff
     private BoundCamera camera;
     private Sprite coinSprite = MultiplayerGameScene.getInstance().coinSprite;
+    private MultiplayerGameScene gameScene = MultiplayerGameScene.getInstance();
     //constructor
     public CoinCreator(String room, int xPosCoin, int yPosCoin) {
         super(room);
@@ -31,17 +33,20 @@ public class CoinCreator extends Creator {
         camera = ResourcesManager.getInstance().camera;
         VertexBufferObjectManager vbom = ResourcesManager.getInstance().vbom;
 
+        coinSprite = MultiplayerGameScene.getInstance().coinSprite;
         if (coinSprite == null) {
             coinSprite = new Sprite(camera.getCenterX() - sideLength + ((xPosCoin - 1) * sideLength),
                     camera.getCenterY() - sideLength + ((yPosCoin - 1) * sideLength),
                     sideLength * 7 / 8, sideLength * 7 / 8, ResourcesManager.getInstance().coin_region, vbom);
+            gameScene.attachChild(coinSprite);
         } else {
             coinSprite.registerEntityModifier(new ScaleModifier(0.2f,0.7f,1f));
             coinSprite.setPosition(camera.getCenterX() - sideLength + ((xPosCoin - 1) * sideLength), camera.getCenterY() - sideLength + ((yPosCoin - 1) * sideLength));
         }
 
+        MultiplayerGameScene.getInstance().coinSprite = coinSprite;
 
-        return coinSprite; //TODO Lukas Melnizky
+        return coinSprite;
     }
 
     @Override

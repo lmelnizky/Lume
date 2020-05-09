@@ -27,30 +27,45 @@ public class MultiplayerUsersScene extends BaseScene implements ButtonSprite.OnC
     //INSTANCE
     private static MultiplayerUsersScene INSTANCE;
     //variables
-    private LinkedList<Entity> entities = new LinkedList<>();
-    private LinkedList<Entity> playerEntities = new LinkedList<>();
-    private LinkedList<ITouchArea> touchAreas = new LinkedList<>();
-    private LinkedList<Player> players = new LinkedList<Player>();
+//    private LinkedList<Entity> entities = new LinkedList<>();
+//    private LinkedList<Entity> playerEntities = new LinkedList<>();
+//    private LinkedList<ITouchArea> touchAreas = new LinkedList<>();
+//    private LinkedList<Player> players = new LinkedList<Player>();
+
     private Server server;
 
     private SpriteBackground background;
     //createScene method
     @Override
-    public void createScene() {/*don't write code here, because the method is calling in the super constructor.. so in other classes, the getInstance() method will not work!!!(NullPointerException!)*/}
+    public void createScene() {
+        /*don't write code here, because the method is calling in the super constructor.. so in other classes, the getInstance() method will not work!!!(NullPointerException!)*/
+    }
     //static methods
     public static MultiplayerUsersScene getInstance(){
-        if(INSTANCE == null){INSTANCE = new MultiplayerUsersScene();    INSTANCE.create();}
+        if(INSTANCE == null) {
+            Log.i("MultiplayerUsersScene", "Make new instance");
+            INSTANCE = new MultiplayerUsersScene();
+            INSTANCE.create();
+        }
         return INSTANCE;
     }
-    public static void destroyInstance(){
-        INSTANCE.disposeScene();
-        INSTANCE = null;
+    public static void destroyInstance() {
+        if (INSTANCE != null) INSTANCE.disposeScene();
     }
     //methods
     private void create(){
         Log.i("MultiPlayerUserScene", "create");
         //TODO write code here, it will run after the constructor
-        server = new Server(new LumeGameActions(), new LumeUserActions(), activity.getUserName());
+        if (resourcesManager.server == null) {
+            resourcesManager.server = new Server(new LumeGameActions(), new LumeUserActions(), activity.getUserName());
+            resourcesManager.entities = new LinkedList<>();
+            resourcesManager.playerEntities = new LinkedList<>();
+            resourcesManager.touchAreas = new LinkedList<>();
+            resourcesManager.players = new LinkedList<Player>();
+        } else {
+            resourcesManager.server.addMe();
+        }
+        server = resourcesManager.server;
         createChildren();
         manageChildren();
         background = new SpriteBackground(new Sprite(camera.getCenterX(), camera.getCenterY(),
@@ -63,19 +78,40 @@ public class MultiplayerUsersScene extends BaseScene implements ButtonSprite.OnC
     }
     private void manageChildren(){
         Log.i("MultiPlayerUserScene", "manageChildren");
-        for(Entity e: entities) this.attachChild(e);
-        for(ITouchArea area: touchAreas)this.registerTouchArea(area);
+        for(Entity e: resourcesManager.entities) this.attachChild(e);
+        for(ITouchArea area: resourcesManager.touchAreas)this.registerTouchArea(area);
     }
     public void addRequestPopUp(String id, String room){}
+
     public void updateScene(){
         Log.i("MultiPlayerUserScene", "updateScene");
-        for(Player p: players) playerEntities.add(new PlayersField(p));
+        for(Player p: resourcesManager.players) resourcesManager.playerEntities.add(new PlayersField(p));
     }
     //constructor
     private MultiplayerUsersScene(){}
     //override methods from superclass
     @Override
     public void onBackKeyPressed() {
+//        server.getSocket().disconnect();
+//        server.getSocket().close();
+//        server = null;
+        //this.disposeScene();
+        resourcesManager.server.deleteMe();
+//        for (int i = 0; i < resourcesManager.entities.size(); i++) {
+//            resourcesManager.entities.get(i).detachSelf();
+//            resourcesManager.entities.get(i).dispose();
+//        }
+//        resourcesManager.entities = null;
+//        for (int i = 0; i < resourcesManager.playerEntities.size(); i++) {
+//            resourcesManager.playerEntities.get(i).detachSelf();
+//            resourcesManager.playerEntities.get(i).dispose();
+//        }
+//        resourcesManager.playerEntities = null;
+//        for (int i = 0; i < resourcesManager.touchAreas.size(); i++) {
+//            unregisterTouchArea(resourcesManager.touchAreas.get(i));
+//        }
+//        resourcesManager.touchAreas = null;
+//        resourcesManager.players = null;
         SceneManager.getInstance().loadMenuScene(engine);
     }
 
@@ -84,14 +120,16 @@ public class MultiplayerUsersScene extends BaseScene implements ButtonSprite.OnC
 
     @Override
     public void disposeScene() {
-        //don't call the static destroy method, it will be recursive :)
+        this.detachSelf();
+        this.dispose();
+        if (INSTANCE != null) INSTANCE = null;
     }
     //getter and setter
-    public LinkedList<Entity> getEntitiesList() {return entities;}
-    public LinkedList<ITouchArea> getTouchAreasList() {return touchAreas;}
-    public LinkedList<Player> getPlayers() {return players;}
-    public void setPlayers(LinkedList<Player> players) {this.players = players;}
-    public LinkedList<Entity> getPlayerEntities() {return playerEntities;}
+    public LinkedList<Entity> getEntitiesList() {return resourcesManager.entities;}
+    public LinkedList<ITouchArea> getTouchAreasList() {return resourcesManager.touchAreas;}
+    public LinkedList<Player> getPlayers() {return resourcesManager.players;}
+    public void setPlayers(LinkedList<Player> players) {resourcesManager.players = players;}
+    public LinkedList<Entity> getPlayerEntities() {return resourcesManager.playerEntities;}
 
     public Server getServer() {return server;}
 

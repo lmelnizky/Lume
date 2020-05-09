@@ -498,8 +498,8 @@ public class HighscoreScene extends BaseScene {
             lamporghinaSprite.detachSelf();
             lamporghinaSprite.dispose();
             lamporghinaSprite = null;
-            xPosGrume = 0;
-            yPosGrume = 0;
+            xPosGrume = -1;
+            yPosGrume = -1; //to be sure it cannot collide with coin
         }
     }
 
@@ -1200,6 +1200,18 @@ public class HighscoreScene extends BaseScene {
     private void coinCheck() {
         if ((xPosLume == xPosCoin && yPosLume == yPosCoin) ||
                 (xPosGrume == xPosCoin && yPosGrume == yPosCoin)) {
+            int randomBelch = randomGenerator.nextInt(3) + 1;
+            switch (randomBelch) {
+                case 1:
+                    ResourcesManager.getInstance().belchSound1.play();
+                    break;
+                case 2:
+                    ResourcesManager.getInstance().belchSound2.play();
+                    break;
+                case 3:
+                    ResourcesManager.getInstance().belchSound3.play();
+                    break;
+            }
             addToScore(1);
         }
     }

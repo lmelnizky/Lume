@@ -18,7 +18,7 @@ public class Referee {
         scene.registerUpdateHandler(new IUpdateHandler() {
             @Override
             public void onUpdate(float pSecondsElapsed) {
-                //createStones();
+                createStones();
             }
 
             @Override
@@ -26,6 +26,7 @@ public class Referee {
 
             }
         });
+        //coinCheck();
     }
 
     public void createStones() {
@@ -89,7 +90,7 @@ public class Referee {
 
     }
 
-    private void coinCheck() {
+    public void coinCheck() {
         for (Player p : scene.getMultiplayer().getPlayers()) {
             int xPosPlayer, yPosPlayer;
             xPosPlayer = (int) p.getCurrentPosition().x;
@@ -100,7 +101,7 @@ public class Referee {
         }
     }
 
-    private CoinCreator createCoin() {
+    public CoinCreator createCoin() {
         boolean oasch = false;
         do {
             scene.xPosCoin = scene.randomGenerator.nextInt(3) + 1;

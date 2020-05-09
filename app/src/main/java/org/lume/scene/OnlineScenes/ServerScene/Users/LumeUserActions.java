@@ -3,6 +3,7 @@ package org.lume.scene.OnlineScenes.ServerScene.Users;
 import android.util.Log;
 
 import org.lume.entity.Entity;
+import org.lume.manager.ResourcesManager;
 import org.lume.scene.OnlineScenes.ServerScene.Player;
 import org.lume.scene.OnlineScenes.ServerScene.Users.entities.AnswerRequest;
 import org.lume.scene.OnlineScenes.ServerScene.Users.entities.PlayersField;
@@ -17,7 +18,7 @@ public class LumeUserActions implements UserActions {
     @Override
     public void socketID(String id) {
         Log.i("LumeUserActions", "socketID");
-        localPLayer = new Player(id,scene.getServer().userName);
+        localPLayer = new Player(id, scene.getServer().userName);
     }
     @Override
     public void allUsers(Collection<Player> players) {
@@ -36,9 +37,9 @@ public class LumeUserActions implements UserActions {
     public void userDisconnected(String userID) {
         Log.i("LumeUserActions", "userDisconnected");
         Player player = null;
-        for(Player p: scene.getPlayers()) if(p.getId().equals(userID)) player = new Player(p.getId(), p.getUsername());
-        scene.getPlayers().remove(player);
-        for(Entity t: scene.getPlayerEntities()) if(t instanceof PlayersField) if(((PlayersField) t).getPlayer().getId().equals(userID)) scene.detachChild(t);
+        for(Player p: ResourcesManager.getInstance().players) if(p.getId().equals(userID)) player = new Player(p.getId(), p.getUsername());
+        ResourcesManager.getInstance().players.remove(player);
+        for(Entity t: ResourcesManager.getInstance().playerEntities) if(t instanceof PlayersField) if(((PlayersField) t).getPlayer().getId().equals(userID)) scene.detachChild(t);
     }
     @Override
     public void getRequest(String id, String room) {

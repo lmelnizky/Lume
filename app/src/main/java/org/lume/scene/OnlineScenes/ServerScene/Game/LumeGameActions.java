@@ -61,8 +61,9 @@ public class LumeGameActions implements GameActions {
     @Override
     public void loadCoin(CoinCreator creator) {
         Log.i("LumaGameActions", "loadCoin");
-        scene.attachChild(creator.createSprite());
-        //is called when the referee uploaded a new Coin
+        Sprite s = creator.createSprite();
+        //if (!s.hasParent()) scene.attachChild(s);
+        //attachChild is said in CoinCreator
     }
 
     @Override

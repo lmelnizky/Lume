@@ -64,7 +64,7 @@ public class BallCreator extends Creator {
         PhysicsWorld physicsWorld = gameScene.physicsWorld;
 
         float speedFactor = sideLength/15;
-        speed = (direction%2 == 0) ? ResourcesManager.getInstance().screenRatio : 1f;
+        speed = (direction%2 == 0) ? ResourcesManager.getInstance().screenRatio*0.7f : 0.7f;
         speed *= speedFactor;
 
         switch (direction) {
@@ -115,12 +115,12 @@ public class BallCreator extends Creator {
                 }*/
                 lumeCircle = new Circle(gameScene.localPlayer.getSprite().getX(), gameScene.localPlayer.getSprite().getY(), gameScene.localPlayer.getSprite().getWidth()/2);
                 grumeCircle = new Circle(gameScene.opponentPlayer.getSprite().getX(), gameScene.opponentPlayer.getSprite().getY(), gameScene.opponentPlayer.getSprite().getWidth()/2);
-                if (stoneCircle.collision(lumeCircle) && !gameScene.gameOverDisplayed && !gameScene.lumeIndestructible) {
+                if (stoneCircle.collision(lumeCircle) && !gameScene.gameOverDisplayed && !gameScene.lumeIndestructible && gameScene.referee != null) {
                     gameScene.lumeIndestructible = true; //after emit would take too long!!!
                     gameScene.multiplayer.getServer().emit(new LoseLifeCreator(gameScene.multiplayer.getRoom(), gameScene.localPlayer.getId()));
                     //gameScene.displayGameOverScene();
                 }
-                if (stoneCircle.collision(grumeCircle) && !gameScene.gameOverDisplayed && !gameScene.grumeIndestructible) {
+                if (stoneCircle.collision(grumeCircle) && !gameScene.gameOverDisplayed && !gameScene.grumeIndestructible && gameScene.referee != null) {
                     gameScene.grumeIndestructible = true; //after emit would take too long!!!
                     gameScene.multiplayer.getServer().emit(new LoseLifeCreator(gameScene.multiplayer.getRoom(), gameScene.opponentPlayer.getId()));
                     //gameScene.displayGameOverScene();

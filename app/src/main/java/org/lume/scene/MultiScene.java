@@ -495,7 +495,7 @@ public class MultiScene extends BaseScene {
                             }
                         }
                     } else { //TAP
-                        if (grumeCanBomb && !bombing) {
+                        if (grumeCanBomb && !bombing && !bombLaid) {
                             layBomb(xPosGrume, yPosGrume, 'G');
                         }
                     }
@@ -823,12 +823,6 @@ public class MultiScene extends BaseScene {
         gameHUD.attachChild(lumeHeart2);
         gameHUD.attachChild(lumeHeart3);
 
-        lumeText = new Text(sideLength*6, sideLength*0.5f, resourcesManager.smallFont, "LUME", vbom);
-        gameHUD.attachChild(lumeText);
-
-        grumeText = new Text(camera.getWidth()-sideLength*6, sideLength*0.5f, resourcesManager.smallFont, "GRUME", vbom);
-        gameHUD.attachChild(grumeText);
-
         camera.setHUD(gameHUD);
     }
 
@@ -851,12 +845,6 @@ public class MultiScene extends BaseScene {
         if (!lumeBomb.isDisposed()) lumeBomb.dispose();
         if (!grumeBomb.isDisposed()) grumeBomb.detachSelf();
         if (!grumeBomb.isDisposed()) grumeBomb.dispose();
-
-        if (!lumeText.isDisposed()) lumeText.detachSelf();
-        if (!lumeText.isDisposed()) lumeText.dispose();
-
-        if (!grumeText.isDisposed()) grumeText.detachSelf();
-        if (!grumeText.isDisposed()) grumeText.dispose();
 
         gameHUD.detachChildren();
         gameHUD.detachSelf();
@@ -1290,7 +1278,7 @@ public class MultiScene extends BaseScene {
         ResourcesManager.getInstance().luserSound.play();
 
         lumeSpriteGameOver = new Sprite(camera.getCenterX() - 4*sideLength, resourcesManager.screenHeight/2,
-                sideLength*3, sideLength*3, resourcesManager.player_region, vbom);
+                sideLength*3, sideLength*3, resourcesManager.lume_region, vbom);
         secondLayer.attachChild(lumeSpriteGameOver);
         grumeSpriteGameOver = new Sprite(camera.getCenterX() + 4*sideLength, resourcesManager.screenHeight/2,
                 sideLength*3, sideLength*3, resourcesManager.grume_region, vbom);

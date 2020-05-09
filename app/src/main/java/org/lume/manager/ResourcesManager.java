@@ -14,6 +14,8 @@ import org.lume.base.BaseScene;
 import org.lume.engine.Engine;
 import org.lume.engine.camera.BoundCamera;
 import org.lume.engine.options.EngineOptions;
+import org.lume.entity.Entity;
+import org.lume.entity.scene.ITouchArea;
 import org.lume.entity.scene.background.SpriteBackground;
 import org.lume.opengl.font.Font;
 import org.lume.opengl.font.FontFactory;
@@ -28,9 +30,13 @@ import org.lume.opengl.texture.atlas.buildable.builder.ITextureAtlasBuilder;
 import org.lume.opengl.texture.region.ITextureRegion;
 import org.lume.opengl.texture.region.TiledTextureRegion;
 import org.lume.opengl.vbo.VertexBufferObjectManager;
+import org.lume.scene.OnlineScenes.ServerScene.Player;
+import org.lume.scene.OnlineScenes.ServerScene.Server;
+import org.lume.scene.OnlineScenes.ServerScene.Users.MultiplayerUsersScene;
 import org.lume.util.debug.Debug;
 
 import java.io.IOException;
+import java.util.LinkedList;
 
 /**
  * Created by Lukas on 15.05.2017.
@@ -54,6 +60,13 @@ public class ResourcesManager {
     public Font smallFont;
     public Font worldNumberFont;
     public Font bigFont;
+
+    //server
+    public Server server;
+    public LinkedList<Entity> entities;
+    public LinkedList<Entity> playerEntities;
+    public LinkedList<ITouchArea> touchAreas;
+    public LinkedList<Player> players;
 
     //---------------------------------------------
     // TEXTURES & TEXTURE REGIONS
@@ -304,8 +317,8 @@ public class ResourcesManager {
     }
 
     public void unloadOnlineUserResources() {
-        //if (onlineUserTextureAtlas != null) onlineUserTextureAtlas.unload();
-        //if (onlineUserTextureAtlas != null) onlineUserTextureAtlas.clearTextureAtlasSources();
+        if (onlineUserTextureAtlas != null) onlineUserTextureAtlas.unload();
+        if (onlineUserTextureAtlas != null) onlineUserTextureAtlas.clearTextureAtlasSources();
         onlineUserTextureAtlas = null;
     }
 
@@ -1033,6 +1046,8 @@ public class ResourcesManager {
                 this.unloadGameAudio();
                 break;
             case SCENE_ONLINEUSERS:
+                //MultiplayerUsersScene.destroyInstance();
+                MultiplayerUsersScene.getInstance().disposeScene();
                 this.unloadOnlineUserResources();
                 break;
             case SCENE_ONLINEMULTI:
