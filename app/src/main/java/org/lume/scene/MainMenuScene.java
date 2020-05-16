@@ -228,8 +228,8 @@ public class MainMenuScene extends BaseScene implements IOnMenuItemClickListener
                 SceneManager.getInstance().loadSkillMenuScene(engine);
                 return true;
             case MENU_ONLINE_MULTI:
-                SceneManager.getInstance().loadOnlineUsersScene(engine);
-                //activity.toastOnUiThread("Available soon!", 0);
+                //SceneManager.getInstance().loadOnlineUsersScene(engine);
+                activity.toastOnUiThread("Available soon!", 0);
                 return true;
             default:
                 return false;

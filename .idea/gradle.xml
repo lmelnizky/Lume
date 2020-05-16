@@ -15,7 +15,6 @@
             <option value="$PROJECT_DIR$/app" />
             <option value="$PROJECT_DIR$/app/andengineLibary" />
             <option value="$PROJECT_DIR$/app/andengineLibary/AndEngineHelperClasses" />
-            <option value="$PROJECT_DIR$/tappx-sdk-3.1.5" />
           </set>
         </option>
         <option name="resolveModulePerSourceSet" value="false" />

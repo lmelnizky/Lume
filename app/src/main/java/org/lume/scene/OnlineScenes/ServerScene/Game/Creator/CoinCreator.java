@@ -1,6 +1,8 @@
 package org.lume.scene.OnlineScenes.ServerScene.Game.Creator;
 
 import org.lume.engine.camera.BoundCamera;
+import org.lume.engine.handler.timer.ITimerCallback;
+import org.lume.engine.handler.timer.TimerHandler;
 import org.lume.entity.modifier.ScaleModifier;
 import org.lume.entity.sprite.Sprite;
 import org.lume.manager.ResourcesManager;
@@ -32,17 +34,22 @@ public class CoinCreator extends Creator {
     public Sprite createSprite() {
         camera = ResourcesManager.getInstance().camera;
         VertexBufferObjectManager vbom = ResourcesManager.getInstance().vbom;
-
         coinSprite = MultiplayerGameScene.getInstance().coinSprite;
-        if (coinSprite == null) {
-            coinSprite = new Sprite(camera.getCenterX() - sideLength + ((xPosCoin - 1) * sideLength),
-                    camera.getCenterY() - sideLength + ((yPosCoin - 1) * sideLength),
-                    sideLength * 7 / 8, sideLength * 7 / 8, ResourcesManager.getInstance().coin_region, vbom);
-            gameScene.attachChild(coinSprite);
-        } else {
-            coinSprite.registerEntityModifier(new ScaleModifier(0.2f,0.7f,1f));
-            coinSprite.setPosition(camera.getCenterX() - sideLength + ((xPosCoin - 1) * sideLength), camera.getCenterY() - sideLength + ((yPosCoin - 1) * sideLength));
-        }
+        coinSprite.setVisible(false);
+        ResourcesManager.getInstance().engine.registerUpdateHandler(new TimerHandler(0.2f, new ITimerCallback() {
+            public void onTimePassed(final TimerHandler pTimerHandler) {
+                coinSprite.setVisible(true);
+                if (coinSprite == null) {
+                    coinSprite = new Sprite(camera.getCenterX() - sideLength + ((xPosCoin - 1) * sideLength),
+                            camera.getCenterY() - sideLength + ((yPosCoin - 1) * sideLength),
+                            sideLength * 7 / 8, sideLength * 7 / 8, ResourcesManager.getInstance().coin_region, vbom);
+                    gameScene.attachChild(coinSprite);
+                } else {
+                    //coinSprite.registerEntityModifier(new ScaleModifier(0.2f,0.7f,1f));
+                    coinSprite.setPosition(camera.getCenterX() - sideLength + ((xPosCoin - 1) * sideLength), camera.getCenterY() - sideLength + ((yPosCoin - 1) * sideLength));
+                }
+            }
+        }));
 
         MultiplayerGameScene.getInstance().coinSprite = coinSprite;
 

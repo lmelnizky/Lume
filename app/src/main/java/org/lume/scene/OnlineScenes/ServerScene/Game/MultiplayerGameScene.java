@@ -349,18 +349,18 @@ public class MultiplayerGameScene extends BaseScene {
     private void playerMoved() {
         for (Player p : this.getMultiplayer().getPlayers()) {
             if  (p.getCurrentPosition().x == this.xPosCoin && p.getCurrentPosition().y == this.yPosCoin) {
-                int randomBelch = randomGenerator.nextInt(3) + 1;
-                switch (randomBelch) {
-                    case 1:
-                        ResourcesManager.getInstance().belchSound1.play();
-                        break;
-                    case 2:
-                        ResourcesManager.getInstance().belchSound2.play();
-                        break;
-                    case 3:
-                        ResourcesManager.getInstance().belchSound3.play();
-                        break;
-                }
+//                int randomBelch = randomGenerator.nextInt(3) + 1;
+//                switch (randomBelch) {
+//                    case 1:
+//                        ResourcesManager.getInstance().belchSound1.play();
+//                        break;
+//                    case 2:
+//                        ResourcesManager.getInstance().belchSound2.play();
+//                        break;
+//                    case 3:
+//                        ResourcesManager.getInstance().belchSound3.play();
+//                        break;
+//                }
                 p.setScore(p.getScore()+1);
             }
         }

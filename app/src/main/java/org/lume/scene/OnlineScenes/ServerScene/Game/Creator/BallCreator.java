@@ -155,7 +155,7 @@ public class BallCreator extends Creator {
             crackyStones.add(stone);
         }
         //animate cannon
-        gameScene.animateCannon(direction, position);
+        //gameScene.animateCannon(direction, position);
         body.setLinearVelocity(xVel, yVel);
         physicsWorld.registerPhysicsConnector(new PhysicsConnector(stone, body, true, false));
         ball = new Ball(direction, null, body, stone, thorny, false, speed);

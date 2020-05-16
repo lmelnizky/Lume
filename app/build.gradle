@@ -7,8 +7,8 @@ android {
         applicationId "org.lume"
         minSdkVersion 19
         targetSdkVersion 29
-        versionCode 16
-        versionName "2.6"
+        versionCode 17
+        versionName "2.7"
         multiDexEnabled true
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
@@ -53,6 +53,7 @@ dependencies {
     //firebase
     implementation 'com.google.firebase:firebase-core:17.3.0'
     implementation 'com.google.firebase:firebase-database:19.2.1'
+    implementation 'com.google.firebase:firebase-appindexing:19.1.0'
     //firebase ends
     implementation 'me.drakeet.support:toastcompat:1.1.0'
     testImplementation 'junit:junit:4.12'

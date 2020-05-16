@@ -1,2 +1,2 @@
-include ':andenginephysicsbox2dextension', ':app', ':tappx-sdk-3.1.5'
+include ':andenginephysicsbox2dextension', ':app'
 include ':app:andengineLibary:AndEngineHelperClasses'
