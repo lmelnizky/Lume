@@ -4,6 +4,7 @@ import android.content.Context;
 import android.os.Build;
 import android.os.VibrationEffect;
 import android.os.Vibrator;
+import android.util.Log;
 
 import com.badlogic.gdx.math.Vector2;
 
@@ -38,6 +39,7 @@ import org.lume.util.adt.color.Color;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.LinkedList;
 import java.util.Random;
 
@@ -130,10 +132,11 @@ public class MultiplayerGameScene extends BaseScene {
         sideLength = resourcesManager.sideLength;
         xPositions = 3;
         yPositions = 3;
+        stoneTime = new Date().getTime();
 
         createLayers();
         createBackground();
-        createMusic();
+        //createMusic();
         createPhysics();
         createBoard();
         createPlayer();
@@ -367,7 +370,7 @@ public class MultiplayerGameScene extends BaseScene {
     }
 
     private void createMusic() {
-        ResourcesManager.getInstance().backgroundMusic.play();
+        //ResourcesManager.getInstance().backgroundMusic.play();
     }
 
     private void createBoard() {
@@ -572,18 +575,28 @@ public class MultiplayerGameScene extends BaseScene {
     }
 
     public void coinCheck() {
+        Log.i("MultiplayerGameScene", "start coincheck");
         if (localPlayer.getCurrentPosition().x == xPosCoin && localPlayer.getCurrentPosition().y == yPosCoin) {
             addBombScore(localPlayer);
-
             createCoin();
         } else if (opponentPlayer.getCurrentPosition().x == xPosCoin && opponentPlayer.getCurrentPosition().y == yPosCoin) {
             addBombScore(opponentPlayer);
             createCoin();
         }
+        Log.i("MultiplayerGamescene", "finishCoincheck");
     }
 
     public void createCoin() {
-        if (referee != null) multiplayer.getServer().emit(referee.createCoin());
+        Log.i("Multiplayergamescene", "before sending createCoin emit");
+
+        engine.registerUpdateHandler(new TimerHandler(0.2f, new ITimerCallback() {
+            public void onTimePassed(final TimerHandler pTimerHandler) {
+                engine.unregisterUpdateHandler(pTimerHandler);
+                if (referee != null) multiplayer.getServer().emit(referee.createCoin());
+            }
+        }));
+
+        Log.i("MultiplayerGameScene", "Referee created new CoinPosition");
     }
 
     public void addBombScore(Player player) {
@@ -696,9 +709,9 @@ public class MultiplayerGameScene extends BaseScene {
         gameOverScene = new CameraScene(camera);
         gameOverScene.setBackgroundEnabled(false);
 
-        ResourcesManager.getInstance().backgroundMusic.stop();
-        ResourcesManager.getInstance().backgroundMusic.pause();
-        ResourcesManager.getInstance().luserSound.play();
+//        ResourcesManager.getInstance().backgroundMusic.stop();
+//        ResourcesManager.getInstance().backgroundMusic.pause();
+//        ResourcesManager.getInstance().luserSound.play();
 
         float textY = (yPosLocal == 2) ? camera.getCenterY() + sideLength : camera.getCenterY();
         gameOverText = new Text(camera.getCenterX(), textY,

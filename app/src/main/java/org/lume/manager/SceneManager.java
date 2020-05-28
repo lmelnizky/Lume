@@ -1,5 +1,7 @@
 package org.lume.manager;
 
+import android.util.Log;
+
 import org.lume.base.BaseScene;
 import org.lume.engine.Engine;
 import org.lume.engine.handler.timer.ITimerCallback;
@@ -464,6 +466,7 @@ public class SceneManager {
             public void onTimePassed(TimerHandler pTimerHandler) {
                 mEngine.unregisterUpdateHandler(pTimerHandler);
                 setScene(onlineGameScene);
+                Log.i("SceneManger", "setScene to onlineGameScene");
             }
         }));
     }

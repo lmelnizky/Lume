@@ -1,5 +1,7 @@
 package org.lume.scene.OnlineScenes.ServerScene.Game.Creator;
 
+import android.util.Log;
+
 import com.badlogic.gdx.math.Vector2;
 
 import org.lume.entity.sprite.Sprite;
@@ -32,6 +34,7 @@ public class MoveCreator extends Creator {
     //call coinCheck() after this TODO (that's the job of the referee class)
     @Override
     public Sprite createSprite() {
+        Log.i("MoveCreator", "createSprite Start");
         for (Player player : MultiplayerGameScene.getInstance().getMultiplayer().getPlayers()) {
             if (player.getId().equals(movedPlayersID)) {
                 playerSprite = player.getSprite();
@@ -61,7 +64,9 @@ public class MoveCreator extends Creator {
                 this.setyPosPlayer(yPosPlayer);
 
                 player.updatePosition(new Vector2(xPosPlayer, yPosPlayer));
+                Log.i("MoveCreator", "before scene coincheck");
                 scene.coinCheck();
+                Log.i("MoveCreator", "after scene coincheck");
             }
         }
         return playerSprite;

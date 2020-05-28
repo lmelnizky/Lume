@@ -30,7 +30,7 @@ public class Server {
     private GameActions gameActions;
     //String list of events
     protected final String connect = Socket.EVENT_CONNECT;
-    protected final String disconnect = Socket.EVENT_CONNECT;
+    protected final String disconnect = Socket.EVENT_DISCONNECT;
     protected final String getIdFromServer = "socketID";
     protected final String getAllUsers = "GetAllUsers";
     protected final String newUserConnected = "newPlayer";

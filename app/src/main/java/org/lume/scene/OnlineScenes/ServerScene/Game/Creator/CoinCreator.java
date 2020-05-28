@@ -1,5 +1,7 @@
 package org.lume.scene.OnlineScenes.ServerScene.Game.Creator;
 
+import android.util.Log;
+
 import org.lume.engine.camera.BoundCamera;
 import org.lume.engine.handler.timer.ITimerCallback;
 import org.lume.engine.handler.timer.TimerHandler;
@@ -34,26 +36,24 @@ public class CoinCreator extends Creator {
     public Sprite createSprite() {
         camera = ResourcesManager.getInstance().camera;
         VertexBufferObjectManager vbom = ResourcesManager.getInstance().vbom;
-        coinSprite = MultiplayerGameScene.getInstance().coinSprite;
-        coinSprite.setVisible(false);
-        ResourcesManager.getInstance().engine.registerUpdateHandler(new TimerHandler(0.2f, new ITimerCallback() {
-            public void onTimePassed(final TimerHandler pTimerHandler) {
-                coinSprite.setVisible(true);
-                if (coinSprite == null) {
-                    coinSprite = new Sprite(camera.getCenterX() - sideLength + ((xPosCoin - 1) * sideLength),
-                            camera.getCenterY() - sideLength + ((yPosCoin - 1) * sideLength),
-                            sideLength * 7 / 8, sideLength * 7 / 8, ResourcesManager.getInstance().coin_region, vbom);
-                    gameScene.attachChild(coinSprite);
-                } else {
-                    //coinSprite.registerEntityModifier(new ScaleModifier(0.2f,0.7f,1f));
-                    coinSprite.setPosition(camera.getCenterX() - sideLength + ((xPosCoin - 1) * sideLength), camera.getCenterY() - sideLength + ((yPosCoin - 1) * sideLength));
-                }
-            }
-        }));
+        if (MultiplayerGameScene.getInstance().coinSprite != null) MultiplayerGameScene.getInstance().coinSprite.setVisible(false);
 
-        MultiplayerGameScene.getInstance().coinSprite = coinSprite;
 
-        return coinSprite;
+        if (MultiplayerGameScene.getInstance().coinSprite == null) {
+            Log.i("CoinCreator", "First coinSprite");
+            MultiplayerGameScene.getInstance().coinSprite = new Sprite(camera.getCenterX() - sideLength + ((xPosCoin - 1) * sideLength),
+                    camera.getCenterY() - sideLength + ((yPosCoin - 1) * sideLength),
+                    sideLength * 7 / 8, sideLength * 7 / 8, ResourcesManager.getInstance().coin_region, vbom);
+            gameScene.attachChild(MultiplayerGameScene.getInstance().coinSprite);
+        } else {
+            //MultiplayerGameScene.getInstance().coinSprite.registerEntityModifier(new ScaleModifier(0.2f,0.7f,1f));
+            MultiplayerGameScene.getInstance().coinSprite.setPosition(camera.getCenterX() - sideLength + ((xPosCoin - 1) * sideLength), camera.getCenterY() - sideLength + ((yPosCoin - 1) * sideLength));
+            if (MultiplayerGameScene.getInstance().coinSprite != null) MultiplayerGameScene.getInstance().coinSprite.setVisible(true);
+        }
+
+        //MultiplayerGameScene.getInstance().coinSprite = coinSprite;
+
+        return null;
     }
 
     @Override
