@@ -42,33 +42,33 @@ public class MoveCreator extends Creator {
 
                 switch (direction) {
                     case 'R':
-                        if (scene.localPlayer.getCurrentPosition().x < 3 &&
-                                (scene.localPlayer.getCurrentPosition().x + 1 != scene.opponentPlayer.getCurrentPosition().x || scene.localPlayer.getCurrentPosition().y != scene.opponentPlayer.getCurrentPosition().y) &&
-                                (scene.localPlayer.getCurrentPosition().x + 1 != scene.xPosBomb || scene.localPlayer.getCurrentPosition().y != scene.yPosBomb)) {
+                        if (player.getCurrentPosition().x < 3 &&
+                                (player.getCurrentPosition().x + 1 != scene.opponentPlayer.getCurrentPosition().x || player.getCurrentPosition().y != scene.opponentPlayer.getCurrentPosition().y) &&
+                                (player.getCurrentPosition().x + 1 != scene.xPosBomb || player.getCurrentPosition().y != scene.yPosBomb)) {
                             xPosPlayer++;
                             playerSprite.setPosition(playerSprite.getX() + sideLength, playerSprite.getY());
                         }
                         break;
                     case 'L':
-                        if (scene.localPlayer.getCurrentPosition().x > 1 &&
-                                (scene.localPlayer.getCurrentPosition().x - 1 != scene.opponentPlayer.getCurrentPosition().x || scene.localPlayer.getCurrentPosition().y != scene.opponentPlayer.getCurrentPosition().y) &&
-                                (scene.localPlayer.getCurrentPosition().x - 1 != scene.xPosBomb || scene.localPlayer.getCurrentPosition().y != scene.yPosBomb)) {
+                        if (player.getCurrentPosition().x > 1 &&
+                                (player.getCurrentPosition().x - 1 != scene.opponentPlayer.getCurrentPosition().x || player.getCurrentPosition().y != scene.opponentPlayer.getCurrentPosition().y) &&
+                                (player.getCurrentPosition().x - 1 != scene.xPosBomb || player.getCurrentPosition().y != scene.yPosBomb)) {
                             xPosPlayer--;
                             playerSprite.setPosition(playerSprite.getX() - sideLength, playerSprite.getY());
                         }
                         break;
                     case 'D':
-                        if (scene.localPlayer.getCurrentPosition().y > 1 &&
-                                (scene.localPlayer.getCurrentPosition().x != scene.opponentPlayer.getCurrentPosition().x || scene.localPlayer.getCurrentPosition().y - 1 != scene.opponentPlayer.getCurrentPosition().y) &&
-                                (scene.localPlayer.getCurrentPosition().x != scene.xPosBomb || scene.localPlayer.getCurrentPosition().y - 1 != scene.yPosBomb)) {
+                        if (player.getCurrentPosition().y > 1 &&
+                                (player.getCurrentPosition().x != scene.opponentPlayer.getCurrentPosition().x || player.getCurrentPosition().y - 1 != scene.opponentPlayer.getCurrentPosition().y) &&
+                                (player.getCurrentPosition().x != scene.xPosBomb || player.getCurrentPosition().y - 1 != scene.yPosBomb)) {
                             yPosPlayer--;
                             playerSprite.setPosition(playerSprite.getX(), playerSprite.getY() - sideLength);
                         }
                         break;
                     case 'U':
-                        if (scene.localPlayer.getCurrentPosition().y < 3 &&
-                                (scene.localPlayer.getCurrentPosition().x != scene.opponentPlayer.getCurrentPosition().x || scene.localPlayer.getCurrentPosition().y + 1 != scene.opponentPlayer.getCurrentPosition().y) &&
-                                (scene.localPlayer.getCurrentPosition().x != scene.xPosBomb || scene.localPlayer.getCurrentPosition().y + 1 != scene.yPosBomb)) {
+                        if (player.getCurrentPosition().y < 3 &&
+                                (player.getCurrentPosition().x != scene.opponentPlayer.getCurrentPosition().x || player.getCurrentPosition().y + 1 != scene.opponentPlayer.getCurrentPosition().y) &&
+                                (player.getCurrentPosition().x != scene.xPosBomb || player.getCurrentPosition().y + 1 != scene.yPosBomb)) {
                             yPosPlayer++;
                             playerSprite.setPosition(playerSprite.getX(), playerSprite.getY() + sideLength);
                         }

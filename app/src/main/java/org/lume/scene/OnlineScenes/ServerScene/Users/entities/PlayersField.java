@@ -39,7 +39,8 @@ public class PlayersField extends Sprite {
         this.attachChild(inviteButton);
         scene.attachChild(this);    scene.registerTouchArea(inviteButton);
         inviteButton.setEnabled(!thisIsMe);
-        if (thisIsMe) inviteButton.setColor(0.2f, 0.2f, 0.2f);
+        if (thisIsMe) inviteButton.setAlpha(0.2f);
+        if (thisIsMe) this.setAlpha(0.2f);
         Log.i("PlayersField", "createScene");
     }
     public void onClick(ButtonSprite button){
