@@ -71,6 +71,10 @@ public class MoveCreator extends Creator {
                     scene.xPosLocal = xPosPlayer;
                     scene.yPosLocal = yPosPlayer;
                 }
+                else{
+                    scene.xPosOpponent = xPosPlayer;
+                    scene.yPosOpponent = yPosPlayer;
+                }
             }
         }
         System.out.println("ist der Gegener ausgeblendet?" + !playerSprite.isVisible());
