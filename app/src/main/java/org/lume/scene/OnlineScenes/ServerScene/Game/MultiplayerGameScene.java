@@ -319,6 +319,9 @@ public class MultiplayerGameScene extends BaseScene {
                         }
                     } else { //TAP
                         System.out.println("Ich tippe gerade und versuche eine Bombe zu senden");
+                        System.out.println("lumecanBomb: " + lumeCanBomb);
+                        System.out.println("bombing: " + !bombing);
+                        System.out.println("bomblaid: " + !bombLaid);
                         if (lumeCanBomb && !bombing && !bombLaid) {
                             System.out.println("Ich lege gerade eine Bombe!");
                             multiplayer.getServer().emit(new PutBombCreator(multiplayer.getRoom(),(int) localPlayer.getCurrentPosition().x,(int) localPlayer.getCurrentPosition().y, localPlayer.getId()));
