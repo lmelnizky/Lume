@@ -31,7 +31,6 @@ public class MoveCreator extends Creator {
 
     //call setPlayer and Opponent positions before calling this
     //call setSprite before calling this
-    //call coinCheck() after this TODO (that's the job of the referee class)
     @Override
     public Sprite createSprite() {
         Log.i("MoveCreator", "createSprite Start");
@@ -43,20 +42,36 @@ public class MoveCreator extends Creator {
 
                 switch (direction) {
                     case 'R':
-                        xPosPlayer++;
-                        playerSprite.setPosition(playerSprite.getX() + sideLength, playerSprite.getY());
+                        if (scene.localPlayer.getCurrentPosition().x < 3 &&
+                                (scene.localPlayer.getCurrentPosition().x + 1 != scene.opponentPlayer.getCurrentPosition().x || scene.localPlayer.getCurrentPosition().y != scene.opponentPlayer.getCurrentPosition().y) &&
+                                (scene.localPlayer.getCurrentPosition().x + 1 != scene.xPosBomb || scene.localPlayer.getCurrentPosition().y != scene.yPosBomb)) {
+                            xPosPlayer++;
+                            playerSprite.setPosition(playerSprite.getX() + sideLength, playerSprite.getY());
+                        }
                         break;
                     case 'L':
-                        xPosPlayer--;
-                        playerSprite.setPosition(playerSprite.getX() - sideLength, playerSprite.getY());
+                        if (scene.localPlayer.getCurrentPosition().x > 1 &&
+                                (scene.localPlayer.getCurrentPosition().x - 1 != scene.opponentPlayer.getCurrentPosition().x || scene.localPlayer.getCurrentPosition().y != scene.opponentPlayer.getCurrentPosition().y) &&
+                                (scene.localPlayer.getCurrentPosition().x - 1 != scene.xPosBomb || scene.localPlayer.getCurrentPosition().y != scene.yPosBomb)) {
+                            xPosPlayer--;
+                            playerSprite.setPosition(playerSprite.getX() - sideLength, playerSprite.getY());
+                        }
                         break;
                     case 'D':
-                        yPosPlayer--;
-                        playerSprite.setPosition(playerSprite.getX(), playerSprite.getY() - sideLength);
+                        if (scene.localPlayer.getCurrentPosition().y > 1 &&
+                                (scene.localPlayer.getCurrentPosition().x != scene.opponentPlayer.getCurrentPosition().x || scene.localPlayer.getCurrentPosition().y - 1 != scene.opponentPlayer.getCurrentPosition().y) &&
+                                (scene.localPlayer.getCurrentPosition().x != scene.xPosBomb || scene.localPlayer.getCurrentPosition().y - 1 != scene.yPosBomb)) {
+                            yPosPlayer--;
+                            playerSprite.setPosition(playerSprite.getX(), playerSprite.getY() - sideLength);
+                        }
                         break;
                     case 'U':
-                        yPosPlayer++;
-                        playerSprite.setPosition(playerSprite.getX(), playerSprite.getY() + sideLength);
+                        if (scene.localPlayer.getCurrentPosition().y < 3 &&
+                                (scene.localPlayer.getCurrentPosition().x != scene.opponentPlayer.getCurrentPosition().x || scene.localPlayer.getCurrentPosition().y + 1 != scene.opponentPlayer.getCurrentPosition().y) &&
+                                (scene.localPlayer.getCurrentPosition().x != scene.xPosBomb || scene.localPlayer.getCurrentPosition().y + 1 != scene.yPosBomb)) {
+                            yPosPlayer++;
+                            playerSprite.setPosition(playerSprite.getX(), playerSprite.getY() + sideLength);
+                        }
                         break;
                 }
 
@@ -64,17 +79,16 @@ public class MoveCreator extends Creator {
                 this.setyPosPlayer(yPosPlayer);
 
                 player.updatePosition(new Vector2(xPosPlayer, yPosPlayer));
-                Log.i("MoveCreator", "before scene coincheck");
-                scene.coinCheck();
-                Log.i("MoveCreator", "after scene coincheck");
                 if(movedPlayersID.equals(scene.localPlayer.getId())) {
                     scene.xPosLocal = xPosPlayer;
                     scene.yPosLocal = yPosPlayer;
-                }
-                else{
+                } else {
                     scene.xPosOpponent = xPosPlayer;
                     scene.yPosOpponent = yPosPlayer;
                 }
+                Log.i("MoveCreator", "before scene coincheck");
+                scene.coinCheck();
+                Log.i("MoveCreator", "after scene coincheck");
             }
         }
         System.out.println("ist der Gegener ausgeblendet?" + !playerSprite.isVisible());

@@ -930,6 +930,10 @@ public class ResourcesManager {
         bomb_sign13_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(multiTextureAtlas, activity, "bomb_sign13.png");
         bomb_sign23_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(multiTextureAtlas, activity, "bomb_sign23.png");
         bomb_sign_red_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(multiTextureAtlas, activity, "bomb_sign_red.png");
+        stone_03_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(multiTextureAtlas, activity, "stone_03.png");
+        stone_13_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(multiTextureAtlas, activity, "stone_13.png");
+        stone_23_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(multiTextureAtlas, activity, "stone_23.png");
+        stone_33_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(multiTextureAtlas, activity, "stone_33.png");
         heart_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(multiTextureAtlas, activity, "heart.png");
         firebeam_horizontal = BitmapTextureAtlasTextureRegionFactory.createFromAsset(multiTextureAtlas, activity, "firebeam_horizontal.png");
         firebeam_vertical = BitmapTextureAtlasTextureRegionFactory.createFromAsset(multiTextureAtlas, activity, "firebeam_vertical.png");
