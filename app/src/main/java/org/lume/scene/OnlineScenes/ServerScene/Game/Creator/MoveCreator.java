@@ -67,6 +67,10 @@ public class MoveCreator extends Creator {
                 Log.i("MoveCreator", "before scene coincheck");
                 scene.coinCheck();
                 Log.i("MoveCreator", "after scene coincheck");
+                if(movedPlayersID.equals(scene.localPlayer.getId())) {
+                    scene.xPosLocal = xPosPlayer;
+                    scene.yPosLocal = yPosPlayer;
+                }
             }
         }
         System.out.println("ist der Gegener ausgeblendet?" + !playerSprite.isVisible());

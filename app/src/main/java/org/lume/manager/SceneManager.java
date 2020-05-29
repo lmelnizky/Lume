@@ -10,6 +10,7 @@ import org.lume.scene.HelpScene;
 import org.lume.scene.HighscoreScene;
 import org.lume.scene.MultiScene;
 import org.lume.scene.OnlineScenes.ServerScene.Game.MultiplayerGameScene;
+import org.lume.scene.OnlineScenes.ServerScene.Multiplayer;
 import org.lume.scene.OnlineScenes.ServerScene.Player;
 import org.lume.scene.OnlineScenes.ServerScene.Server;
 import org.lume.scene.OnlineScenes.ServerScene.Users.MultiplayerUsersScene;

@@ -594,7 +594,6 @@ public class MultiplayerGameScene extends BaseScene {
         if (referee != null){
         multiplayer.getServer().emit(referee.createCoin());
         }
-
         Log.i("MultiplayerGameScene", "Referee created new CoinPosition");
     }
 
