@@ -600,11 +600,8 @@ public class MultiplayerGameScene extends BaseScene {
     }
 
     public void addBombScore(Player player) {
-<<<<<<< HEAD
         System.out.println("");
-=======
         Log.i("MultiPlayerGameScene", "addBombscore start");
->>>>>>> f974a2809bb314a68f7070fadf816b2f8bf71dd9
         if (player == localPlayer) {
             bombScoreLume++;
             Log.i("MultiplayerGameScene", "Added bombScoreLume, now: " + String.valueOf(bombScoreLume));

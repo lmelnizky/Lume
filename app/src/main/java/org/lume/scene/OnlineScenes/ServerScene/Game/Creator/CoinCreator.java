@@ -50,7 +50,8 @@ public class CoinCreator extends Creator {
             MultiplayerGameScene.getInstance().coinSprite.setPosition(camera.getCenterX() - sideLength + ((xPosCoin - 1) * sideLength), camera.getCenterY() - sideLength + ((yPosCoin - 1) * sideLength));
             if (MultiplayerGameScene.getInstance().coinSprite != null) MultiplayerGameScene.getInstance().coinSprite.setVisible(true);
         }
-
+        gameScene.xPosCoin = xPosCoin;
+        gameScene.yPosCoin = yPosCoin;
         //MultiplayerGameScene.getInstance().coinSprite = coinSprite;
 
         return null;
