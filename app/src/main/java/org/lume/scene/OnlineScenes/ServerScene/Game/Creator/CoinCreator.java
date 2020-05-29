@@ -46,7 +46,7 @@ public class CoinCreator extends Creator {
                     sideLength * 7 / 8, sideLength * 7 / 8, ResourcesManager.getInstance().coin_region, vbom);
             gameScene.attachChild(MultiplayerGameScene.getInstance().coinSprite);
         } else {
-            //MultiplayerGameScene.getInstance().coinSprite.registerEntityModifier(new ScaleModifier(0.2f,0.7f,1f));
+            MultiplayerGameScene.getInstance().coinSprite.registerEntityModifier(new ScaleModifier(0.2f,0.7f,1f));
             MultiplayerGameScene.getInstance().coinSprite.setPosition(camera.getCenterX() - sideLength + ((xPosCoin - 1) * sideLength), camera.getCenterY() - sideLength + ((yPosCoin - 1) * sideLength));
             if (MultiplayerGameScene.getInstance().coinSprite != null) MultiplayerGameScene.getInstance().coinSprite.setVisible(true);
         }
