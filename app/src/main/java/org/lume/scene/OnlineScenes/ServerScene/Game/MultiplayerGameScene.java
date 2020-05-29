@@ -100,10 +100,7 @@ public class MultiplayerGameScene extends BaseScene {
     public Sprite luserSprite, finishSprite, replaySprite;
     public Text gameOverText;
     public Player localPlayer, opponentPlayer;
-<<<<<<< HEAD
     private boolean debug = false;
-=======
->>>>>>> 34ed78e41b69ab65f93498dbc0ee735d28145294
 
     public Referee referee;
 
@@ -121,11 +118,7 @@ public class MultiplayerGameScene extends BaseScene {
     @Override
     public void createScene() {/*don't write code here, because the method is calling in the super constructor.. so in other classes, the getInstance() method will not work!!!(NullPointerException!)*/}
     //static methods
-<<<<<<< HEAD
     public static void createInstance(LinkedList<Player> players, Server server, String room){ INSTANCE = new MultiplayerGameScene(players, server, room);}
-=======
-    public static void createInstance(LinkedList<Player> players, Server server, String room){ INSTANCE = new MultiplayerGameScene(players, server, room); INSTANCE.create();}
->>>>>>> 34ed78e41b69ab65f93498dbc0ee735d28145294
     public static MultiplayerGameScene getInstance(){
         if(INSTANCE == null) throw new RuntimeException("you have to call create Instance before getInstance!!!");
         return INSTANCE;
@@ -135,11 +128,7 @@ public class MultiplayerGameScene extends BaseScene {
         INSTANCE = null;
     }
     //methods
-<<<<<<< HEAD
     public void create(){
-=======
-    private void create(){
->>>>>>> 34ed78e41b69ab65f93498dbc0ee735d28145294
         //initialization
         sideLength = resourcesManager.sideLength;
         xPositions = 3;
@@ -207,10 +196,7 @@ public class MultiplayerGameScene extends BaseScene {
         final Rectangle shootLeft = new Rectangle(camera.getCenterX() - resourcesManager.screenWidth / 4, camera.getCenterY(),
                 resourcesManager.screenWidth / 2, resourcesManager.screenHeight, vbom) {
             public boolean onAreaTouched(TouchEvent touchEvent, float x, float y) {
-<<<<<<< HEAD
                 System.out.println("tap on the left side!");
-=======
->>>>>>> 34ed78e41b69ab65f93498dbc0ee735d28145294
                 if (touchEvent.isActionDown()) {
                     shootX1 = x;
                     shootY1 = y;
@@ -253,11 +239,7 @@ public class MultiplayerGameScene extends BaseScene {
                             }
                         }
                     } else { //TAP
-<<<<<<< HEAD
                         debug = true;
-=======
-
->>>>>>> 34ed78e41b69ab65f93498dbc0ee735d28145294
                     }
 
 
@@ -609,18 +591,15 @@ public class MultiplayerGameScene extends BaseScene {
     public void createCoin() {
         Log.i("Multiplayergamescene", "before sending createCoin emit");
 
-<<<<<<< HEAD
         if (referee != null){
         multiplayer.getServer().emit(referee.createCoin());
         }
-=======
         engine.registerUpdateHandler(new TimerHandler(0.2f, new ITimerCallback() {
             public void onTimePassed(final TimerHandler pTimerHandler) {
                 engine.unregisterUpdateHandler(pTimerHandler);
                 if (referee != null) multiplayer.getServer().emit(referee.createCoin());
             }
         }));
->>>>>>> 34ed78e41b69ab65f93498dbc0ee735d28145294
 
         Log.i("MultiplayerGameScene", "Referee created new CoinPosition");
     }
