@@ -465,6 +465,7 @@ public class SceneManager {
             @Override
             public void onTimePassed(TimerHandler pTimerHandler) {
                 mEngine.unregisterUpdateHandler(pTimerHandler);
+                MultiplayerGameScene.getInstance().create();
                 setScene(onlineGameScene);
                 Log.i("SceneManger", "setScene to onlineGameScene");
             }

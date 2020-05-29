@@ -226,6 +226,10 @@ public class ResourcesManager {
     public ITextureRegion bomb_sign13_region;
     public ITextureRegion bomb_sign23_region;
     public ITextureRegion bomb_sign_red_region;
+    public ITextureRegion stone_03_region;
+    public ITextureRegion stone_13_region;
+    public ITextureRegion stone_23_region;
+    public ITextureRegion stone_33_region;
     public ITextureRegion finger_luser;
     public ITextureRegion finger_watch;
     public ITextureRegion finger_middle;
