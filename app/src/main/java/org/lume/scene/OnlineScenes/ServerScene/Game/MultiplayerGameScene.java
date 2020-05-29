@@ -594,13 +594,6 @@ public class MultiplayerGameScene extends BaseScene {
         if (referee != null){
         multiplayer.getServer().emit(referee.createCoin());
         }
-        engine.registerUpdateHandler(new TimerHandler(0.2f, new ITimerCallback() {
-            public void onTimePassed(final TimerHandler pTimerHandler) {
-                engine.unregisterUpdateHandler(pTimerHandler);
-                if (referee != null) multiplayer.getServer().emit(referee.createCoin());
-            }
-        }));
-
         Log.i("MultiplayerGameScene", "Referee created new CoinPosition");
     }
 
@@ -702,10 +695,12 @@ public class MultiplayerGameScene extends BaseScene {
     }
 
     private void disposeHUD() {
-        gameHUD.detachChildren();
-        gameHUD.detachSelf();
-        gameHUD.dispose();
-        gameHUD = null;
+        if (gameHUD != null) {
+            gameHUD.detachChildren();
+            gameHUD.detachSelf();
+            gameHUD.dispose();
+            gameHUD = null;
+        }
     }
 
     public void displayGameOverScene() {

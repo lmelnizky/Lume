@@ -133,13 +133,6 @@ public class Server {
     if(creator instanceof PutBombCreator)socket.emit(loadBomb,creator.getJSON());
     if(creator instanceof PutStoneCreator)socket.emit(loadStone,creator.getJSON());
             });
-        if(creator instanceof CoinCreator)  socket.emit(loadCoin, creator.getJSON());
-        if(creator instanceof MoveCreator)  socket.emit(playerMoved, creator.getJSON());
-        if(creator instanceof BallCreator)  socket.emit(loadBall, creator.getJSON());
-        if(creator instanceof CannonCreator)socket.emit(loadCannon,creator.getJSON());
-        if(creator instanceof LoseLifeCreator)socket.emit(loseLife,creator.getJSON());
-        if(creator instanceof PutBombCreator)socket.emit(loadBomb,creator.getJSON());
-        if(creator instanceof PutStoneCreator)socket.emit(loadStone,creator.getJSON());
     }
     public void loseLifeEmit(String ID){
         try {socket.emit(loseLife, new JSONObject("{\"ID\":" + "\"" +  ID + "\"" + "}"));}
