@@ -119,7 +119,6 @@ public class MultiplayerGameScene extends BaseScene {
     public void createScene() {/*don't write code here, because the method is calling in the super constructor.. so in other classes, the getInstance() method will not work!!!(NullPointerException!)*/}
     //static methods
     public static void createInstance(LinkedList<Player> players, Server server, String room){ INSTANCE = new MultiplayerGameScene(players, server, room);}
-    public static void createInstance(LinkedList<Player> players, Server server, String room){ INSTANCE = new MultiplayerGameScene(players, server, room); INSTANCE.create();}
     public static MultiplayerGameScene getInstance(){
         if(INSTANCE == null) throw new RuntimeException("you have to call create Instance before getInstance!!!");
         return INSTANCE;
