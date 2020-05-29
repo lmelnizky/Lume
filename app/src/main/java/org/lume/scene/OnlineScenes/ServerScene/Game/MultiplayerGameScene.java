@@ -604,6 +604,7 @@ public class MultiplayerGameScene extends BaseScene {
     }
 
     public void addBombScore(Player player) {
+        System.out.println("");
         if (player == localPlayer) {
             bombScoreLume++;
             if (bombScoreLume == 2) lumeCanBomb = true;
