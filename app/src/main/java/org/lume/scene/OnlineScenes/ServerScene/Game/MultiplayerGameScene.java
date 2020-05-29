@@ -274,6 +274,8 @@ public class MultiplayerGameScene extends BaseScene {
                         if (Math.abs(deltaX) > Math.abs(deltaY)) { //horizontal
                             if (deltaX > 0) { //left to right
                                 //movePlayer('R');
+                                Log.i("MultiPlayerGameScene", "iLaaidBomb: " + iLaidBomb);
+
                                 if (bombLaid && lumeCanBomb && iLaidBomb) {
                                     System.out.println("lege bomb nach rechts");
                                     if (xPosLocal < 3) {
@@ -289,7 +291,9 @@ public class MultiplayerGameScene extends BaseScene {
                                 }
                             } else { //right to left
                                 //movePlayer('L');
+                                Log.i("MultiPlayerGameScene", "iLaaidBomb: " + iLaidBomb);
                                 if (bombLaid && lumeCanBomb && iLaidBomb) {
+                                    System.out.println("lege bomb nach links");
                                     if (xPosLocal > 1) {
                                         iLaidBomb = false;
                                         multiplayer.getServer().emit(new PutBombCreator(multiplayer.getRoom(), (int) localPlayer.getCurrentPosition().x-1, (int) localPlayer.getCurrentPosition().y, localPlayer.getId()));
@@ -305,7 +309,9 @@ public class MultiplayerGameScene extends BaseScene {
                         } else { //vertical
                             if (deltaY > 0) { //up to down
                                 //movePlayer('U');
+                                Log.i("MultiPlayerGameScene", "iLaaidBomb: " + iLaidBomb);
                                 if (bombLaid && lumeCanBomb && iLaidBomb) {
+                                    System.out.println("lege bombe nach oben");
                                     if (yPosLocal < 3) {
                                         iLaidBomb = false;
                                         multiplayer.getServer().emit(new PutBombCreator(multiplayer.getRoom(), (int) localPlayer.getCurrentPosition().x, (int) localPlayer.getCurrentPosition().y+1, localPlayer.getId()));
@@ -319,7 +325,9 @@ public class MultiplayerGameScene extends BaseScene {
                                 }
                             } else { //down to up
                                 //movePlayer('D');
+                                Log.i("MultiPlayerGameScene", "iLaaidBomb: " + iLaidBomb);
                                 if (bombLaid && lumeCanBomb && iLaidBomb) {
+                                    System.out.println("lege bombe nach unten");
                                     if (yPosLocal > 1) {
                                         iLaidBomb = false;
                                         multiplayer.getServer().emit(new PutBombCreator(multiplayer.getRoom(), (int) localPlayer.getCurrentPosition().x, (int) localPlayer.getCurrentPosition().y-1, localPlayer.getId()));
@@ -342,6 +350,7 @@ public class MultiplayerGameScene extends BaseScene {
                             System.out.println("Ich lege gerade eine Bombe!");
                             multiplayer.getServer().emit(new PutBombCreator(multiplayer.getRoom(),(int) localPlayer.getCurrentPosition().x,(int) localPlayer.getCurrentPosition().y, localPlayer.getId()));
                             iLaidBomb = true;
+                            System.out.println("laidbomb: " + iLaidBomb);
                         }
                     }
 
