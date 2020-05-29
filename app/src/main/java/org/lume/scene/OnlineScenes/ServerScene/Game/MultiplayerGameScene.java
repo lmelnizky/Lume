@@ -271,6 +271,7 @@ public class MultiplayerGameScene extends BaseScene {
                             if (deltaX > 0) { //left to right
                                 //movePlayer('R');
                                 if (bombLaid && lumeCanBomb) {
+                                    System.out.println("lege bomb nach rechts");
                                     if (xPosLocal < 3) multiplayer.getServer().emit(new PutBombCreator(multiplayer.getRoom(), (int) localPlayer.getCurrentPosition().x+1, (int) localPlayer.getCurrentPosition().y, localPlayer.getId()));
                                 } else {
                                     if (localPlayer.getCurrentPosition().x < 3 &&
