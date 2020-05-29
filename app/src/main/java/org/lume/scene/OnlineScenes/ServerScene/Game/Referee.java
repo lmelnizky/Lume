@@ -35,7 +35,7 @@ public class Referee {
         long age;
         long interval = 5000;
         age = (new Date()).getTime() - scene.stoneTime;
-        if (scene.firstStonesInLevel) interval = 6000;
+        if (scene.firstStonesInLevel) interval = 2500;
         if (age >= interval) {
             if (scene.firstStonesInLevel) scene.getMultiplayer().getServer().emit(createCoin()); //create first coin
             scene.firstStonesInLevel = false;

@@ -605,11 +605,11 @@ public class MultiplayerGameScene extends BaseScene {
         if (player == localPlayer) {
             bombScoreLume++;
             Log.i("MultiplayerGameScene", "Added bombScoreLume, now: " + String.valueOf(bombScoreLume));
-            if (bombScoreLume == 3) lumeCanBomb = true;
+            if (bombScoreLume >= 3) lumeCanBomb = true;
         } else if (player == opponentPlayer) {
             bombScoreGrume++;
             Log.i("MultiplayerGameScene", "Added bombScoreGrume, now: " + String.valueOf(bombScoreGrume));
-            if (bombScoreGrume == 3) grumeCanBomb = true;
+            if (bombScoreGrume >= 3) grumeCanBomb = true;
         }
         updateBombsHUD();
     }
