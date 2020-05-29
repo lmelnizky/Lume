@@ -33,7 +33,8 @@ public class RequestPopUp extends Sprite{
         create();
     }
     private void create(){
-        questionText = new Text(getWidth()/2,getHeight()/4*3, ResourcesManager.getInstance().standardFont, requestFrom.getUsername() + " wants to play with you", ResourcesManager.getInstance().vbom);
+        questionText = new Text(getWidth()/2,getHeight()/4*3, ResourcesManager.getInstance().standardFont, requestFrom.getUsername() + " wants to play with you Game starts soon", ResourcesManager.getInstance().vbom);
+        questionText.setText(requestFrom.getUsername() + " wants to play with you");
         yes = new ButtonSprite(getWidth()/4, getHeight()/4, ResourcesManager.getInstance().inputtext_online_region,ResourcesManager.getInstance().vbom, scene);
         no = new ButtonSprite(getWidth()/4*3,getHeight()/4, ResourcesManager.getInstance().inputtext_online_region, ResourcesManager.getInstance().vbom, scene);
         yes.setSize(getWidth()/4,getHeight()/10);
@@ -49,6 +50,8 @@ public class RequestPopUp extends Sprite{
     }
     public void onClick(ButtonSprite pButtonSprite, float pTouchAreaLocalX, float pTouchAreaLocalY) {
         if(pButtonSprite == yes){
+            yes.setColor(0.2f, 0.2f, 0.2f);
+            questionText.setText("Game starts soon");
             LinkedList<Player> players = new LinkedList();
             for(Player p: scene.getPlayers()) if(p.getId().equals(requestFrom.getId())) players.add(p);
             if(scene.getServer().getUserActions() instanceof LumeUserActions)players.add(((LumeUserActions) scene.getServer().getUserActions()).getLocalPLayer());
@@ -61,6 +64,7 @@ public class RequestPopUp extends Sprite{
             }));
         }
         if(pButtonSprite == no){
+            no.setColor(0.2f, 0.2f, 0.2f);
             scene.getServer().sendAnswer(false, requestFrom.getId(), room);
         }
     }

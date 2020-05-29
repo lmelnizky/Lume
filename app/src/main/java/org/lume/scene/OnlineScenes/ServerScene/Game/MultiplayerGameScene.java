@@ -87,7 +87,10 @@ public class MultiplayerGameScene extends BaseScene {
     public IEntity firstLayer, secondLayer, thirdLayer;
     public Sprite lumeSprite, grumeSprite;
     public HUD gameHUD;
-    public Sprite lumeBomb, grumeBomb;
+    public Sprite lumeBomb03, lumeBomb13, lumeBomb23, lumeBomb33;
+    public Sprite grumeBomb03, grumeBomb13, grumeBomb23, grumeBomb33;
+    public Sprite lumeStone03, lumeStone13, lumeStone23, lumeStone33;
+    public Sprite grumeStone03, grumeStone13, grumeStone23, grumeStone33;
     public Sprite lumeHeart1, lumeHeart2, lumeHeart3;
     public Sprite grumeHeart1, grumeHeart2, grumeHeart3;
     public Text lumeText, grumeText;
@@ -128,7 +131,7 @@ public class MultiplayerGameScene extends BaseScene {
         INSTANCE = null;
     }
     //methods
-    public void create(){
+    public void create() {
         //initialization
         sideLength = resourcesManager.sideLength;
         xPositions = 3;
@@ -318,7 +321,7 @@ public class MultiplayerGameScene extends BaseScene {
                             }
                         }
                     } else { //TAP
-                        System.out.println("Ich tippe gerade und versuche eine Bombe zu senden");
+                        System.out.println("Ich tippe gerade und versuche eine Bombe zu senden und habe so viele Muenzen: " + String.valueOf(bombScoreLume));
                         System.out.println("lumecanBomb: " + lumeCanBomb);
                         System.out.println("bombing: " + !bombing);
                         System.out.println("bomblaid: " + !bombLaid);
@@ -345,17 +348,6 @@ public class MultiplayerGameScene extends BaseScene {
         secondLayer.attachChild(swipeRight);
     }
 
-    public void removeLumeBomb() {
-//        lumeBomb.detachSelf();
-//        gameHUD.detachChild(lumeBomb);
-//        if (!grumeBomb.isDisposed()) grumeBomb.dispose();
-    }
-
-    public void removeGrumeBomb() {
-        grumeBomb.detachSelf();
-        gameHUD.detachChild(grumeBomb);
-        if (!grumeBomb.isDisposed()) grumeBomb.dispose();
-    }
 
     private void playerMoved() {
         for (Player p : this.getMultiplayer().getPlayers()) {
@@ -585,9 +577,13 @@ public class MultiplayerGameScene extends BaseScene {
     public void coinCheck() {
         Log.i("MultiplayerGameScene", "start coincheck");
         if (localPlayer.getCurrentPosition().x == xPosCoin && localPlayer.getCurrentPosition().y == yPosCoin) {
+            Log.i("MultiPlayerGameScene", "localcurpos.x: " + String.valueOf(localPlayer.getCurrentPosition().x) +
+                    "localcurpos.y: " + String.valueOf(localPlayer.getCurrentPosition().y));
             addBombScore(localPlayer);
             createCoin();
         } else if (opponentPlayer.getCurrentPosition().x == xPosCoin && opponentPlayer.getCurrentPosition().y == yPosCoin) {
+            Log.i("MultiPlayerGameScene", "opponentcurpos.x: " + String.valueOf(opponentPlayer.getCurrentPosition().x) +
+                    "opponentcurpos.y: " + String.valueOf(opponentPlayer.getCurrentPosition().y));
             addBombScore(opponentPlayer);
             createCoin();
         }
@@ -604,14 +600,21 @@ public class MultiplayerGameScene extends BaseScene {
     }
 
     public void addBombScore(Player player) {
+<<<<<<< HEAD
         System.out.println("");
+=======
+        Log.i("MultiPlayerGameScene", "addBombscore start");
+>>>>>>> f974a2809bb314a68f7070fadf816b2f8bf71dd9
         if (player == localPlayer) {
             bombScoreLume++;
-            if (bombScoreLume == 2) lumeCanBomb = true;
+            Log.i("MultiplayerGameScene", "Added bombScoreLume, now: " + String.valueOf(bombScoreLume));
+            if (bombScoreLume == 3) lumeCanBomb = true;
         } else if (player == opponentPlayer) {
             bombScoreGrume++;
-            if (bombScoreGrume == 2) grumeCanBomb = true;
+            Log.i("MultiplayerGameScene", "Added bombScoreGrume, now: " + String.valueOf(bombScoreGrume));
+            if (bombScoreGrume == 3) grumeCanBomb = true;
         }
+        updateBombsHUD();
     }
 
     public void disableShootOnTime() {
@@ -662,13 +665,83 @@ public class MultiplayerGameScene extends BaseScene {
     private void createHUD() {
         gameHUD = new HUD();
 
-        lumeBomb = new Sprite(camera.getCenterX()-sideLength*3, camera.getHeight() - sideLength/2,
+        lumeBomb03 = new Sprite(camera.getCenterX()-sideLength*3, camera.getHeight() - sideLength/2,
                 sideLength*3/4, sideLength*3/4, resourcesManager.bomb_sign00_region, vbom);
-        gameHUD.attachChild(lumeBomb);
+        gameHUD.attachChild(lumeBomb03);
 
-        grumeBomb = new Sprite(camera.getCenterX() + sideLength*3, camera.getHeight() - sideLength/2,
+        lumeBomb13 = new Sprite(camera.getCenterX()-sideLength*3, camera.getHeight() - sideLength/2,
+                sideLength*3/4, sideLength*3/4, resourcesManager.bomb_sign13_region, vbom);
+        lumeBomb13.setVisible(false);
+        gameHUD.attachChild(lumeBomb13);
+
+        lumeBomb23 = new Sprite(camera.getCenterX()-sideLength*3, camera.getHeight() - sideLength/2,
+                sideLength*3/4, sideLength*3/4, resourcesManager.bomb_sign23_region, vbom);
+        lumeBomb23.setVisible(false);
+        gameHUD.attachChild(lumeBomb23);
+
+        lumeBomb33 = new Sprite(camera.getCenterX()-sideLength*3, camera.getHeight() - sideLength/2,
+                sideLength*3/4, sideLength*3/4, resourcesManager.bomb_sign_red_region, vbom);
+        lumeBomb33.setVisible(false);
+        gameHUD.attachChild(lumeBomb33);
+
+        grumeBomb03 = new Sprite(camera.getCenterX() + sideLength*3, camera.getHeight() - sideLength/2,
                 sideLength*3/4, sideLength*3/4, resourcesManager.bomb_sign00_region, vbom);
-        gameHUD.attachChild(grumeBomb);
+        gameHUD.attachChild(grumeBomb03);
+
+        grumeBomb13 = new Sprite(camera.getCenterX()+sideLength*3, camera.getHeight() - sideLength/2,
+                sideLength*3/4, sideLength*3/4, resourcesManager.bomb_sign13_region, vbom);
+        grumeBomb13.setVisible(false);
+        gameHUD.attachChild(grumeBomb13);
+
+        grumeBomb23 = new Sprite(camera.getCenterX()+sideLength*3, camera.getHeight() - sideLength/2,
+                sideLength*3/4, sideLength*3/4, resourcesManager.bomb_sign23_region, vbom);
+        grumeBomb23.setVisible(false);
+        gameHUD.attachChild(grumeBomb23);
+
+        grumeBomb33 = new Sprite(camera.getCenterX()+sideLength*3, camera.getHeight() - sideLength/2,
+                sideLength*3/4, sideLength*3/4, resourcesManager.bomb_sign_red_region, vbom);
+        grumeBomb33.setVisible(false);
+        gameHUD.attachChild(grumeBomb33);
+
+
+
+        lumeStone03 = new Sprite(camera.getCenterX()-sideLength*4, camera.getHeight() - sideLength/2,
+                sideLength*3/4, sideLength*3/4, resourcesManager.stone_03_region, vbom);
+        gameHUD.attachChild(lumeStone03);
+
+        lumeStone13 = new Sprite(camera.getCenterX()-sideLength*4, camera.getHeight() - sideLength/2,
+                sideLength*3/4, sideLength*3/4, resourcesManager.stone_13_region, vbom);
+        lumeStone13.setVisible(false);
+        gameHUD.attachChild(lumeStone13);
+
+        lumeStone23 = new Sprite(camera.getCenterX()-sideLength*4, camera.getHeight() - sideLength/2,
+                sideLength*3/4, sideLength*3/4, resourcesManager.stone_23_region, vbom);
+        lumeStone23.setVisible(false);
+        gameHUD.attachChild(lumeStone23);
+
+        lumeStone33 = new Sprite(camera.getCenterX()-sideLength*4, camera.getHeight() - sideLength/2,
+                sideLength*3/4, sideLength*3/4, resourcesManager.stone_33_region, vbom);
+        lumeStone33.setVisible(false);
+        gameHUD.attachChild(lumeStone33);
+
+        grumeStone03 = new Sprite(camera.getCenterX() + sideLength*4, camera.getHeight() - sideLength/2,
+                sideLength*3/4, sideLength*3/4, resourcesManager.stone_03_region, vbom);
+        gameHUD.attachChild(grumeStone03);
+
+        grumeStone13 = new Sprite(camera.getCenterX()+sideLength*4, camera.getHeight() - sideLength/2,
+                sideLength*3/4, sideLength*3/4, resourcesManager.stone_13_region, vbom);
+        grumeStone13.setVisible(false);
+        gameHUD.attachChild(grumeStone13);
+
+        grumeStone23 = new Sprite(camera.getCenterX()+sideLength*4, camera.getHeight() - sideLength/2,
+                sideLength*3/4, sideLength*3/4, resourcesManager.stone_23_region, vbom);
+        grumeStone23.setVisible(false);
+        gameHUD.attachChild(grumeStone23);
+
+        grumeStone33 = new Sprite(camera.getCenterX()+sideLength*4, camera.getHeight() - sideLength/2,
+                sideLength*3/4, sideLength*3/4, resourcesManager.stone_33_region, vbom);
+        grumeStone33.setVisible(false);
+        gameHUD.attachChild(grumeStone33);
 
         grumeHeart1 = new Sprite(camera.getWidth()-sideLength*5/2, camera.getHeight()-sideLength/2,
                 sideLength*3/4, sideLength*3/4, resourcesManager.heart_region, vbom); //innerst heart
@@ -699,6 +772,118 @@ public class MultiplayerGameScene extends BaseScene {
         gameHUD.attachChild(grumeText);
 
         camera.setHUD(gameHUD);
+    }
+
+    public void updateBombsHUD() {
+        switch (bombScoreLume) {
+            case 0:
+                lumeBomb03.setVisible(true);
+                lumeBomb13.setVisible(false);
+                lumeBomb23.setVisible(false);
+                lumeBomb33.setVisible(false);
+                break;
+            case 1:
+                lumeBomb03.setVisible(false);
+                lumeBomb13.setVisible(true);
+                lumeBomb23.setVisible(false);
+                lumeBomb33.setVisible(false);
+                break;
+            case 2:
+                lumeBomb03.setVisible(false);
+                lumeBomb13.setVisible(false);
+                lumeBomb23.setVisible(true);
+                lumeBomb33.setVisible(false);
+                break;
+            case 3:
+                lumeBomb03.setVisible(false);
+                lumeBomb13.setVisible(false);
+                lumeBomb23.setVisible(false);
+                lumeBomb33.setVisible(true);
+            break;
+        }
+
+        switch (bombScoreGrume) {
+            case 0:
+                grumeBomb03.setVisible(true);
+                grumeBomb13.setVisible(false);
+                grumeBomb23.setVisible(false);
+                grumeBomb33.setVisible(false);
+                break;
+            case 1:
+                grumeBomb03.setVisible(false);
+                grumeBomb13.setVisible(true);
+                grumeBomb23.setVisible(false);
+                grumeBomb33.setVisible(false);
+                break;
+            case 2:
+                grumeBomb03.setVisible(false);
+                grumeBomb13.setVisible(false);
+                grumeBomb23.setVisible(true);
+                grumeBomb33.setVisible(false);
+                break;
+            case 3:
+                grumeBomb03.setVisible(false);
+                grumeBomb13.setVisible(false);
+                grumeBomb23.setVisible(false);
+                grumeBomb33.setVisible(true);
+                break;
+        }
+    }
+
+    public void updateStonesHUD() {
+        switch (stoneScoreLume) {
+            case 0:
+                lumeStone03.setVisible(true);
+                lumeStone13.setVisible(false);
+                lumeStone23.setVisible(false);
+                lumeStone33.setVisible(false);
+                break;
+            case 1:
+                lumeStone03.setVisible(false);
+                lumeStone13.setVisible(true);
+                lumeStone23.setVisible(false);
+                lumeStone33.setVisible(false);
+                break;
+            case 2:
+                lumeStone03.setVisible(false);
+                lumeStone13.setVisible(false);
+                lumeStone23.setVisible(true);
+                lumeStone33.setVisible(false);
+                break;
+            case 3:
+                lumeStone03.setVisible(false);
+                lumeStone13.setVisible(false);
+                lumeStone23.setVisible(false);
+                lumeStone33.setVisible(true);
+                break;
+        }
+
+        switch (stoneScoreGrume) {
+            case 0:
+                grumeStone03.setVisible(true);
+                grumeStone13.setVisible(false);
+                grumeStone23.setVisible(false);
+                grumeStone33.setVisible(false);
+                break;
+            case 1:
+                grumeStone03.setVisible(false);
+                grumeStone13.setVisible(true);
+                grumeStone23.setVisible(false);
+                grumeStone33.setVisible(false);
+                break;
+            case 2:
+                grumeStone03.setVisible(false);
+                grumeStone13.setVisible(false);
+                grumeStone23.setVisible(true);
+                grumeStone33.setVisible(false);
+                break;
+            case 3:
+                grumeStone03.setVisible(false);
+                grumeStone13.setVisible(false);
+                grumeStone23.setVisible(false);
+                grumeStone33.setVisible(true);
+                break;
+        }
     }
 
     private void disposeHUD() {

@@ -2,6 +2,8 @@ package org.lume.scene.OnlineScenes.ServerScene.Game.Creator;
 
 
 
+import android.util.Log;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.lume.engine.camera.BoundCamera;
@@ -50,6 +52,7 @@ public class PutBombCreator extends Creator {
             scene.xPosBomb = xPosBomb;
             scene.yPosBomb = yPosBomb;
         } else { //lay bomb first time on tap
+            Log.i("PutBombCreator", "Start lay bomb");
             if (playerId.equals(scene.localPlayer.getId())) {
                 scene.bombLaid = true;
                 scene.bombScoreLume = 0;
@@ -76,6 +79,7 @@ public class PutBombCreator extends Creator {
 //                    }
 //                });
             }
+            scene.updateBombsHUD();
 
             if (scene.bombSprite == null) {
                 scene.bombSprite = new Sprite(camera.getCenterX() - sideLength + ((xPosBomb - 1) * sideLength), camera.getCenterY() - sideLength + ((yPosBomb - 1) * sideLength),

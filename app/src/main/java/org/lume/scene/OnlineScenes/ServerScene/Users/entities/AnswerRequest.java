@@ -29,7 +29,7 @@ public class AnswerRequest extends Sprite {
         Text text = new Text(CAMERA_WIDTH / 2, CAMERA_HEIGHT / 4 * 3, ResourcesManager.getInstance().standardFont,
                 "1234567890123456789012345678901234567890123456789012345678901234567890", this.getVertexBufferObjectManager());
         if (angenommen)
-            text.setText(fromPLayer.getUsername() + " has accepted you request :) Good luck!");
+            text.setText(fromPLayer.getUsername() + " has accepted your request :) Good luck!");
         if (!angenommen)
             text.setText(fromPLayer.getUsername() + " did not accept your request :( Luser!");
         this.attachChild(text);

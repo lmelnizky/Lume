@@ -2,6 +2,7 @@ package org.lume.scene.OnlineScenes.ServerScene.Users.entities;
 
 import android.util.Log;
 
+import org.lume.GameActivity;
 import org.lume.engine.handler.timer.ITimerCallback;
 import org.lume.engine.handler.timer.TimerHandler;
 import org.lume.entity.sprite.ButtonSprite;
@@ -26,21 +27,26 @@ public class PlayersField extends Sprite {
         create();
     }
     private void create(){
+        boolean thisIsMe = (player.getUsername().equals(ResourcesManager.getInstance().activity.getUserName()));
         inviteButton = new ButtonSprite(0,0,ResourcesManager.getInstance().inputtext_online_region, ResourcesManager.getInstance().vbom, scene);
         inviteButton.setSize(super.getHeight()*3.25f, super.getHeight()/1.5f);
         inviteButton.setPosition(super.getWidth()-inviteButton.getWidth()/1.25f, super.getHeight()/2);
-        nameText = new Text(0,0, ResourcesManager.getInstance().standardFont, player.getUsername(), ResourcesManager.getInstance().vbom);
+        nameText = new Text(0,0, ResourcesManager.getInstance().standardFont, player.getUsername() + ((thisIsMe) ? " (me)" : ""), ResourcesManager.getInstance().vbom);
         nameText.setPosition(nameText.getLineAlignmentWidth()/2 + 30, this.getHeight()/2);
         inviteText = new Text(inviteButton.getWidth()/2, inviteButton.getHeight()/2, ResourcesManager.getInstance().standardFont, "INVITE", ResourcesManager.getInstance().vbom);
         inviteButton.attachChild(inviteText);
         this.attachChild(nameText);
         this.attachChild(inviteButton);
         scene.attachChild(this);    scene.registerTouchArea(inviteButton);
+        inviteButton.setEnabled(!thisIsMe);
+        if (thisIsMe) inviteButton.setAlpha(0.2f);
+        if (thisIsMe) this.setAlpha(0.2f);
         Log.i("PlayersField", "createScene");
     }
     public void onClick(ButtonSprite button){
         Log.i("PlayersField", "OnClick");
         if(button == inviteButton){
+            inviteButton.setColor(0.2f, 0.2f, 0.2f);
             String id = "";
             for(Player p: scene.getPlayers()) if(p.getId().equals(player.getId())) id = p.getId();
             scene.getServer().sendRequest(id);
