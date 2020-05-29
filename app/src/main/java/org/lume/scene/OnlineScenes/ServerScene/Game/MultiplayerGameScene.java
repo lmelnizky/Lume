@@ -64,6 +64,7 @@ public class MultiplayerGameScene extends BaseScene {
     public boolean lumeCanStone, grumeCanStone;
     public boolean bombing = false;
     public boolean bombLaid = false;
+    public boolean iLaidBomb = false;
     public boolean stoneLaid = false;
     public float sideLength;
     public float shootX1, shootX2, shootY1, shootY2;
@@ -273,9 +274,12 @@ public class MultiplayerGameScene extends BaseScene {
                         if (Math.abs(deltaX) > Math.abs(deltaY)) { //horizontal
                             if (deltaX > 0) { //left to right
                                 //movePlayer('R');
-                                if (bombLaid && lumeCanBomb) {
+                                if (bombLaid && lumeCanBomb && iLaidBomb) {
                                     System.out.println("lege bomb nach rechts");
-                                    if (xPosLocal < 3) multiplayer.getServer().emit(new PutBombCreator(multiplayer.getRoom(), (int) localPlayer.getCurrentPosition().x+1, (int) localPlayer.getCurrentPosition().y, localPlayer.getId()));
+                                    if (xPosLocal < 3) {
+                                        iLaidBomb = false;
+                                        multiplayer.getServer().emit(new PutBombCreator(multiplayer.getRoom(), (int) localPlayer.getCurrentPosition().x+1, (int) localPlayer.getCurrentPosition().y, localPlayer.getId()));
+                                    }
                                 } else {
                                     if (localPlayer.getCurrentPosition().x < 3 &&
                                             (localPlayer.getCurrentPosition().x + 1 != opponentPlayer.getCurrentPosition().x || localPlayer.getCurrentPosition().y != opponentPlayer.getCurrentPosition().y) &&
@@ -285,8 +289,11 @@ public class MultiplayerGameScene extends BaseScene {
                                 }
                             } else { //right to left
                                 //movePlayer('L');
-                                if (bombLaid && lumeCanBomb) {
-                                    if (xPosLocal > 1) multiplayer.getServer().emit(new PutBombCreator(multiplayer.getRoom(), (int) localPlayer.getCurrentPosition().x-1, (int) localPlayer.getCurrentPosition().y, localPlayer.getId()));
+                                if (bombLaid && lumeCanBomb && iLaidBomb) {
+                                    if (xPosLocal > 1) {
+                                        iLaidBomb = false;
+                                        multiplayer.getServer().emit(new PutBombCreator(multiplayer.getRoom(), (int) localPlayer.getCurrentPosition().x-1, (int) localPlayer.getCurrentPosition().y, localPlayer.getId()));
+                                    }
                                 } else {
                                     if (localPlayer.getCurrentPosition().x > 1 &&
                                             (localPlayer.getCurrentPosition().x - 1 != opponentPlayer.getCurrentPosition().x || localPlayer.getCurrentPosition().y != opponentPlayer.getCurrentPosition().y) &&
@@ -298,8 +305,11 @@ public class MultiplayerGameScene extends BaseScene {
                         } else { //vertical
                             if (deltaY > 0) { //up to down
                                 //movePlayer('U');
-                                if (bombLaid && lumeCanBomb) {
-                                    if (yPosLocal < 3) multiplayer.getServer().emit(new PutBombCreator(multiplayer.getRoom(), (int) localPlayer.getCurrentPosition().x, (int) localPlayer.getCurrentPosition().y+1, localPlayer.getId()));
+                                if (bombLaid && lumeCanBomb && iLaidBomb) {
+                                    if (yPosLocal < 3) {
+                                        iLaidBomb = false;
+                                        multiplayer.getServer().emit(new PutBombCreator(multiplayer.getRoom(), (int) localPlayer.getCurrentPosition().x, (int) localPlayer.getCurrentPosition().y+1, localPlayer.getId()));
+                                    }
                                 } else {
                                     if (localPlayer.getCurrentPosition().y < 3 &&
                                             (localPlayer.getCurrentPosition().x != opponentPlayer.getCurrentPosition().x || localPlayer.getCurrentPosition().y + 1 != opponentPlayer.getCurrentPosition().y) &&
@@ -309,8 +319,11 @@ public class MultiplayerGameScene extends BaseScene {
                                 }
                             } else { //down to up
                                 //movePlayer('D');
-                                if (bombLaid && lumeCanBomb) {
-                                    if (yPosLocal > 1) multiplayer.getServer().emit(new PutBombCreator(multiplayer.getRoom(), (int) localPlayer.getCurrentPosition().x, (int) localPlayer.getCurrentPosition().y-1, localPlayer.getId()));
+                                if (bombLaid && lumeCanBomb && iLaidBomb) {
+                                    if (yPosLocal > 1) {
+                                        iLaidBomb = false;
+                                        multiplayer.getServer().emit(new PutBombCreator(multiplayer.getRoom(), (int) localPlayer.getCurrentPosition().x, (int) localPlayer.getCurrentPosition().y-1, localPlayer.getId()));
+                                    }
                                 } else {
                                     if (localPlayer.getCurrentPosition().y > 1 &&
                                             (localPlayer.getCurrentPosition().x != opponentPlayer.getCurrentPosition().x || localPlayer.getCurrentPosition().y - 1 != opponentPlayer.getCurrentPosition().y) &&
@@ -328,6 +341,7 @@ public class MultiplayerGameScene extends BaseScene {
                         if (lumeCanBomb && !bombing && !bombLaid) {
                             System.out.println("Ich lege gerade eine Bombe!");
                             multiplayer.getServer().emit(new PutBombCreator(multiplayer.getRoom(),(int) localPlayer.getCurrentPosition().x,(int) localPlayer.getCurrentPosition().y, localPlayer.getId()));
+                            iLaidBomb = true;
                         }
                     }
 

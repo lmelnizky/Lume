@@ -12,6 +12,7 @@ import org.lume.engine.handler.timer.TimerHandler;
 import org.lume.entity.sprite.Sprite;
 import org.lume.manager.ResourcesManager;
 import org.lume.scene.OnlineScenes.ServerScene.Game.MultiplayerGameScene;
+import org.lume.scene.OnlineScenes.ServerScene.Player;
 
 public class PutBombCreator extends Creator {
 
@@ -33,8 +34,12 @@ public class PutBombCreator extends Creator {
     @Override
     public Sprite createSprite() {
         if (scene.bombLaid) { //put bomb on swipe
+            for(Player p: scene.getMultiplayer().getPlayers())
+                if(p.getId().equals(scene.localPlayer))
+                    scene.lumeCanBomb = false;
+                else
+                    scene.grumeCanBomb = false;
             scene.bombLaid = false;
-            scene.lumeCanBomb = false;
             scene.bombing = true;
             scene.bombSprite.setPosition(camera.getCenterX() - sideLength + ((xPosBomb - 1) * sideLength),
                     camera.getCenterY() - sideLength + ((yPosBomb - 1) * sideLength));
