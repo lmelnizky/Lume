@@ -1,5 +1,10 @@
 package org.lume.scene.OnlineScenes.ServerScene;
 
+<<<<<<< HEAD
+import org.lume.GameActivity;
+import org.lume.manager.ResourcesManager;
+=======
+>>>>>>> 34ed78e41b69ab65f93498dbc0ee735d28145294
 import org.lume.scene.OnlineScenes.ServerScene.Game.Creator.BallCreator;
 import org.lume.scene.OnlineScenes.ServerScene.Game.Creator.CannonCreator;
 import org.lume.scene.OnlineScenes.ServerScene.Game.Creator.CoinCreator;
@@ -48,6 +53,11 @@ public class Server {
     protected final String loseLife = "loseLife";
     protected final String loadStone = "putStone";
     protected final String loadBomb = "putBomb";
+<<<<<<< HEAD
+
+    private GameActivity activity = ResourcesManager.getInstance().activity;
+=======
+>>>>>>> 34ed78e41b69ab65f93498dbc0ee735d28145294
     //constructor
     public Server(GameActions gameActions, UserActions userActions, String username) {
         //initialize variables
@@ -119,6 +129,18 @@ public class Server {
     }
     //these are methods, which can called by the referee
     public void emit(Creator creator){
+<<<<<<< HEAD
+        System.out.println("In SERVER: emit()");
+        activity.runOnUiThread(() -> {
+    if(creator instanceof CoinCreator){ System.out.println("start sending"); socket.emit(loadCoin, creator.getJSON());System.out.println("done with sending");}
+    if(creator instanceof MoveCreator)  socket.emit(playerMoved, creator.getJSON());
+    if(creator instanceof BallCreator)  socket.emit(loadBall, creator.getJSON());
+    if(creator instanceof CannonCreator)socket.emit(loadCannon,creator.getJSON());
+    if(creator instanceof LoseLifeCreator)socket.emit(loseLife,creator.getJSON());
+    if(creator instanceof PutBombCreator)socket.emit(loadBomb,creator.getJSON());
+    if(creator instanceof PutStoneCreator)socket.emit(loadStone,creator.getJSON());
+            });
+=======
         if(creator instanceof CoinCreator)  socket.emit(loadCoin, creator.getJSON());
         if(creator instanceof MoveCreator)  socket.emit(playerMoved, creator.getJSON());
         if(creator instanceof BallCreator)  socket.emit(loadBall, creator.getJSON());
@@ -126,6 +148,7 @@ public class Server {
         if(creator instanceof LoseLifeCreator)socket.emit(loseLife,creator.getJSON());
         if(creator instanceof PutBombCreator)socket.emit(loadBomb,creator.getJSON());
         if(creator instanceof PutStoneCreator)socket.emit(loadStone,creator.getJSON());
+>>>>>>> 34ed78e41b69ab65f93498dbc0ee735d28145294
     }
     public void loseLifeEmit(String ID){
         try {socket.emit(loseLife, new JSONObject("{\"ID\":" + "\"" +  ID + "\"" + "}"));}

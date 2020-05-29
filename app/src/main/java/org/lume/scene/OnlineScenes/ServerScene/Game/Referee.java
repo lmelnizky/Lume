@@ -1,5 +1,10 @@
 package org.lume.scene.OnlineScenes.ServerScene.Game;
 
+<<<<<<< HEAD
+import android.util.Log;
+
+=======
+>>>>>>> 34ed78e41b69ab65f93498dbc0ee735d28145294
 import org.lume.engine.handler.IUpdateHandler;
 import org.lume.scene.OnlineScenes.ServerScene.Game.Creator.BallCreator;
 import org.lume.scene.OnlineScenes.ServerScene.Game.Creator.CoinCreator;
@@ -31,16 +36,26 @@ public class Referee {
 
     public void createStones() {
         long age;
+<<<<<<< HEAD
+        long interval = 5000;
+        age = (new Date()).getTime() - scene.stoneTime;
+        if (scene.firstStonesInLevel) interval = 3000;
+=======
         long interval = 4000;
         age = (new Date()).getTime() - scene.stoneTime;
         if (scene.firstStonesInLevel) interval = 4000;
+>>>>>>> 34ed78e41b69ab65f93498dbc0ee735d28145294
         if (age >= interval) {
 
             if (scene.firstStonesInLevel) scene.getMultiplayer().getServer().emit(createCoin()); //create first coin
             scene.firstStonesInLevel = false;
             scene.variant = scene.randomGenerator.nextInt(3) + 1;
+<<<<<<< HEAD
+            showStonesToScreen(scene.variant);
+=======
             //showStonesToScreen(scene.variant);
             //TODO test
+>>>>>>> 34ed78e41b69ab65f93498dbc0ee735d28145294
             scene.stoneTime = new Date().getTime();
         }
     }
@@ -104,15 +119,27 @@ public class Referee {
     }
 
     public CoinCreator createCoin() {
+<<<<<<< HEAD
+        Log.i("Referee", "Start createCoin()");
         boolean oasch = false;
         do {
+            oasch = false;
+            Log.i("Referee", "Try finding right pos, old values: " + String.valueOf(scene.xPosCoin) + ", " + String.valueOf(scene.yPosCoin));
+=======
+        boolean oasch = false;
+        do {
+>>>>>>> 34ed78e41b69ab65f93498dbc0ee735d28145294
             scene.xPosCoin = scene.randomGenerator.nextInt(3) + 1;
             scene.yPosCoin = scene.randomGenerator.nextInt(3) + 1;
             for (Player p : scene.getMultiplayer().getPlayers()) {
                 if (scene.xPosCoin == p.getCurrentPosition().x && scene.yPosCoin == p.getCurrentPosition().y) oasch = true;
             }
         } while (oasch);
+<<<<<<< HEAD
+        Log.i("Referee", "before return, new values: " + String.valueOf(scene.xPosCoin) + ", " + String.valueOf(scene.yPosCoin));
+=======
 
+>>>>>>> 34ed78e41b69ab65f93498dbc0ee735d28145294
         return new CoinCreator(scene.getMultiplayer().getRoom(),scene.xPosCoin, scene.yPosCoin);
     }
 }
