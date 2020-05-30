@@ -679,6 +679,11 @@ public class World0 extends BaseScene {
                 text4.detachSelf();
                 text4.dispose();
                 break;
+            case 5:
+                text5.setText("");
+                text5.detachSelf();
+                text5.dispose();
+                break;
         }
     }
 

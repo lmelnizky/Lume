@@ -86,7 +86,7 @@ public class ShopScene extends BaseScene {
             @Override
             public boolean onAreaTouched(final TouchEvent pSceneTouchEvent, final float pTouchAreaLocalX,
                                          final float pTouchAreaLocalY) {
-                if (pSceneTouchEvent.isActionDown()) {
+                if (pSceneTouchEvent.isActionDown() && activity.getCurrentPlayer()!= 0) {
                     activity.showCoinHint(0, 0, ShopScene.this);
                     return true;
                 } else {
@@ -100,8 +100,8 @@ public class ShopScene extends BaseScene {
             @Override
             public boolean onAreaTouched(final TouchEvent pSceneTouchEvent, final float pTouchAreaLocalX,
                                          final float pTouchAreaLocalY) {
-                if (pSceneTouchEvent.isActionDown()) {
-                    if (activity.getCurrentBeersos() >= 100) {
+                if (pSceneTouchEvent.isActionDown() && activity.getCurrentPlayer()!= 1) {
+                    if (activity.getCurrentBeersos() >= 100 || activity.isLamporghinaUnlocked()) {
                         activity.showCoinHint(1, 100, ShopScene.this);
                     } else {
                         activity.toastOnUiThread("Not enough coins, man!", 0);
@@ -118,8 +118,8 @@ public class ShopScene extends BaseScene {
             @Override
             public boolean onAreaTouched(final TouchEvent pSceneTouchEvent, final float pTouchAreaLocalX,
                                          final float pTouchAreaLocalY) {
-                if (pSceneTouchEvent.isActionDown()) {
-                    if (activity.getCurrentBeersos() >= 1000) {
+                if (pSceneTouchEvent.isActionDown() && activity.getCurrentPlayer()!= 2) {
+                    if (activity.getCurrentBeersos() >= 1000 || activity.isGrumeUnlocked()) {
                         activity.showCoinHint(2, 1000, ShopScene.this);
                     } else {
                         activity.toastOnUiThread("Not enough coins, man!");

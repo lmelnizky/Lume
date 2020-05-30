@@ -7,8 +7,8 @@ android {
         applicationId "org.lume"
         minSdkVersion 19
         targetSdkVersion 29
-        versionCode 17
-        versionName "2.7"
+        versionCode 18
+        versionName "2.8"
         multiDexEnabled true
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }

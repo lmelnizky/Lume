@@ -97,7 +97,7 @@ public class UploadUserScene extends BaseScene implements ButtonSprite.OnClickLi
                         usernameText.setText("Username:" + " (already used)");
                         activity.toastOnUiThread("This name already exists!", 0);
                     }
-                    if (username.length() > 19) {
+                    if (userNameInputText.getText().length() > 19) {
                         enabled = false;
                         usernameText.setText("Username:" + " (too long)");
                         activity.toastOnUiThread("This name has 20+ characters!", 0);

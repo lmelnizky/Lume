@@ -50,13 +50,7 @@ import java.io.IOException;
 import me.drakeet.support.toast.ToastCompat;
 
 public class GameActivity extends BaseGameActivity implements RewardedVideoAdListener {
-    /**
-     * UserScene Fuck you
-     * Winner text
-     * ResourcesManager bug in UsersScene
-     * delete me after usersScene
-     * Upload User after install
-     */
+
     private static final int REQUEST_ENABLE_BT = 7;
     private static final String GAME = "LUME";
     private static final String CURRENTWORLD = "CURRENTWORLD";
@@ -73,6 +67,8 @@ public class GameActivity extends BaseGameActivity implements RewardedVideoAdLis
     private static final String COINS = "COINS";
     private static final String HIGHSCORE = "HIGHSCORE";
     private static final String PLAYER = "PLAYER";
+    private static final String LAMPORGHINA_UNLOCKED = "LAMPORGHINA_UNLOCKED";
+    private static final String GRUME_UNLOCKED = "GRUME_UNLOCKED";
     private static final String IS_SLOWMO = "IS_SLOWMO";
 
     private BoundCamera camera;
@@ -280,8 +276,45 @@ public class GameActivity extends BaseGameActivity implements RewardedVideoAdLis
     }
 
     public void setPlayer(int player) {
+        switch (player) {
+            case 0:
+                //Lume is always unlocked
+                break;
+            case 1:
+                editor.putBoolean(LAMPORGHINA_UNLOCKED, true);
+                editor.commit();
+                break;
+            case 2:
+                editor.putBoolean(GRUME_UNLOCKED, true);
+                editor.commit();
+                break;
+        }
         editor.putInt(PLAYER, player);
         editor.commit();
+    }
+
+    public boolean isPlayerUnlocked(int player) {
+        boolean isUnlocked = false;
+        switch (player) {
+            case 0:
+                isUnlocked = true;
+                break;
+            case 1:
+                isUnlocked = pref.getBoolean(LAMPORGHINA_UNLOCKED, false);
+                 break;
+            case 2:
+                isUnlocked = pref.getBoolean(GRUME_UNLOCKED, false);
+                break;
+        }
+        return isUnlocked;
+    }
+
+    public boolean isLamporghinaUnlocked() {
+        return pref.getBoolean(LAMPORGHINA_UNLOCKED, false);
+    }
+
+    public boolean isGrumeUnlocked() {
+        return pref.getBoolean(GRUME_UNLOCKED, false);
     }
 
     public boolean isLoudVisible() {
@@ -658,8 +691,8 @@ public class GameActivity extends BaseGameActivity implements RewardedVideoAdLis
                 alert.setPositiveButton("Good deal!", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface arg0, int arg1) {
+                        if (!isPlayerUnlocked(player)) addBeersos(-coins);
                         setPlayer(player);
-                        addBeersos(-coins);
                         scene.updateChosenRect();
                     }
                 });
