@@ -441,11 +441,12 @@ public class SceneManager {
 
     public void loadOnlineUsersScene(final Engine mEngine) {
         ResourcesManager.getInstance().unloadCurrentScene(currentScene);
-        loadingScene = new LoadingScene();
+        loadingScene = new LoadingScene("connecting to server..");
         setScene(loadingScene);
+        ResourcesManager.getInstance().unloadCurrentScene(currentScene);
         ResourcesManager.getInstance().unloadMenuTextures();
         ResourcesManager.getInstance().loadOnlineUserResources();
-        mEngine.registerUpdateHandler(new TimerHandler(1f, new ITimerCallback() {
+        mEngine.registerUpdateHandler(new TimerHandler(4f, new ITimerCallback() {
             @Override
             public void onTimePassed(TimerHandler pTimerHandler) {
                 mEngine.unregisterUpdateHandler(pTimerHandler);
@@ -491,6 +492,7 @@ public class SceneManager {
     public void loadMenuScene(final Engine mEngine) {
         ResourcesManager.getInstance().unloadCurrentScene(currentScene);
         //currentScene.disposeScene();
+        loadingScene = new LoadingScene();
         setScene(loadingScene);
         ResourcesManager.getInstance().unloadCurrentScene(currentScene);
         ResourcesManager.getInstance().bluetoothSocket = null;

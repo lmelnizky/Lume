@@ -61,7 +61,7 @@ public class UploadUserScene extends BaseScene implements ButtonSprite.OnClickLi
         confirmButton.setSize(CAMERA_WIDTH/5,CAMERA_WIDTH/10);
         confirmButton.setEnabled(false);
         confirmButtonHelpText = new Text(confirmButton.getWidth()/2, confirmButton.getHeight()/2, ResourcesManager.getInstance().standardFont, "CONFIRM", vbom);
-        usernameText = new Text(CAMERA_WIDTH/4, CAMERA_HEIGHT/4*3, ResourcesManager.getInstance().standardFont, "Username: (already used)", vbom);
+        usernameText = new Text(CAMERA_WIDTH/4, CAMERA_HEIGHT/4*3, ResourcesManager.getInstance().standardFont, "Username: (already used)(too long)", vbom);
         usernameText.setText("Username:");
 
         confirmButton.attachChild(confirmButtonHelpText);
@@ -96,7 +96,13 @@ public class UploadUserScene extends BaseScene implements ButtonSprite.OnClickLi
                         enabled = false;
                         usernameText.setText("Username:" + " (already used)");
                         activity.toastOnUiThread("This name already exists!", 0);
-                    } else {
+                    }
+                    if (username.length() > 19) {
+                        enabled = false;
+                        usernameText.setText("Username:" + " (too long)");
+                        activity.toastOnUiThread("This name has 20+ characters!", 0);
+                    }
+                    else {
                         usernameText.setText("Username:");
                     }
                 }
