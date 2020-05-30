@@ -66,6 +66,8 @@ public class RequestPopUp extends Sprite{
         if(pButtonSprite == no){
             no.setColor(0.2f, 0.2f, 0.2f);
             scene.getServer().sendAnswer(false, requestFrom.getId(), room);
+            scene.detachChild(this);
+            this.dispose();
         }
     }
     public Player getRequestFrom() {return requestFrom;}

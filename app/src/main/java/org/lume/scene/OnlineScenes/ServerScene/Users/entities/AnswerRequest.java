@@ -1,7 +1,12 @@
 package org.lume.scene.OnlineScenes.ServerScene.Users.entities;
 
+import android.util.Log;
+import android.widget.Button;
+
 import org.lume.engine.handler.timer.ITimerCallback;
 import org.lume.engine.handler.timer.TimerHandler;
+import org.lume.entity.Entity;
+import org.lume.entity.sprite.ButtonSprite;
 import org.lume.entity.sprite.Sprite;
 import org.lume.entity.text.Text;
 import org.lume.manager.ResourcesManager;
@@ -20,6 +25,7 @@ public class AnswerRequest extends Sprite {
     private MultiplayerUsersScene scene = MultiplayerUsersScene.getInstance();
     private String room;
     private Player fromPlayer;
+    private ButtonSprite okayButtonSprite;
 
     public AnswerRequest(Player fromPLayer, boolean angenommen, String room) {
         super(CAMERA_WIDTH / 2, CAMERA_HEIGHT / 2, ResourcesManager.getInstance().inputtext_online_region, ResourcesManager.getInstance().vbom);
@@ -51,6 +57,28 @@ public class AnswerRequest extends Sprite {
                     scene.getServer().createGameRoom(list, room);
                 }
             }));
+        }
+        else{
+            okayButtonSprite = new ButtonSprite(CAMERA_WIDTH/2, CAMERA_HEIGHT/4, ResourcesManager.getInstance().inputtext_online_region, getVertexBufferObjectManager(), scene);
+            okayButtonSprite.setSize(CAMERA_WIDTH/8, CAMERA_HEIGHT/8);
+            Text helpOkayButtonText = new Text(okayButtonSprite.getWidth()/2, okayButtonSprite.getHeight()/2, ResourcesManager.getInstance().standardFont, "OKAY", getVertexBufferObjectManager());
+            okayButtonSprite.attachChild(helpOkayButtonText);
+            this.attachChild(okayButtonSprite);
+            scene.registerTouchArea(okayButtonSprite);
+            Log.i("AnswerRequest", "registered okayButtonSprite");
+        }
+    }
+    public void onClick(ButtonSprite bs){
+        Log.i("AnswerRequest", "OnClick");
+        if(bs == okayButtonSprite){
+            Log.i("AnswerRequeat", "Clicked on OkayButton");
+            scene.unregisterTouchArea(okayButtonSprite);
+            scene.detachChild(this);
+            this.dispose();
+            for(Entity e : scene.getPlayerEntities())
+                if(e instanceof PlayersField)
+                    if(((PlayersField) e).getPlayer().getId().equals(fromPlayer.getId()))
+                        ((PlayersField) e).getInviteButton().setVisible(true);
         }
     }
 }

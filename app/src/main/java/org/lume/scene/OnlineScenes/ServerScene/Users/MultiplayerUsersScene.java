@@ -15,6 +15,7 @@ import org.lume.manager.SceneType;
 import org.lume.scene.OnlineScenes.ServerScene.Game.LumeGameActions;
 import org.lume.scene.OnlineScenes.ServerScene.Player;
 import org.lume.scene.OnlineScenes.ServerScene.Server;
+import org.lume.scene.OnlineScenes.ServerScene.Users.entities.AnswerRequest;
 import org.lume.scene.OnlineScenes.ServerScene.Users.entities.PlayersField;
 import org.lume.scene.OnlineScenes.ServerScene.Users.entities.RequestPopUp;
 import org.lume.util.adt.color.Color;
@@ -138,8 +139,9 @@ public class MultiplayerUsersScene extends BaseScene implements ButtonSprite.OnC
 
     @Override
     public void onClick(ButtonSprite pButtonSprite, float pTouchAreaLocalX, float pTouchAreaLocalY) {
-        Log.i("OnClick","OnClick");
+        Log.i("MultiplayerUsersScene","OnClick");
         if(pButtonSprite.getParent() instanceof RequestPopUp) ((RequestPopUp) pButtonSprite.getParent()).onClick(pButtonSprite, pTouchAreaLocalX, pTouchAreaLocalY);
         if(pButtonSprite.getParent() instanceof PlayersField) ((PlayersField) pButtonSprite.getParent()).onClick(pButtonSprite);
+        if(pButtonSprite.getParent() instanceof AnswerRequest) ((AnswerRequest) pButtonSprite.getParent()).onClick(pButtonSprite);
     }
 }

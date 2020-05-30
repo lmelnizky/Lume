@@ -46,7 +46,7 @@ public class PlayersField extends Sprite {
     public void onClick(ButtonSprite button){
         Log.i("PlayersField", "OnClick");
         if(button == inviteButton){
-            inviteButton.setColor(0.2f, 0.2f, 0.2f);
+            inviteButton.setVisible(false);
             String id = "";
             for(Player p: scene.getPlayers()) if(p.getId().equals(player.getId())) id = p.getId();
             scene.getServer().sendRequest(id);
@@ -55,4 +55,5 @@ public class PlayersField extends Sprite {
     }
 
     public Player getPlayer() {return player;}
+    public Sprite getInviteButton(){return inviteButton;}
 }
