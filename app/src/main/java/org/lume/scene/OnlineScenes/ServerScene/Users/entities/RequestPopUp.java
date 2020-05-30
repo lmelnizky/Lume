@@ -50,7 +50,6 @@ public class RequestPopUp extends Sprite{
     }
     public void onClick(ButtonSprite pButtonSprite, float pTouchAreaLocalX, float pTouchAreaLocalY) {
         if(pButtonSprite == yes){
-            scene.getServer().deleteMe();
             yes.setColor(0.2f, 0.2f, 0.2f);
             questionText.setText("Game starts soon");
             LinkedList<Player> players = new LinkedList();

@@ -41,7 +41,6 @@ public class AnswerRequest extends Sprite {
         this.attachChild(text);
         scene.attachChild(this);
         if (angenommen) {
-            scene.getServer().deleteMe();
             LinkedList<Player> players = new LinkedList();
             for (Player p : scene.getPlayers())
                 if (p.getId().equals(fromPLayer.getId())) players.add(p);
