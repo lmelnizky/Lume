@@ -444,10 +444,10 @@ public class SceneManager {
         loadingScene = new LoadingScene();
         setScene(loadingScene);
         ResourcesManager.getInstance().unloadMenuTextures();
+        ResourcesManager.getInstance().loadOnlineUserResources();
         mEngine.registerUpdateHandler(new TimerHandler(1f, new ITimerCallback() {
             @Override
             public void onTimePassed(TimerHandler pTimerHandler) {
-                ResourcesManager.getInstance().loadOnlineUserResources();
                 mEngine.unregisterUpdateHandler(pTimerHandler);
                 onlineUsersScene = MultiplayerUsersScene.getInstance();
                 setScene(onlineUsersScene);
