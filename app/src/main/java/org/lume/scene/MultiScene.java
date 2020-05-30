@@ -25,7 +25,6 @@ import org.lume.entity.scene.background.SpriteBackground;
 import org.lume.entity.sprite.Sprite;
 import org.lume.entity.text.AutoWrap;
 import org.lume.entity.text.Text;
-import org.lume.entity.text.TextOptions;
 import org.lume.entity.text.TickerText;
 import org.lume.extension.physics.box2d.FixedStepPhysicsWorld;
 import org.lume.extension.physics.box2d.PhysicsConnector;
@@ -79,6 +78,7 @@ public class MultiScene extends BaseScene {
     private int lumeLives = 3;
     private int grumeLives = 3;
     private int coinsTotal = 0;
+    private int variant = 1;
 
     private int sideLength;
     private int xPosLume, yPosLume;
@@ -87,9 +87,12 @@ public class MultiScene extends BaseScene {
     private int xPosBomb, yPosBomb;
 
     private long[] stoneTimes;
+    private long stoneTime;
 
     private float shootX1, shootX2, shootY1, shootY2;
     private float swipeX1, swipeX2, swipeY1, swipeY2;
+
+    private float ratio = resourcesManager.screenRatio;
 
     private Random randomGenerator;
 
@@ -193,6 +196,7 @@ public class MultiScene extends BaseScene {
         gameOverDisplayed = false;
         lumeLives = 3;
         grumeLives = 3;
+        stoneTime = new Date().getTime();
     }
 
     private void createKimmelnitz() {
@@ -1030,29 +1034,53 @@ public class MultiScene extends BaseScene {
         boolean thorny = true; //else cannonball
         float randomNumber = randomGenerator.nextFloat();
         float randomThornyNumber = randomGenerator.nextFloat();
-        double probabilityStone = 0.6;
+        double probabilityCannon = 0.3;
         int direction = randomGenerator.nextInt(4) + 1;
         int randomRow = randomGenerator.nextInt(3) + 1; //values 0 to 2
-        long[] age = new long[4]; //is used to prevent screen from showing too many stones
-        long interval = (long) 7000;
+        //long[] age = new long[4]; //is used to prevent screen from showing too many stones
+        long interval = (long) 5000;
+        if (coinsTotal > 10) interval = 4500;
         if (firstStonesInLevel) interval = 1500;
-        age[direction - 1] = (new Date()).getTime() - stoneTimes[direction - 1];
-        if (age[direction - 1] >= interval) {
+        long age = new Date().getTime() - stoneTime;
+        //age[direction - 1] = (new Date()).getTime() - stoneTimes[direction - 1];
+        if (age >= interval) {
             if (firstStonesInLevel) createCoin();
             firstStonesInLevel = false;
-            if (randomThornyNumber < 0.15f) thorny = false;
-            this.showStonesToScreen(direction, randomRow, thorny);
-            if (randomNumber < probabilityStone && coinsTotal > 10) {
-                int secondStone = (randomRow%3) + 1;
-                if (coinsTotal > 30) this.showStonesToScreen(direction, secondStone, thorny);
-                if (randomNumber < 0.2 || coinsTotal > 30) secondStone = (secondStone%3) + 1;
-                this.showStonesToScreen(direction, secondStone, thorny);
-            }
-            stoneTimes[direction - 1] = new Date().getTime();
+            variant = randomGenerator.nextInt(3) + 1;
+            boolean isCannon = randomNumber<probabilityCannon;
+            this.showStones(variant, isCannon);
+            //this.addBall(direction, 0, thorny);
+            //if (randomThornyNumber < 0.15f) thorny = false;
+            stoneTime = new Date().getTime();
         }
     }
 
-    private void showStonesToScreen(int direction, int randomRow, final boolean thorny) {
+    private void showStones(int variant, boolean addCannonball) {
+        int randomDir1 = randomGenerator.nextInt(4) + 1;
+        int randomDir2 = randomDir1+1;
+        if (randomDir2 > 4) randomDir2 = 1;
+        int dir1Opp = (randomDir1 <= 2) ? randomDir1+2 : randomDir1-2;
+        int dir2Opp = (randomDir2 <= 2) ? randomDir2+2 : randomDir2-2;
+        int pos0or2_1 = randomGenerator.nextInt(2)*2;
+        int pos0or2_2 = randomGenerator.nextInt(2)*2;
+
+        switch (variant) {
+            case 1://cross
+                addBall(randomDir1, 1, true);
+                addBall(dir1Opp, 1, true);
+                addBall(randomDir2, 1, true);
+                addBall(dir2Opp, 1, true);
+                break;
+            case 2://T
+
+                break;
+            case 3://L
+
+                break;
+        }
+    }
+
+    private void addBall(int direction, int position, final boolean thorny) {
         final FixtureDef FIXTURE_DEF = PhysicsFactory.createFixtureDef(0, 0.01f, 0.5f);
         final Sprite stone;
         Ball ball;
@@ -1066,23 +1094,23 @@ public class MultiScene extends BaseScene {
 
         switch (direction) {
             case 1:
-                x = camera.getCenterX()-sideLength + ((randomRow-1)*sideLength);
+                x = camera.getCenterX()-sideLength + ((position-1)*sideLength);
                 y = camera.getHeight() + sideLength/2;
                 yVel = -speed;
                 break;
             case 2:
                 x = camera.getWidth() + sideLength/2;
-                y = camera.getCenterY()-sideLength + ((randomRow-1)*sideLength);
+                y = camera.getCenterY()-sideLength + ((position-1)*sideLength);
                 xVel = -speed;
                 break;
             case 3:
-                x = camera.getCenterX()-sideLength + ((randomRow-1)*sideLength);
+                x = camera.getCenterX()-sideLength + ((position-1)*sideLength);
                 y = -sideLength/2;
                 yVel = speed;
                 break;
             case 4:
                 x = -sideLength/2;
-                y = camera.getCenterY()-sideLength + ((randomRow-1)*sideLength);
+                y = camera.getCenterY()-sideLength + ((position-1)*sideLength);
                 xVel = speed;
                 break;
         }
@@ -1119,7 +1147,7 @@ public class MultiScene extends BaseScene {
         secondLayer.attachChild(stone);
 
         //animate cannon
-        animateCannon(direction, randomRow-1);
+        animateCannon(direction, position-1);
 
         final Body body = PhysicsFactory.createCircleBody(physicsWorld, stone, BodyDef.BodyType.KinematicBody, FIXTURE_DEF);
         if (thorny) {

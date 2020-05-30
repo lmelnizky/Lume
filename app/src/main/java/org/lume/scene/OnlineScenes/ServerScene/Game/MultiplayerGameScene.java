@@ -728,6 +728,7 @@ public class MultiplayerGameScene extends BaseScene {
         lumeStone03 = new Sprite(camera.getCenterX()-sideLength*4, camera.getHeight() - sideLength/2,
                 sideLength*3/4, sideLength*3/4, resourcesManager.stone_03_region, vbom);
         gameHUD.attachChild(lumeStone03);
+        lumeStone03.setVisible(false);
 
         lumeStone13 = new Sprite(camera.getCenterX()-sideLength*4, camera.getHeight() - sideLength/2,
                 sideLength*3/4, sideLength*3/4, resourcesManager.stone_13_region, vbom);
@@ -747,6 +748,7 @@ public class MultiplayerGameScene extends BaseScene {
         grumeStone03 = new Sprite(camera.getCenterX() + sideLength*4, camera.getHeight() - sideLength/2,
                 sideLength*3/4, sideLength*3/4, resourcesManager.stone_03_region, vbom);
         gameHUD.attachChild(grumeStone03);
+        grumeStone03.setVisible(false);
 
         grumeStone13 = new Sprite(camera.getCenterX()+sideLength*4, camera.getHeight() - sideLength/2,
                 sideLength*3/4, sideLength*3/4, resourcesManager.stone_13_region, vbom);
