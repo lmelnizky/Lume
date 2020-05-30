@@ -117,7 +117,7 @@ public class MainMenuScene extends BaseScene implements IOnMenuItemClickListener
 
     @Override
     public void disposeScene() {
-        // TODO Auto-generated method stub
+
     }
 
     public boolean onMenuItemClicked(MenuScene pMenuScene, IMenuItem pMenuItem, float pMenuItemLocalX, float pMenuItemLocalY) {
@@ -457,9 +457,11 @@ public class MainMenuScene extends BaseScene implements IOnMenuItemClickListener
 
     public void updateCoinText() {
         if (coinText != null) coinText.setText("C: " + String.valueOf(activity.getCurrentBeersos()));
+        if (coinText != null) coinText.setPosition(20+coinText.getWidth()/2, coinText.getY());
     }
     public void updateHSText() {
         if (hsText != null) hsText.setText("HS: " + String.valueOf(activity.getCurrentHighscore()));
+        if (hsText != null) hsText.setPosition(20+worldText.getWidth()+sideLength/2+hsText.getWidth()/2, hsText.getY());
     }
 
     private void createMenuChildScene() {
