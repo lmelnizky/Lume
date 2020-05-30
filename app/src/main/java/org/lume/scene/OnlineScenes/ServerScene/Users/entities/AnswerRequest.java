@@ -57,8 +57,7 @@ public class AnswerRequest extends Sprite {
                     scene.getServer().createGameRoom(list, room);
                 }
             }));
-        }
-        else{
+        } else {
             okayButtonSprite = new ButtonSprite(CAMERA_WIDTH/2, CAMERA_HEIGHT/4, ResourcesManager.getInstance().inputtext_online_region, getVertexBufferObjectManager(), scene);
             okayButtonSprite.setSize(CAMERA_WIDTH/8, CAMERA_HEIGHT/8);
             Text helpOkayButtonText = new Text(okayButtonSprite.getWidth()/2, okayButtonSprite.getHeight()/2, ResourcesManager.getInstance().standardFont, "OKAY", getVertexBufferObjectManager());
@@ -76,9 +75,11 @@ public class AnswerRequest extends Sprite {
             scene.detachChild(this);
             this.dispose();
             for(Entity e : scene.getPlayerEntities())
-                if(e instanceof PlayersField)
-                    if(((PlayersField) e).getPlayer().getId().equals(fromPlayer.getId()))
+                if (e instanceof PlayersField) {
+                    ((PlayersField) e).getInviteButton().setEnabled(true);
+                    if (((PlayersField) e).getPlayer().getId().equals(fromPlayer.getId()))
                         ((PlayersField) e).getInviteButton().setVisible(true);
+                }
         }
     }
 }

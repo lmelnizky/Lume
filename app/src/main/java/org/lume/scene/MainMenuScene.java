@@ -228,7 +228,13 @@ public class MainMenuScene extends BaseScene implements IOnMenuItemClickListener
                 SceneManager.getInstance().loadSkillMenuScene(engine);
                 return true;
             case MENU_ONLINE_MULTI:
-                SceneManager.getInstance().loadOnlineUsersScene(engine);
+                if (!activity.isNameOnline()) {
+                    UploadUserScene uus = new UploadUserScene();
+                    uus.registerParentScene(this);
+                    this.setChildScene(uus);
+                } else {
+                    SceneManager.getInstance().loadOnlineUsersScene(engine);
+                }
                 //activity.toastOnUiThread("Available soon!", 0);
                 return true;
             default:

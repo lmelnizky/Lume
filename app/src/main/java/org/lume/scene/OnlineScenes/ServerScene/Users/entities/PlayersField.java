@@ -38,14 +38,17 @@ public class PlayersField extends Sprite {
         this.attachChild(nameText);
         this.attachChild(inviteButton);
         scene.attachChild(this);    scene.registerTouchArea(inviteButton);
-        inviteButton.setEnabled(!thisIsMe);
-        if (thisIsMe) inviteButton.setAlpha(0.2f);
-        if (thisIsMe) this.setAlpha(0.2f);
+        inviteButton.setVisible(!thisIsMe);
+        if (thisIsMe) {
+            inviteButton.setAlpha(0.2f);
+            this.setAlpha(0.2f);
+        }
         Log.i("PlayersField", "createScene");
     }
     public void onClick(ButtonSprite button){
         Log.i("PlayersField", "OnClick");
         if(button == inviteButton){
+            inviteButton.setEnabled(false);
             inviteButton.setVisible(false);
             String id = "";
             for(Player p: scene.getPlayers()) if(p.getId().equals(player.getId())) id = p.getId();
@@ -55,5 +58,5 @@ public class PlayersField extends Sprite {
     }
 
     public Player getPlayer() {return player;}
-    public Sprite getInviteButton(){return inviteButton;}
+    public ButtonSprite getInviteButton(){return inviteButton;}
 }
