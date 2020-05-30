@@ -117,10 +117,12 @@ public class MultiScene extends BaseScene {
     private Sprite[] cannonN, cannonE, cannonS, cannonW;
     private Sprite[] cannonNS, cannonES, cannonSS, cannonWS;
     private Sprite[] cannonNU, cannonEU, cannonSU, cannonWU;
+    private Sprite finishSprite;
     private ArrayList<Sprite> crackyStones, crackyStonesToRemove, cannonBallsToRemove;
     private ArrayList<Sprite> stones, stonesToRemove;
 
     private Rectangle shootLeft, swipeRight;
+    private Scene gameOverScene;
 
     private HUD gameHUD;
     private Text lumeScoreText, myLivesText, timeText, grumeScoreText, opponentLivesText;
@@ -1032,14 +1034,13 @@ public class MultiScene extends BaseScene {
 
     private void createStones() {
         boolean thorny = true; //else cannonball
-        float randomNumber = randomGenerator.nextFloat();
-        float randomThornyNumber = randomGenerator.nextFloat();
-        double probabilityCannon = 0.3;
-        int direction = randomGenerator.nextInt(4) + 1;
-        int randomRow = randomGenerator.nextInt(3) + 1; //values 0 to 2
+        float randomNumber;
+        float probabilityCannon = 0.25f;
         //long[] age = new long[4]; //is used to prevent screen from showing too many stones
-        long interval = (long) 5000;
-        if (coinsTotal > 10) interval = 4500;
+        long interval = (long) 7000; //set minimum
+        if (coinsTotal > 10) interval = 5500;
+        long addToIntMin = randomGenerator.nextInt(3000);
+        interval += (long) addToIntMin; //sthing between 5000 and 8000
         if (firstStonesInLevel) interval = 1500;
         long age = new Date().getTime() - stoneTime;
         //age[direction - 1] = (new Date()).getTime() - stoneTimes[direction - 1];
@@ -1047,6 +1048,7 @@ public class MultiScene extends BaseScene {
             if (firstStonesInLevel) createCoin();
             firstStonesInLevel = false;
             variant = randomGenerator.nextInt(3) + 1;
+            randomNumber = randomGenerator.nextFloat();
             boolean isCannon = randomNumber<probabilityCannon;
             this.showStones(variant, isCannon);
             //this.addBall(direction, 0, thorny);
@@ -1070,17 +1072,29 @@ public class MultiScene extends BaseScene {
                 addBall(dir1Opp, 1, true);
                 addBall(randomDir2, 1, true);
                 addBall(dir2Opp, 1, true);
+
+                if (addCannonball) addBall(randomDir1, pos0or2_1, false);
                 break;
             case 2://T
+                addBall(randomDir1, pos0or2_1, true);
+                addBall(dir1Opp, pos0or2_1, true);
+                addBall(randomDir2, 1, true);
+                addBall(dir2Opp, 1, true);
 
+                if (addCannonball) addBall(randomDir2, pos0or2_1, false);
                 break;
             case 3://L
+                addBall(randomDir1, pos0or2_1, true);
+                addBall(dir1Opp, pos0or2_1, true);
+                addBall(randomDir2, pos0or2_2, true);
+                addBall(dir2Opp, pos0or2_2, true);
 
+                if (addCannonball) addBall(randomDir1, 1, false);
                 break;
         }
     }
 
-    private void addBall(int direction, int position, final boolean thorny) {
+    private void addBall(int direction, int position, final boolean thorny) { //thorny = false means cannonball
         final FixtureDef FIXTURE_DEF = PhysicsFactory.createFixtureDef(0, 0.01f, 0.5f);
         final Sprite stone;
         Ball ball;
@@ -1090,27 +1104,29 @@ public class MultiScene extends BaseScene {
         float y = 0;
         float xVel = 0;
         float yVel = 0;
-        float speed = (coinsTotal > 10) ? camera.getWidth()/370 : camera.getWidth()/500;
+        float speed = sideLength/15;
+        boolean horizontal = direction%2 == 0;
+        speed *= (horizontal) ? ratio*0.8f : 0.8f;
 
         switch (direction) {
             case 1:
-                x = camera.getCenterX()-sideLength + ((position-1)*sideLength);
+                x = camera.getCenterX()-sideLength + ((position)*sideLength);
                 y = camera.getHeight() + sideLength/2;
                 yVel = -speed;
                 break;
             case 2:
                 x = camera.getWidth() + sideLength/2;
-                y = camera.getCenterY()-sideLength + ((position-1)*sideLength);
+                y = camera.getCenterY()-sideLength + ((position)*sideLength);
                 xVel = -speed;
                 break;
             case 3:
-                x = camera.getCenterX()-sideLength + ((position-1)*sideLength);
+                x = camera.getCenterX()-sideLength + ((position)*sideLength);
                 y = -sideLength/2;
                 yVel = speed;
                 break;
             case 4:
                 x = -sideLength/2;
-                y = camera.getCenterY()-sideLength + ((position-1)*sideLength);
+                y = camera.getCenterY()-sideLength + ((position)*sideLength);
                 xVel = speed;
                 break;
         }
@@ -1147,7 +1163,7 @@ public class MultiScene extends BaseScene {
         secondLayer.attachChild(stone);
 
         //animate cannon
-        animateCannon(direction, position-1);
+        animateCannon(direction, position);
 
         final Body body = PhysicsFactory.createCircleBody(physicsWorld, stone, BodyDef.BodyType.KinematicBody, FIXTURE_DEF);
         if (thorny) {
@@ -1303,7 +1319,7 @@ public class MultiScene extends BaseScene {
         //removeItems();
         halvesLayer.detachChildren();
 
-        final Scene gameOverScene = new CameraScene(camera);
+        gameOverScene = new CameraScene(camera);
         gameOverScene.setBackgroundEnabled(false);
 
         ResourcesManager.getInstance().backgroundMusic.stop();
@@ -1400,17 +1416,17 @@ public class MultiScene extends BaseScene {
 //        deleteLayers();
 
         gameOverText = new Text(camera.getCenterX(), camera.getCenterY()+2*sideLength, resourcesManager.bigFont, "Game Over!", vbom) {
-            public boolean onAreaTouched(TouchEvent touchEvent, float x, float y) {
-                if (touchEvent.isActionDown()) {
-                    clearChildScene();
-                    setIgnoreUpdate(false);
-                    gameOverDisplayed = false;
-                    registerUpdateHandler(physicsWorld);
-                    disposeHUD();
-                    SceneManager.getInstance().loadMenuScene(engine);
-                }
-                return true;
-            }
+//            public boolean onAreaTouched(TouchEvent touchEvent, float x, float y) {
+//                if (touchEvent.isActionDown()) {
+//                    clearChildScene();
+//                    setIgnoreUpdate(false);
+//                    gameOverDisplayed = false;
+//                    registerUpdateHandler(physicsWorld);
+//                    disposeHUD();
+//                    SceneManager.getInstance().loadMenuScene(engine);
+//                }
+//                return true;
+//            }
         };
         gameOverText.setColor(Color.RED);
 //        revengeText = new Text(revengeX, revengeY, resourcesManager.smallFont, "Revenge!", vbom) {
@@ -1440,6 +1456,7 @@ public class MultiScene extends BaseScene {
         gameOverScene.attachChild(luserText);
         gameOverScene.attachChild(luserSprite);
         gameOverScene.attachChild(fingerSprite);
+        displayGameOverButton();
 
         //stop things
         unregisterUpdateHandler(physicsWorld);
@@ -1454,5 +1471,31 @@ public class MultiScene extends BaseScene {
 
             }
         }));
+    }
+
+    private void displayGameOverButton() {
+        //add finish Sprite
+        finishSprite = new Sprite(camera.getCenterX(),
+                camera.getHeight()*2/9, sideLength, sideLength,
+                ResourcesManager.getInstance().finish_region, vbom) {
+            @Override
+            public boolean onAreaTouched(final TouchEvent pSceneTouchEvent, final float pTouchAreaLocalX,
+                                         final float pTouchAreaLocalY) {
+                if (pSceneTouchEvent.isActionDown()) {
+                    //clear child scenes - game will be resumed
+                    clearChildScene();
+                    setIgnoreUpdate(false);
+                    gameOverDisplayed = false;
+                    registerUpdateHandler(physicsWorld);
+                    disposeHUD();
+                    SceneManager.getInstance().loadMenuScene(engine);
+                    return true;
+                } else {
+                    return false;
+                }
+            }
+        };
+        gameOverScene.registerTouchArea(finishSprite);
+        gameOverScene.attachChild(finishSprite);
     }
 }
