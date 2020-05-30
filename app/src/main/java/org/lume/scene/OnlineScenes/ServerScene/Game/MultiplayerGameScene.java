@@ -918,6 +918,7 @@ public class MultiplayerGameScene extends BaseScene {
     }
 
     public void displayGameOverScene(boolean winner) {
+        multiplayer.getServer().deleteMe();
         gameOverDisplayed = true;
 
         gameOverScene = new CameraScene(camera);
