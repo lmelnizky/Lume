@@ -956,7 +956,7 @@ public class MultiplayerGameScene extends BaseScene {
                 //stop things
                 //unregisterUpdateHandler(physicsWorld);
                 setIgnoreUpdate(true);
-                luserSprite.setVisible(true);
+                if (luserSprite != null) luserSprite.setVisible(true);
                 //setChildScene(gameOverScene, false, true, true); //set gameOverScene as a child scene - so game will be paused
                 ResourcesManager.getInstance().activity.showLevelHint();
             }
