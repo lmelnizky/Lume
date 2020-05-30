@@ -4,6 +4,7 @@ import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
 import android.graphics.Color;
 import android.graphics.Typeface;
+import android.util.Log;
 
 import org.lume.GameActivity;
 import org.lume.audio.music.Music;
@@ -307,13 +308,15 @@ public class ResourcesManager {
 
     public void loadOnlineUserResources() {
         if (onlineUserTextureAtlas == null) {
+            Log.i("ResourcesManager", "onlineAtlas is null, start loading");
             BitmapTextureAtlasTextureRegionFactory.setAssetBasePath("gfx/menu/");
             onlineUserTextureAtlas = new BuildableBitmapTextureAtlas(activity.getTextureManager(), 2048, 2048, TextureOptions.BILINEAR);
-            inputtext_online_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(onlineUserTextureAtlas, activity, "inputtext.png");
+            inputtext_online_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(onlineUserTextureAtlas, activity, "playerfield.png");
             online_background_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(onlineUserTextureAtlas, activity, "online_back.png");
             try {
                 this.onlineUserTextureAtlas.build(new BlackPawnTextureAtlasBuilder<IBitmapTextureAtlasSource, BitmapTextureAtlas>(0, 1, 0));
                 this.onlineUserTextureAtlas.load();
+                Log.i("ResourcesManagger", "start loading");
             } catch (final ITextureAtlasBuilder.TextureAtlasBuilderException e) {
                 Debug.e(e);
             }
@@ -321,6 +324,7 @@ public class ResourcesManager {
     }
 
     public void unloadOnlineUserResources() {
+        Log.i("ResourcesManager", "unloadOnlineUserRes");
         if (onlineUserTextureAtlas != null) onlineUserTextureAtlas.unload();
         if (onlineUserTextureAtlas != null) onlineUserTextureAtlas.clearTextureAtlasSources();
         onlineUserTextureAtlas = null;

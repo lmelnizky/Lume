@@ -124,6 +124,7 @@ public class MultiplayerUsersScene extends BaseScene implements ButtonSprite.OnC
 
     @Override
     public void disposeScene() {
+        Log.i("MultiplayerUserScene", "disposeScene");
         this.detachSelf();
         this.dispose();
         if (INSTANCE != null) INSTANCE = null;
