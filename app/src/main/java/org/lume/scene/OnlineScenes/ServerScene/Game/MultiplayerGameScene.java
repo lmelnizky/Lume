@@ -917,7 +917,7 @@ public class MultiplayerGameScene extends BaseScene {
         }
     }
 
-    public void displayGameOverScene() {
+    public void displayGameOverScene(boolean winner) {
         gameOverDisplayed = true;
 
         gameOverScene = new CameraScene(camera);
@@ -929,19 +929,24 @@ public class MultiplayerGameScene extends BaseScene {
 
         float textY = (yPosLocal == 2) ? camera.getCenterY() + sideLength : camera.getCenterY();
         gameOverText = new Text(camera.getCenterX(), textY,
-                resourcesManager.smallFont, "L u s e r !", vbom);
+                resourcesManager.smallFont, "L u s e r ! W i n n e r !", vbom);
+        if (winner) {
+            gameOverText.setText("W i n n e r !");
+            gameOverText.setColor(Color.GREEN);
+        } else {
+            gameOverText.setText("L u s e r !");
+            gameOverText.setColor(Color.RED);
 
-
-        luserSprite = new Sprite(lumeSprite.getX()-lumeSprite.getWidth()*4/10,
-                lumeSprite.getY() + lumeSprite.getHeight()*5/10,
-                lumeSprite.getWidth(), lumeSprite.getWidth(),
-                ResourcesManager.getInstance().finger_luser, vbom);
-        secondLayer.attachChild(luserSprite);
-        luserSprite.setVisible(false);
+            luserSprite = new Sprite(lumeSprite.getX()-lumeSprite.getWidth()*4/10,
+                    lumeSprite.getY() + lumeSprite.getHeight()*5/10,
+                    lumeSprite.getWidth(), lumeSprite.getWidth(),
+                    ResourcesManager.getInstance().finger_luser, vbom);
+            secondLayer.attachChild(luserSprite);
+            luserSprite.setVisible(false);
+        }
 
         displayGameOverButtons();
 
-        gameOverText.setColor(Color.RED);
         gameOverScene.registerTouchArea(gameOverText);
         gameOverScene.attachChild(gameOverText);
 
@@ -1045,7 +1050,7 @@ public class MultiplayerGameScene extends BaseScene {
 //                lumeHeart3.detachSelf();
 //                lumeHeart3.dispose();
                 lumeHeart3.setVisible(false);
-                displayGameOverScene();
+                displayGameOverScene(false);
             } else if (lumeLives == 1){ //lume has one life left
                 lumeIndestructible = true;
                 lumeSprite.setAlpha(0.3f);
@@ -1080,7 +1085,7 @@ public class MultiplayerGameScene extends BaseScene {
 //                grumeHeart3.detachSelf();
 //                grumeHeart3.dispose();
                 grumeHeart3.setVisible(false);
-                displayGameOverScene();
+                displayGameOverScene(true);
             } else if (grumeLives == 1){ //lume has one life left
                 grumeIndestructible = true;
                 grumeSprite.setAlpha(0.3f);
