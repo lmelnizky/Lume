@@ -145,9 +145,10 @@ public class Server {
     }
     public void addMe(){
         socket.emit("addMe");
+        System.out.println("ADD ME");
     }
     public void deleteMe(){
-        socket.emit("deleteMe");
+        socket.emit("deleteMe", userName);
     }
     //getter
     public String getOnlineServerUrl() {return onlineServerUrl;}
