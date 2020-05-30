@@ -50,7 +50,13 @@ import java.io.IOException;
 import me.drakeet.support.toast.ToastCompat;
 
 public class GameActivity extends BaseGameActivity implements RewardedVideoAdListener {
-
+    /**
+     * UserScene Fuck you
+     * Winner text
+     * ResourcesManager bug in UsersScene
+     * delete me after usersScene
+     * Upload User after install
+     */
     private static final int REQUEST_ENABLE_BT = 7;
     private static final String GAME = "LUME";
     private static final String CURRENTWORLD = "CURRENTWORLD";
