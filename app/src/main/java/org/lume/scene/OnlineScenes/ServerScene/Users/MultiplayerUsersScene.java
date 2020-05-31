@@ -44,14 +44,19 @@ public class MultiplayerUsersScene extends BaseScene implements ButtonSprite.OnC
     //static methods
     public static MultiplayerUsersScene getInstance(){
         if(INSTANCE == null) {
-            Log.i("MultiplayerUsersScene", "Make new instance");
-            INSTANCE = new MultiplayerUsersScene();
-            INSTANCE.create();
+            throw new RuntimeException("Call createInstance before getInstance!");
         }
         return INSTANCE;
     }
+    public static void createInstance(){
+        Log.i("MultiplayerUsersScene", "Make new instance");
+        INSTANCE = new MultiplayerUsersScene();
+        INSTANCE.create();
+        ((LumeUserActions)INSTANCE.server.getUserActions()).setListen(true);
+    }
     public static void destroyInstance() {
-        if (INSTANCE != null) INSTANCE.disposeScene();
+        ((LumeUserActions)INSTANCE.getServer().getUserActions()).setListen(false);
+        if (INSTANCE != null) INSTANCE = null;
     }
     //methods
     private void create(){
@@ -127,7 +132,7 @@ public class MultiplayerUsersScene extends BaseScene implements ButtonSprite.OnC
         Log.i("MultiplayerUserScene", "disposeScene");
         this.detachSelf();
         this.dispose();
-        if (INSTANCE != null) INSTANCE = null;
+        MultiplayerUsersScene.destroyInstance();
     }
     //getter and setter
     public LinkedList<Entity> getEntitiesList() {return resourcesManager.entities;}
