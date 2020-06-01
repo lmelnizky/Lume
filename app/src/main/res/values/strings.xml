@@ -2,4 +2,5 @@
     <string name="app_name">Lume</string>
     <string name="title_activity_multi">MultiActivity</string>
     <string name="title_base_feature">Instant Module</string>
+    <string name="photo">Take a picture for your player!</string>
 </resources>

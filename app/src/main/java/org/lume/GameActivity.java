@@ -1,18 +1,37 @@
 package org.lume;
 
+import android.Manifest;
+import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.ActivityNotFoundException;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
+import android.graphics.Matrix;
+import android.graphics.Paint;
+import android.graphics.PorterDuff;
+import android.graphics.PorterDuffXfermode;
+import android.graphics.Rect;
+import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.provider.MediaStore;
 import android.util.DisplayMetrics;
 import android.view.KeyEvent;
 import android.view.View;
+import android.widget.Button;
 import android.widget.FrameLayout;
+import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
+
+import androidx.annotation.NonNull;
 
 import com.google.android.gms.ads.AdListener;
 import com.google.android.gms.ads.AdRequest;
@@ -70,6 +89,13 @@ public class GameActivity extends BaseGameActivity implements RewardedVideoAdLis
     private static final String LAMPORGHINA_UNLOCKED = "LAMPORGHINA_UNLOCKED";
     private static final String GRUME_UNLOCKED = "GRUME_UNLOCKED";
     private static final String IS_SLOWMO = "IS_SLOWMO";
+
+    private static final int CAMERA_REQUEST = 1888;
+    private static final int MY_CAMERA_PERMISSION_CODE = 100;
+    private static final int PIC_CROP = 200;
+    private ImageView imageView;
+    private Uri picUri;
+
 
     private BoundCamera camera;
     private EngineOptions engineOptions;
@@ -381,62 +407,105 @@ public class GameActivity extends BaseGameActivity implements RewardedVideoAdLis
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-//        //Tappx ADS
-        //Tappx ADS
+        //TODO THIS IS TEST
+        setContentView(R.layout.activity_main);
+        this.imageView = (ImageView)this.findViewById(R.id.imageView1);
+        Button photoButton = (Button) this.findViewById(R.id.button1);
+        photoButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v)
+            {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                    if (checkSelfPermission(Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED)
+                    {
+                        requestPermissions(new String[]{Manifest.permission.CAMERA}, MY_CAMERA_PERMISSION_CODE);
+                    }
+                    else
+                    {
+                        Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                        startActivityForResult(cameraIntent, CAMERA_REQUEST);
+                    }
+                }
+            }
+        });
+    }
 
-//        tappxInterstitial = new TappxInterstitial(this.getApplicationContext(), "pub-50236-android-4229");
-//        tappxInterstitial.setAutoShowWhenReady(true);
-//        runOnUiThread(new Runnable() {
-//            @Override
-//            public void run() {
-//                tappxInterstitial.loadAd();
-//            }
-//        });
-//        tappxInterstitial.setListener(new TappxInterstitialListener() {
-//            @Override
-//            public void onInterstitialLoaded(TappxInterstitial tappxInterstitial) {
-//            }
-//
-//            @Override
-//            public void onInterstitialLoadFailed(TappxInterstitial tappxInterstitial, TappxAdError tappxAdError) {
-//                runOnUiThread(new Runnable() {
-//                    @Override
-//                    public void run() {
-//                        tappxInterstitial.loadAd();
-//                    }
-//                });
-//            }
-//
-//            @Override
-//            public void onInterstitialShown(TappxInterstitial tappxInterstitial) {
-//                runOnUiThread(new Runnable() {
-//                    @Override
-//                    public void run() {
-//                        tappxInterstitial.loadAd();
-//                    }
-//                });
-//            }
-//
-//            @Override
-//            public void onInterstitialClicked(TappxInterstitial tappxInterstitial) {
-//                runOnUiThread(new Runnable() {
-//                    @Override
-//                    public void run() {
-//                        tappxInterstitial.loadAd();
-//                    }
-//                });
-//            }
-//
-//            @Override
-//            public void onInterstitialDismissed(TappxInterstitial tappxInterstitial) {
-//                runOnUiThread(new Runnable() {
-//                    @Override
-//                    public void run() {
-//                        tappxInterstitial.loadAd();
-//                    }
-//                });
-//            }
-//        });
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults)
+    {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == MY_CAMERA_PERMISSION_CODE)
+        {
+            if (grantResults[0] == PackageManager.PERMISSION_GRANTED)
+            {
+                Toast.makeText(this, "camera permission granted", Toast.LENGTH_LONG).show();
+                Intent cameraIntent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
+                startActivityForResult(cameraIntent, CAMERA_REQUEST);
+            }
+            else
+            {
+                Toast.makeText(this, "camera permission denied", Toast.LENGTH_LONG).show();
+            }
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (resultCode == Activity.RESULT_OK) {
+            if (requestCode == CAMERA_REQUEST) {
+                Bitmap photo = (Bitmap) data.getExtras().get("data");
+                Bitmap circlePhoto = this.getCroppedBitmap(photo);
+                Bitmap icon = BitmapFactory.decodeResource(getApplicationContext().getResources(),
+                        R.drawable.lume_scheme);
+                Bitmap scaledBitmap = Bitmap.createScaledBitmap(icon, 120, 120, false);
+                Bitmap overlayedPhoto = this.overlay(circlePhoto, scaledBitmap);
+                imageView.setImageBitmap(overlayedPhoto);
+            }
+        }
+    }
+
+    public Bitmap getCroppedBitmap(Bitmap bitmap) {
+        Bitmap output = Bitmap.createBitmap(bitmap.getWidth(),
+                bitmap.getHeight(), Bitmap.Config.ARGB_8888);
+        Canvas canvas = new Canvas(output);
+
+        final int color = 0xff424242;
+        final Paint paint = new Paint();
+        final Rect rect = new Rect(0, 0, bitmap.getWidth(), bitmap.getHeight());
+
+        paint.setAntiAlias(true);
+        canvas.drawARGB(0, 0, 0, 0);
+        paint.setColor(color);
+        // canvas.drawRoundRect(rectF, roundPx, roundPx, paint);
+        canvas.drawCircle(bitmap.getWidth() / 2, bitmap.getHeight() / 2,
+                bitmap.getWidth() / 2, paint);
+        paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC_IN));
+        canvas.drawBitmap(bitmap, rect, rect, paint);
+        //Bitmap _bmp = Bitmap.createScaledBitmap(output, 60, 60, false);
+        //return _bmp;
+        return output;
+    }
+
+    public Bitmap overlay(Bitmap bmp1, Bitmap bmp2) {
+        Bitmap bmOverlay = Bitmap.createBitmap(bmp1.getWidth(), bmp1.getHeight(), bmp1.getConfig());
+        Canvas canvas = new Canvas(bmOverlay);
+        canvas.drawBitmap(bmp1, new Matrix(), null);
+        canvas.drawBitmap(bmp2, new Matrix(), null);
+        return bmOverlay;
+    }
+
+    public static Bitmap scaleDown(Bitmap realImage, float maxImageSize,
+                                   boolean filter) {
+        float ratio = Math.min(
+                (float) maxImageSize / realImage.getWidth(),
+                (float) maxImageSize / realImage.getHeight());
+        int width = Math.round((float) ratio * realImage.getWidth());
+        int height = Math.round((float) ratio * realImage.getHeight());
+
+        Bitmap newBitmap = Bitmap.createScaledBitmap(realImage, width,
+                height, filter);
+        return newBitmap;
     }
 
     @Override protected void onSetContentView() {
