@@ -1,9 +1,10 @@
 package org.lume;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.content.ActivityNotFoundException;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -19,19 +20,23 @@ import android.graphics.Rect;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Handler;
 import android.os.Looper;
 import android.provider.MediaStore;
 import android.util.DisplayMetrics;
 import android.view.KeyEvent;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.FrameLayout;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.core.app.ActivityCompat;
 
 import com.google.android.gms.ads.AdListener;
 import com.google.android.gms.ads.AdRequest;
@@ -64,6 +69,7 @@ import org.lume.opengl.view.RenderSurfaceView;
 import org.lume.scene.ShopScene;
 import org.lume.ui.activity.BaseGameActivity;
 
+import java.io.File;
 import java.io.IOException;
 
 import me.drakeet.support.toast.ToastCompat;
@@ -91,11 +97,21 @@ public class GameActivity extends BaseGameActivity implements RewardedVideoAdLis
     private static final String IS_SLOWMO = "IS_SLOWMO";
 
     private static final int CAMERA_REQUEST = 1888;
+    private static final int WRITE_REQUEST = 1988;
     private static final int MY_CAMERA_PERMISSION_CODE = 100;
     private static final int PIC_CROP = 200;
-    private ImageView imageView;
-    private Uri picUri;
-
+    private ImageView photoImageView;
+    private Button buttonCrop, photoButton;
+    private ImageButton biggerButton, smallerButton, okButton;
+    Bitmap photo, icon;
+    String mCurrentPhotoPath;
+    private boolean imageViewInitialised = false;
+    private int fingersUsed, firstFingerX, firstFingerY, secondFingerX, secondFingerY, secondFingerXFinal, secondFingerYFinal;
+    private int posX, posY, diameter;
+    private int bmpWidth, bmpHeight, viewWidth, viewHeight, wFactor, hFactor;
+    DisplayMetrics displayMetrics = new DisplayMetrics();
+    int screenHeight = displayMetrics.heightPixels;
+    private int screenWidth = displayMetrics.widthPixels;
 
     private BoundCamera camera;
     private EngineOptions engineOptions;
@@ -409,8 +425,20 @@ public class GameActivity extends BaseGameActivity implements RewardedVideoAdLis
 
         //TODO THIS IS TEST
         setContentView(R.layout.activity_main);
-        this.imageView = (ImageView)this.findViewById(R.id.imageView1);
-        Button photoButton = (Button) this.findViewById(R.id.button1);
+        this.photoImageView = (ImageView)this.findViewById(R.id.imageView1);
+        buttonCrop = findViewById(R.id.button2);
+        buttonCrop.setVisibility(View.GONE);
+        photoButton = (Button) this.findViewById(R.id.button1);
+        biggerButton = findViewById(R.id.bigger);
+        biggerButton.setVisibility(View.GONE);
+//        biggerButton.getLayoutParams().height = 20;
+//        biggerButton.getLayoutParams().width = 20;
+        smallerButton = findViewById(R.id.smaller);
+        smallerButton.setVisibility(View.GONE);
+        okButton = findViewById(R.id.ok);
+        okButton.setVisibility(View.GONE);
+//        smallerButton.getLayoutParams().height = photoButton.getHeight();
+//        smallerButton.getLayoutParams().width = photoButton.getHeight();
         photoButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v)
@@ -419,11 +447,29 @@ public class GameActivity extends BaseGameActivity implements RewardedVideoAdLis
                     if (checkSelfPermission(Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED)
                     {
                         requestPermissions(new String[]{Manifest.permission.CAMERA}, MY_CAMERA_PERMISSION_CODE);
-                    }
-                    else
-                    {
-                        Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                        startActivityForResult(cameraIntent, CAMERA_REQUEST);
+                    } else {
+                        //ask for permission
+                        if (Build.VERSION.SDK_INT >= 23) {
+                            String[] PERMISSIONS = {android.Manifest.permission.READ_EXTERNAL_STORAGE,android.Manifest.permission.WRITE_EXTERNAL_STORAGE};
+                            if (!hasPermissions(GameActivity.this.getApplicationContext(), PERMISSIONS)) {
+                                ActivityCompat.requestPermissions(GameActivity.this, PERMISSIONS, WRITE_REQUEST);
+                            } else {
+                                toastOnUiThread("writing granted", 0);
+                                Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                                File photoFile = null;
+                                try {
+                                    photoFile = createImageFile();
+                                } catch (IOException e) {
+                                    e.printStackTrace();
+                                }
+                                if (photoFile != null) {
+                                    cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(photoFile));
+                                    startActivityForResult(cameraIntent, CAMERA_REQUEST);
+                                }
+                            }
+                        } else {
+                            toastOnUiThread("Permission denied", 0);
+                        }
                     }
                 }
             }
@@ -434,54 +480,261 @@ public class GameActivity extends BaseGameActivity implements RewardedVideoAdLis
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults)
     {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        if (requestCode == MY_CAMERA_PERMISSION_CODE)
-        {
+        if (requestCode == MY_CAMERA_PERMISSION_CODE) {
             if (grantResults[0] == PackageManager.PERMISSION_GRANTED)
             {
                 Toast.makeText(this, "camera permission granted", Toast.LENGTH_LONG).show();
-                Intent cameraIntent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
-                startActivityForResult(cameraIntent, CAMERA_REQUEST);
+                //ask for permission
+                if (Build.VERSION.SDK_INT >= 23) {
+                    String[] PERMISSIONS = {android.Manifest.permission.READ_EXTERNAL_STORAGE,android.Manifest.permission.WRITE_EXTERNAL_STORAGE};
+                    if (!hasPermissions(getApplicationContext(), PERMISSIONS)) {
+                        ActivityCompat.requestPermissions((Activity) getApplicationContext(), PERMISSIONS, WRITE_REQUEST);
+                    } else {
+                        toastOnUiThread("Permission denied", 0);
+                    }
+                } else {
+                    toastOnUiThread("Permission denied", 0);
+                }
+
+                //Intent cameraIntent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
+                //startActivityForResult(cameraIntent, CAMERA_REQUEST);
             }
             else
             {
                 Toast.makeText(this, "camera permission denied", Toast.LENGTH_LONG).show();
             }
+        } else if (requestCode == WRITE_REQUEST) {
+            Toast.makeText(this, "writing granted", Toast.LENGTH_SHORT).show();
+            Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+            File photoFile = null;
+            try {
+                photoFile = createImageFile();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            if (photoFile != null) {
+                cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(photoFile));
+                startActivityForResult(cameraIntent, CAMERA_REQUEST);
+            }
         }
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (resultCode == Activity.RESULT_OK) {
             if (requestCode == CAMERA_REQUEST) {
-                Bitmap photo = (Bitmap) data.getExtras().get("data");
-                Bitmap circlePhoto = this.getCroppedBitmap(photo);
-                Bitmap icon = BitmapFactory.decodeResource(getApplicationContext().getResources(),
-                        R.drawable.lume_scheme);
-                Bitmap scaledBitmap = Bitmap.createScaledBitmap(icon, 120, 120, false);
-                Bitmap overlayedPhoto = this.overlay(circlePhoto, scaledBitmap);
-                imageView.setImageBitmap(overlayedPhoto);
+                photo = null;
+                try {
+                    photo = MediaStore.Images.Media.getBitmap(this.getContentResolver(), Uri.parse(mCurrentPhotoPath));
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                photoImageView.setImageBitmap(photo);
+                //Bitmap photo = (Bitmap) data.getExtras().get("data");
+                //Bitmap circlePhoto = this.getCroppedBitmap(photo);
+                //Bitmap icon = BitmapFactory.decodeResource(getApplicationContext().getResources(),
+                        //R.drawable.lume_scheme);
+                //Bitmap scaledBitmap = Bitmap.createScaledBitmap(icon, 120, 120, false);
+                //Bitmap overlayedPhoto = this.overlay(circlePhoto, scaledBitmap);
+
+
+                File fdelete = new File(mCurrentPhotoPath);
+                if (fdelete.exists()) {
+                    if (fdelete.delete()) {
+                        System.out.println("file Deleted :" + mCurrentPhotoPath);
+                    } else {
+                        System.out.println("file not Deleted :" + mCurrentPhotoPath);
+                    }
+                }
+
+                photoButton.setText(R.string.fat);
+                biggerButton.getLayoutParams().height = photoButton.getHeight();
+                biggerButton.getLayoutParams().width = photoButton.getHeight();
+                biggerButton.requestLayout();
+                smallerButton.getLayoutParams().height = photoButton.getHeight();
+                smallerButton.getLayoutParams().width = photoButton.getHeight();
+                smallerButton.requestLayout();
+
+
+                icon = BitmapFactory.decodeResource(getApplicationContext().getResources(),
+                    R.drawable.lume_scheme);
+                photoImageView.setImageBitmap(icon);
+                Bitmap overlayedPhoto = this.overlay(photo, icon);
+                photoImageView.setImageBitmap(overlayedPhoto);
+                viewWidth = photoImageView.getWidth();
+                viewHeight = photoImageView.getHeight();
+                GameActivity.this.getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
+                screenHeight = displayMetrics.heightPixels;
+                screenWidth = displayMetrics.widthPixels;
+                //toastOnUiThread("Screenw and Screenh: " + screenWidth + ", " + screenHeight, 0);
+                wFactor = bmpWidth/viewWidth;
+                hFactor = bmpHeight/viewHeight;
+                photoImageView.setOnTouchListener(new View.OnTouchListener() {
+                    @Override
+                    public boolean onTouch(View v, MotionEvent event) {
+                        int trueViewWidth = bmpWidth/hFactor; //scaled because imageView is on complete width
+                        int deadSpaceX = (screenWidth-trueViewWidth)/2; //this is the imageView space on left side
+                        int deadSpaceY = (screenHeight-trueViewWidth)/2; //this is the imageView space on left side
+                        if (event.getAction() == MotionEvent.ACTION_DOWN){
+                            if (fingersUsed < 2) fingersUsed++;
+                            //toastOnUiThread("OnActionDown, " + fingersUsed, 0);
+                            if (event.getAction() == MotionEvent.ACTION_POINTER_DOWN) toastOnUiThread("Action_Pointer_Down", 1);
+                            if (fingersUsed == 1) firstFingerX = (int) (event.getX()-deadSpaceX)*hFactor;
+                            if (fingersUsed == 1) firstFingerY = (int) (event.getY())*hFactor;
+                            if (fingersUsed == 2) secondFingerX = (int) (event.getX()-deadSpaceX)*hFactor;
+                            if (fingersUsed == 2) secondFingerY = (int) (event.getY())*hFactor;
+                            return true;
+                        } else if (event.getAction() == MotionEvent.ACTION_UP) {
+                            fingersUsed--;
+                            if (fingersUsed < 0) fingersUsed = 0;
+                            //toastOnUiThread("OnActionUp, " + fingersUsed, 0);
+                            if (fingersUsed == 0) { //set position
+                                int x, y;
+                                x = (int)(event.getX()-deadSpaceX)*hFactor;
+                                y = (int) event.getY()*hFactor;
+                                Bitmap newBitmap = overlay(photo, icon, x, y, diameter);
+                                photoImageView.setImageBitmap(newBitmap);
+                            } else if (fingersUsed == 1) { //set size
+                                secondFingerXFinal = (int) (event.getX()-deadSpaceX)*hFactor;
+                                secondFingerYFinal = (int) (event.getY())*hFactor;
+                                int diffX1 = Math.abs(secondFingerX-firstFingerX);
+                                int diffY1 = Math.abs(secondFingerY - firstFingerY);
+                                int diffX2 = Math.abs(secondFingerXFinal-secondFingerX);
+                                int diffY2 = Math.abs(secondFingerYFinal-secondFingerY);
+                                int diffX = diffX2-diffX1;
+                                int diffY = diffY2-diffY1;
+                                diameter += Math.max(diffX, diffY);
+                                Bitmap newBitmap = overlay(photo, icon, posX, posY, diameter);
+                                photoImageView.setImageBitmap(newBitmap);
+                            }
+
+                        } else if (event.getAction() == MotionEvent.ACTION_MOVE) {
+                            int x, y;
+                            x = (int)(event.getX()-deadSpaceX)*hFactor;
+                            y = (int) event.getY()*hFactor;
+                            Bitmap newBitmap = overlay(photo, icon, x, y, diameter);
+                            photoImageView.setImageBitmap(newBitmap);
+//                        } else if (event.getAction() == MotionEvent.ACTION_POINTER_DOWN) {
+//                            //toastOnUiThread("ActionPointerDown", 0);
+//                            secondFingerX = (int) (event.getX()-deadSpaceX)*hFactor;
+//                            secondFingerY = (int) (event.getY())*hFactor;
+//                        } else if (event.getAction() == MotionEvent.ACTION_POINTER_UP) {
+//                            //toastOnUiThread("ActionPointerUp", 0);
+//                            secondFingerXFinal = (int) (event.getX()-deadSpaceX)*hFactor;
+//                            secondFingerYFinal = (int) (event.getY())*hFactor;
+//                            int diffX1 = Math.abs(secondFingerX-firstFingerX);
+//                            int diffY1 = Math.abs(secondFingerY - firstFingerY);
+//                            int diffX2 = Math.abs(secondFingerXFinal-secondFingerX);
+//                            int diffY2 = Math.abs(secondFingerYFinal-secondFingerY);
+//                            int diffX = diffX2-diffX1;
+//                            int diffY = diffY2-diffY1;
+//                            diameter += Math.max(diffX, diffY);
+//                            Bitmap newBitmap = overlay(photo, icon, posX, posY, diameter);
+//                            photoImageView.setImageBitmap(newBitmap);
+                        }
+                        return false;
+                    }
+                });
+                imageViewInitialised = true;
+                buttonCrop.setVisibility(View.VISIBLE);
+                biggerButton.setVisibility(View.VISIBLE);
+                smallerButton.setVisibility(View.VISIBLE);
+                buttonCrop.setOnClickListener(new View.OnClickListener() {
+                    public void onClick(View v) {
+                        toastOnUiThread("Cropping", 0);
+                        //cropping
+                        Bitmap cropBitmap = getCroppedBitmap(photo, icon, posX, posY, diameter);
+                        photoImageView.setImageBitmap(cropBitmap);
+
+                        okButton.setVisibility(View.VISIBLE);
+                        okButton.getLayoutParams().height = photoButton.getHeight();
+                        okButton.getLayoutParams().width = photoButton.getHeight();
+                        okButton.requestLayout();
+                        okButton.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+//                                diameter += 30;
+//                                Bitmap cropBitmap = overlay(photo, icon, posX, posY, diameter);
+//                                photoImageView.setImageBitmap(cropBitmap);
+                            }
+                        });
+                    }
+                });
+                biggerButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        diameter += 30;
+                        Bitmap cropBitmap = overlay(photo, icon, posX, posY, diameter);
+                        photoImageView.setImageBitmap(cropBitmap);
+                    }
+                });
+                smallerButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        diameter -= 30;
+                        Bitmap cropBitmap = overlay(photo, icon, posX, posY, diameter);
+                        photoImageView.setImageBitmap(cropBitmap);
+                    }
+                });
             }
         }
     }
 
-    public Bitmap getCroppedBitmap(Bitmap bitmap) {
-        Bitmap output = Bitmap.createBitmap(bitmap.getWidth(),
-                bitmap.getHeight(), Bitmap.Config.ARGB_8888);
+    @Override
+    public boolean onTouchEvent(MotionEvent event) {
+        if (imageViewInitialised) {
+
+        }
+        return super.onTouchEvent(event);
+    }
+
+    public static boolean hasPermissions(Context context, String... permissions) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && context != null && permissions != null) {
+            for (String permission : permissions) {
+                if (ActivityCompat.checkSelfPermission(context, permission) != PackageManager.PERMISSION_GRANTED) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
+    public File createImageFile() throws IOException {
+
+        long timeStamp = System.currentTimeMillis();
+        String imageFileName = "NAME_" + timeStamp;
+        File storageDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES);
+        File image = File.createTempFile(
+                imageFileName,  /* prefix */
+                ".jpg",         /* suffix */
+                storageDir      /* directory */
+        );
+        mCurrentPhotoPath = "file:" + image.getAbsolutePath();
+        return image;
+    }
+
+    public Bitmap getCroppedBitmap(Bitmap photo, Bitmap scheme, int x, int y, int diameter) {
+        Bitmap output = Bitmap.createBitmap(photo.getWidth(),
+                photo.getHeight(), photo.getConfig());
         Canvas canvas = new Canvas(output);
 
         final int color = 0xff424242;
         final Paint paint = new Paint();
-        final Rect rect = new Rect(0, 0, bitmap.getWidth(), bitmap.getHeight());
+        final Rect rect = new Rect(0, 0, photo.getWidth(), photo.getHeight());
+        final Rect rectScheme = new Rect(x-diameter/2, y-diameter/2, x+diameter/2,
+                y+diameter/2);
 
         paint.setAntiAlias(true);
         canvas.drawARGB(0, 0, 0, 0);
         paint.setColor(color);
         // canvas.drawRoundRect(rectF, roundPx, roundPx, paint);
-        canvas.drawCircle(bitmap.getWidth() / 2, bitmap.getHeight() / 2,
-                bitmap.getWidth() / 2, paint);
+        canvas.drawCircle(x, y,
+                diameter/2, paint);
         paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC_IN));
-        canvas.drawBitmap(bitmap, rect, rect, paint);
+        canvas.drawBitmap(photo, null, rect, paint);
+        canvas.drawBitmap(scheme, null, rectScheme, null);
         //Bitmap _bmp = Bitmap.createScaledBitmap(output, 60, 60, false);
         //return _bmp;
         return output;
@@ -491,8 +744,47 @@ public class GameActivity extends BaseGameActivity implements RewardedVideoAdLis
         Bitmap bmOverlay = Bitmap.createBitmap(bmp1.getWidth(), bmp1.getHeight(), bmp1.getConfig());
         Canvas canvas = new Canvas(bmOverlay);
         canvas.drawBitmap(bmp1, new Matrix(), null);
-        canvas.drawBitmap(bmp2, new Matrix(), null);
+        int width = bmp1.getWidth()/4;
+//        toastOnUiThread("bmp1 w, h: " + bmp1.getWidth() + ", " + bmp1.getHeight() +
+//                "bmp2 w, h: " + bmp2.getWidth() + ", " + bmp2.getHeight() +
+//                "bmp2 w, h: " + photoImageView.getWidth() + ", " + photoImageView.getHeight());
+        Rect src = new Rect(0, 0, bmp1.getWidth(), bmp1.getHeight());
+        Rect dest = new Rect(bmp1.getWidth()/2-width/2, bmp1.getHeight()/2-width/2,
+                bmp1.getWidth()/2+width/2, bmp1.getHeight()/2+width/2);
+        this.posX = bmp1.getWidth()/2;
+        this.posY = bmp1.getHeight()/2;
+        this.bmpWidth = bmp1.getWidth();
+        this.bmpHeight = bmp1.getHeight();
+        this.diameter = width;
+        canvas.drawBitmap(bmp2, null, dest, null);
         return bmOverlay;
+    }
+
+    public Bitmap overlay(Bitmap bmp1, Bitmap bmp2, int x, int y, int diameter) {
+        Bitmap bmOverlay = Bitmap.createBitmap(bmp1.getWidth(), bmp1.getHeight(), bmp1.getConfig());
+        Canvas canvas = new Canvas(bmOverlay);
+        canvas.drawBitmap(bmp1, new Matrix(), null);
+        int width = bmp1.getWidth()/4;
+//        toastOnUiThread("bmp1 w, h: " + bmp1.getWidth() + ", " + bmp1.getHeight() +
+//                "bmp2 w, h: " + bmp2.getWidth() + ", " + bmp2.getHeight() +
+//                "bmp2 w, h: " + photoImageView.getWidth() + ", " + photoImageView.getHeight());
+        Rect src = new Rect(0, 0, bmp1.getWidth(), bmp1.getHeight());
+        Rect dest = new Rect(x-diameter/2, y-diameter/2,
+                x+diameter/2, y+diameter/2);
+        this.posX = x;
+        this.posY = y;
+        this.diameter = diameter;
+        //bmp2 = setBitmapPosition(bmp2, bmp1.getWidth()/2, bmp1.getHeight()/2);
+        canvas.drawBitmap(bmp2, null, dest, null);
+        return bmOverlay;
+    }
+
+    public Bitmap setBitmapSize(Bitmap bitmap, int width) {
+        Bitmap newBitmap = Bitmap.createBitmap(bitmap.getWidth(), bitmap.getHeight(), bitmap.getConfig());
+        Canvas canvas = new Canvas(newBitmap);
+        Rect dest = new Rect(2, 2, 2+width, 2+width);
+        canvas.drawBitmap(bitmap, null, dest, null);
+        return newBitmap;
     }
 
     public static Bitmap scaleDown(Bitmap realImage, float maxImageSize,

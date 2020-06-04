@@ -3,4 +3,6 @@
     <string name="title_activity_multi">MultiActivity</string>
     <string name="title_base_feature">Instant Module</string>
     <string name="photo">Take a picture for your player!</string>
+    <string name="fat">Make a new foto, I look fat!</string>
+    <string name="crop">Crop for a personal LUME!</string>
 </resources>
